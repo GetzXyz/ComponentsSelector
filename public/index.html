@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FORGE — AI PC Builder</title>
   <meta name="description" content="Build your perfect PC. Enter your budget and get the best components — new and used — priced for your region." />
+  <meta property="og:title" content="FORGE — AI PC Builder" />
+  <meta property="og:description" content="Smart PC building tool with regional pricing for Pakistan and worldwide." />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -18,22 +20,12 @@
   <!-- PARTICLE CANVAS -->
   <canvas id="particle-canvas"></canvas>
 
-  <!-- HOT ITEMS TICKER (always visible) -->
-  <div class="hot-ticker-bar">
-    <span class="ticker-label">🔥 HOT NOW</span>
-    <div class="ticker-track-wrap">
-      <div class="ticker-track" id="ticker-track">
-        <!-- filled by JS -->
-      </div>
-    </div>
-  </div>
-
   <!-- BUDGET WARNING MODAL -->
   <div id="budget-modal" class="modal-overlay hidden">
     <div class="modal-card">
       <div class="modal-icon">⚠</div>
       <h2 class="modal-title">Budget Too Low</h2>
-      <p class="modal-body">The minimum budget to build a functional PC is <strong id="modal-min-amount">₨ 20,000</strong>.<br/>Please increase your budget to continue.</p>
+      <p class="modal-body">The minimum budget to build a functional PC is <strong id="modal-min-amount">₨ 27,850</strong>.<br/>Please increase your budget to continue.</p>
       <div class="modal-bar"></div>
       <button class="modal-btn" id="modal-close-btn">Got it, I'll adjust</button>
     </div>
@@ -47,7 +39,6 @@
         <div class="receipt-title">Build Receipt</div>
         <div class="receipt-id" id="receipt-id"></div>
         <div class="receipt-date" id="receipt-date"></div>
-        <div class="receipt-owner" id="receipt-owner"></div>
       </div>
       <div class="receipt-divider dashed"></div>
       <div id="receipt-items" class="receipt-items"></div>
@@ -64,7 +55,7 @@
       <div class="receipt-divider dashed"></div>
       <div class="receipt-footer">
         <p>Thank you for using FORGE</p>
-        <p class="receipt-tagline">FORGE — Your PC, Your Rules</p>
+        <p class="receipt-tagline">forge.build — Your PC, Your Rules</p>
       </div>
       <div class="receipt-actions">
         <button class="receipt-print-btn" onclick="window.print()">🖨 Print Receipt</button>
@@ -73,216 +64,78 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       ONBOARDING SCREEN
-  ═══════════════════════════════════════ -->
+  <!-- ONBOARDING SCREEN -->
   <div id="screen-onboarding" class="screen active">
-
-    <!-- PC Animation Scene -->
-    <div class="pc-scene" aria-hidden="true">
-      <div class="pc-tower">
-        <div class="pc-tower-body">
-          <div class="pc-panel-lines">
-            <div class="panel-line"></div>
-            <div class="panel-line"></div>
-            <div class="panel-line"></div>
-          </div>
-          <!-- GPU -->
-          <div class="gpu-card">
-            <div class="gpu-body">
-              <div class="gpu-fan f1"><div class="fan-blade-wrap"><div class="fan-blades"></div></div></div>
-              <div class="gpu-fan f2"><div class="fan-blade-wrap"><div class="fan-blades"></div></div></div>
-              <div class="gpu-fan f3"><div class="fan-blade-wrap"><div class="fan-blades"></div></div></div>
-            </div>
-            <div class="gpu-rgb-strip"></div>
-          </div>
-          <!-- RAM sticks -->
-          <div class="ram-sticks">
-            <div class="ram-stick"><div class="ram-rgb"></div></div>
-            <div class="ram-stick"><div class="ram-rgb"></div></div>
-            <div class="ram-stick"><div class="ram-rgb"></div></div>
-            <div class="ram-stick"><div class="ram-rgb"></div></div>
-          </div>
-          <!-- CPU cooler -->
-          <div class="cpu-cooler">
-            <div class="cooler-fan"><div class="fan-blade-wrap big"><div class="fan-blades"></div></div></div>
-            <div class="cooler-rgb"></div>
-          </div>
-          <!-- Motherboard glow lines -->
-          <div class="mb-traces">
-            <div class="mb-trace t1"></div>
-            <div class="mb-trace t2"></div>
-            <div class="mb-trace t3"></div>
-          </div>
-          <!-- Power button -->
-          <div class="power-btn-ani">
-            <div class="power-ring"></div>
-          </div>
-        </div>
-        <div class="pc-glass-panel"></div>
-        <div class="pc-glow-leak"></div>
-      </div>
-      <!-- Peripherals -->
-      <div class="peripheral-monitor">
-        <div class="mon-screen">
-          <div class="mon-scanlines"></div>
-          <div class="mon-content">FORGE<br/><span>AI BUILD</span></div>
-        </div>
-        <div class="mon-stand"></div>
-      </div>
-      <div class="peripheral-keyboard">
-        <div class="kb-keys">
-          <div class="kb-key lit"></div><div class="kb-key"></div><div class="kb-key lit"></div>
-          <div class="kb-key"></div><div class="kb-key lit"></div><div class="kb-key"></div>
-          <div class="kb-key lit"></div><div class="kb-key"></div><div class="kb-key lit"></div>
-          <div class="kb-key"></div><div class="kb-key lit"></div><div class="kb-key"></div>
-          <div class="kb-key lit"></div><div class="kb-key"></div><div class="kb-key lit"></div>
-        </div>
-        <div class="kb-spacebar"></div>
-      </div>
-      <div class="peripheral-mouse">
-        <div class="mouse-body">
-          <div class="mouse-scroll"></div>
-          <div class="mouse-rgb-line"></div>
-        </div>
-      </div>
-    </div>
-    <!-- / PC Scene -->
-
     <header class="site-header">
-      <div class="brand">
-        <span class="brand-hex">⬡</span>
-        <span class="brand-name">FORGE</span>
-      </div>
-      <span class="header-tagline">AI PC BUILDER</span>
+      <div class="brand"><span class="brand-mark">⬡</span><span class="brand-name">FORGE</span></div>
+      <span class="header-tagline">AI PC Builder</span>
     </header>
 
     <div class="onboarding-container">
       <div class="onboarding-hero">
-        <div class="hero-badge">POWERED BY GEMINI AI</div>
-        <h1 class="hero-text">BUILD YOUR<br/><em>DREAM RIG.</em></h1>
-        <p class="subtitle">Enter your budget. We source the best real-world components — new &amp; used — priced for your region.</p>
+        <h1 class="hero-text">Build your<br/><em>perfect PC.</em></h1>
+        <p class="subtitle">Enter your budget. We find the best real-world components — new &amp; used — priced for your region.</p>
       </div>
 
       <div class="form-block">
-
-        <!-- Step 1: User Info -->
-        <div class="form-section">
-          <div class="form-section-label"><span class="step-num">01</span> Your Info</div>
-          <div class="fields-row">
-            <div class="field">
-              <label>First Name</label>
-              <input type="text" id="user-name" placeholder="e.g. Ahmed" autocomplete="given-name" />
-            </div>
-            <div class="field">
-              <label>Experience Level</label>
-              <div class="select-wrap">
-                <select id="user-exp">
-                  <option value="beginner">🌱 Beginner — first build</option>
-                  <option value="intermediate" selected>⚙️ Intermediate — some builds</option>
-                  <option value="expert">🔥 Expert — enthusiast</option>
-                </select>
-                <span class="select-arrow">↓</span>
-              </div>
-            </div>
+        <div class="field">
+          <label>Your Country / Region</label>
+          <div class="select-wrap">
+            <select id="region-select">
+              <option value="PK">🇵🇰 Pakistan — PKR</option>
+              <option value="US">🇺🇸 United States — USD</option>
+              <option value="GB">🇬🇧 United Kingdom — GBP</option>
+              <option value="EU">🇪🇺 European Union — EUR</option>
+              <option value="IN">🇮🇳 India — INR</option>
+              <option value="CA">🇨🇦 Canada — CAD</option>
+              <option value="AU">🇦🇺 Australia — AUD</option>
+            </select>
+            <span class="select-arrow">↓</span>
           </div>
-          <div class="fields-row">
-            <div class="field">
-              <label>Primary Use</label>
-              <div class="select-wrap">
-                <select id="user-use">
-                  <option value="personal">🏠 Personal / Home</option>
-                  <option value="professional">💼 Professional</option>
-                  <option value="student">🎓 Student</option>
-                  <option value="streamer">📡 Content Creator / Streamer</option>
-                </select>
-                <span class="select-arrow">↓</span>
-              </div>
-            </div>
+          <span class="field-note">Used only to convert prices to your currency.</span>
+        </div>
+
+        <div class="field">
+          <label>Your Total Budget <span id="currency-label" class="currency-tag">PKR</span></label>
+          <div class="budget-input-wrap">
+            <span id="budget-symbol" class="budget-symbol">₨</span>
+            <input type="number" id="budget-input" value="150000" min="1000" />
           </div>
         </div>
 
-        <!-- Step 2: Region + Budget -->
-        <div class="form-section">
-          <div class="form-section-label"><span class="step-num">02</span> Budget &amp; Region</div>
-          <div class="fields-row">
-            <div class="field">
-              <label>Country / Region</label>
-              <div class="select-wrap">
-                <select id="region-select">
-                  <option value="PK">🇵🇰 Pakistan — PKR</option>
-                  <option value="US">🇺🇸 United States — USD</option>
-                  <option value="GB">🇬🇧 United Kingdom — GBP</option>
-                  <option value="EU">🇪🇺 European Union — EUR</option>
-                  <option value="IN">🇮🇳 India — INR</option>
-                  <option value="CA">🇨🇦 Canada — CAD</option>
-                  <option value="AU">🇦🇺 Australia — AUD</option>
-                </select>
-                <span class="select-arrow">↓</span>
-              </div>
-            </div>
-            <div class="field">
-              <label>Total Budget <span id="currency-label" class="currency-tag">PKR</span></label>
-              <div class="budget-input-wrap">
-                <span id="budget-symbol" class="budget-symbol">₨</span>
-                <input type="number" id="budget-input" value="150000" min="1000" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step 3: Purpose -->
-        <div class="form-section">
-          <div class="form-section-label"><span class="step-num">03</span> Build Purpose</div>
+        <div class="field">
+          <label>Build Purpose</label>
           <div class="purpose-grid">
-            <button class="purpose-btn active" data-purpose="gaming">
-              <span class="pb-icon">🎮</span>
-              <span class="pb-label">Gaming</span>
-              <span class="pb-sub">Max FPS, GPU-heavy</span>
-            </button>
-            <button class="purpose-btn" data-purpose="work">
-              <span class="pb-icon">💼</span>
-              <span class="pb-label">Work / Office</span>
-              <span class="pb-sub">Stable, efficient</span>
-            </button>
-            <button class="purpose-btn" data-purpose="creative">
-              <span class="pb-icon">🎨</span>
-              <span class="pb-label">Creative</span>
-              <span class="pb-sub">RAM &amp; storage first</span>
-            </button>
-            <button class="purpose-btn" data-purpose="general">
-              <span class="pb-icon">⚡</span>
-              <span class="pb-label">General Use</span>
-              <span class="pb-sub">Balanced all-rounder</span>
-            </button>
+            <button class="purpose-btn active" data-purpose="gaming">🎮 Gaming</button>
+            <button class="purpose-btn" data-purpose="work">💼 Work / Office</button>
+            <button class="purpose-btn" data-purpose="creative">🎨 Creative / Editing</button>
+            <button class="purpose-btn" data-purpose="general">⚡ General Use</button>
           </div>
         </div>
 
         <button id="start-btn" class="cta-btn">
-          <span class="cta-text">Find My Components</span>
+          <span>Find My Components</span>
           <span class="cta-arrow">→</span>
         </button>
       </div>
 
-      <p class="privacy-note">🔒 No data stored or shared. Budget &amp; region used only for pricing.</p>
+      <p class="privacy-note">🔒 We don't store or share your info. Budget &amp; country are used only to show relevant parts.</p>
     </div>
 
     <footer class="site-footer">
       <span>⬡ FORGE AI PC Builder</span>
       <span class="footer-sep">·</span>
-      <span>Prices &amp; availability vary by region and market. Always verify before purchasing.</span>
+      <span>Component prices &amp; availability may vary by region, store, and market conditions. Always verify before purchasing.</span>
     </footer>
   </div>
-  <!-- / ONBOARDING -->
 
-  <!-- ═══════════════════════════════════════
-       LOADING SCREEN
-  ═══════════════════════════════════════ -->
+  <!-- LOADING SCREEN -->
   <div id="screen-loading" class="screen">
     <div class="loading-container">
-      <div class="loading-rig" aria-hidden="true">
-        <div class="rig-fan"><div class="fan-blade-wrap big"><div class="fan-blades"></div></div></div>
-        <div class="rig-glow"></div>
+      <div class="loading-spinner">
+        <div class="spinner-ring r1"></div>
+        <div class="spinner-ring r2"></div>
+        <span class="spinner-icon">⬡</span>
       </div>
       <h2 id="loading-headline">Searching the market...</h2>
       <p id="loading-sub">Finding the best components for your budget</p>
@@ -295,28 +148,25 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════
-       BUILDER SCREEN
-  ═══════════════════════════════════════ -->
+  <!-- BUILDER SCREEN -->
   <div id="screen-builder" class="screen">
     <header class="builder-header">
       <div class="header-brand">
-        <span class="brand-hex small">⬡</span>
+        <span class="brand-mark small">⬡</span>
         <span class="brand-name">FORGE</span>
       </div>
       <div class="header-meta">
-        <span id="header-user" class="meta-user"></span>
         <span id="header-purpose" class="meta-tag"></span>
         <span id="header-budget" class="meta-budget"></span>
       </div>
-      <button id="back-btn" class="back-btn">← Change Budget</button>
+      <button id="back-btn" class="back-btn">← New Build</button>
     </header>
 
     <div class="builder-layout">
       <div class="builder-left">
         <div class="section-intro scroll-reveal">
           <h2>Select your components</h2>
-          <p>Choose one from each category. <strong>Click again to deselect.</strong> <span class="tag-new">New</span> = retail. <span class="tag-used">Used</span> = marketplace — verify health &gt;85% before buying.</p>
+          <p>Choose one from each category — including peripherals for a complete battle-station. <span class="tag-new">New</span> = retail box. <span class="tag-used">Used</span> = marketplace — verify health above 85% before buying.</p>
         </div>
         <div id="components-container"></div>
       </div>
@@ -337,9 +187,11 @@
           <div class="summary-tips">
             <div class="tip"><span class="tip-icon">🔧</span><p id="tip-assembly">Add ~7% for technician assembly fees.</p></div>
             <div class="tip"><span class="tip-icon">🌡️</span><p>Budget extra for <strong>thermal paste</strong> if self-building.</p></div>
-            <div class="tip"><span class="tip-icon">🛡️</span><p>Used parts — only buy if <strong>health above 85%</strong>. Ask seller for diagnostics.</p></div>
+            <div class="tip"><span class="tip-icon">🛡️</span><p>For used parts — only buy if <strong>health is above 85%</strong>. Ask the seller for diagnostics.</p></div>
+            <div class="tip"><span class="tip-icon">📦</span><p>Used components may need extra for shipping or local pickup.</p></div>
           </div>
           <button id="save-btn" class="save-btn" disabled>Generate Build Receipt ↗</button>
+          <div id="save-result" class="save-result hidden"></div>
         </div>
       </div>
     </div>
@@ -347,7 +199,7 @@
     <footer class="site-footer builder-footer">
       <span>⬡ FORGE AI PC Builder</span>
       <span class="footer-sep">·</span>
-      <span>Prices vary by region &amp; retailer. Verify all prices before purchase.</span>
+      <span>Component prices &amp; availability vary by region, retailer, and market conditions. Verify all prices before purchase. Used component health should be confirmed above 85% before buying.</span>
     </footer>
   </div>
 
