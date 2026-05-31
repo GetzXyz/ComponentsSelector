@@ -1,6 +1,6 @@
 /* =============================================
-   FORGE — AI PC Builder  v3.0
-   Full animations, receipt, budget guard
+   FORGE — AI PC Builder  v4.0
+   Gemini AI powered + smart static fallback
    ============================================= */
 
 // ── REGION CONFIG ──────────────────────────────
@@ -94,7 +94,6 @@ function initParticles() {
       ctx.fill();
     });
 
-    // connect nearby dots
     for (let i = 0; i < DOTS; i++) {
       for (let j = i + 1; j < DOTS; j++) {
         const dx = dots[i].x - dots[j].x;
@@ -241,28 +240,45 @@ function runLoadingSequence() {
 }
 
 // ══════════════════════════════════════════════
-//  COMPONENT FETCH (no API — smart static)
+//  COMPONENT FETCH — Gemini AI powered
 // ══════════════════════════════════════════════
 async function fetchComponents() {
-  const region = state.region;
-  const budget = state.budgetLocal;
-  const purpose = state.purpose;
+  const region   = state.region;
+  const budget   = state.budgetLocal;
+  const purpose  = state.purpose;
   const currency = REGIONS[region].currency;
+  const symbol   = REGIONS[region].symbol;
 
-  const prompt = `You are a PC building expert. Recommend a complete PC build for:
-- Budget: ${budget} ${currency} (${state.budgetUSD.toFixed(0)} USD equivalent)
-- Purpose: ${purpose}
-- Region: ${region}
+  const prompt = `You are an expert PC builder. A customer in ${region} has a budget of ${symbol}${budget} ${currency} for a ${purpose} PC.
 
-For each component (CPU, GPU, Motherboard, RAM, Storage, PSU, Cooler, Case), provide:
-1. Exact model name currently available in ${region} market
-2. Current approximate price in ${currency}
-3. Key specs
-4. Why it fits this build
+Recommend EXACTLY 3 options for EACH of these 14 categories:
+cpu, gpu, mb, ram, storage, psu, cooler, case, monitor, keyboard, mouse, headset, networking, os
 
-Return as JSON array:
-[{ "category": "cpu", "name": "...", "price": 0, "specs": "...", "reason": "..." }]
-Only return valid JSON, no markdown.`;
+Rules:
+- All prices must be realistic current market prices in ${currency} for the ${region} market
+- The 3 options per category must be: entry-level, mid-range, premium — all appropriate to the total budget
+- GPU and CPU should get the largest share of the budget for gaming; RAM/storage for creative; balanced for work/general
+- The combined cost of a mid-range full build should stay at or under ${budget} ${currency}
+- For the "os" category always include: Ubuntu (free), Windows 11 Home OEM, Windows 11 Pro
+- Use real product model names that are actually available in the ${region} market right now
+
+Return ONLY a valid JSON array, no markdown, no explanation, no backticks, no comments.
+Each object must have exactly these fields:
+{
+  "category": "cpu",
+  "name": "AMD Ryzen 5 5600X",
+  "priceLocal": 42000,
+  "priceUSD": 150,
+  "specs": "6c/12t · 3.7–4.6GHz · 35MB · AM4",
+  "condition": "new",
+  "brand": "AMD",
+  "tier": "budget"
+}
+
+Tier values must be exactly one of: "budget", "mid", "high"
+Generate all 42 items (3 per category × 14 categories).`;
+
+  let geminiSucceeded = false;
 
   try {
     const res = await fetch("/api/gemini", {
@@ -270,12 +286,81 @@ Only return valid JSON, no markdown.`;
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt }),
     });
+
+    if (!res.ok) throw new Error("API response " + res.status);
+
     const data = await res.json();
-    const components = JSON.parse(data.result);
-    // map into state.components here
-    buildSmartRecommendations(); // fallback for display
-  } catch (e) {
-    console.error("Gemini error, falling back to static DB:", e);
+    if (data.error) throw new Error(JSON.stringify(data.error));
+
+    // Strip any accidental markdown fences
+    let raw = data.result.trim();
+    raw = raw.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/i, "").trim();
+
+    const items = JSON.parse(raw);
+    if (!Array.isArray(items) || items.length === 0) throw new Error("Empty or invalid array from Gemini");
+
+    const rr = REGIONS[state.region];
+    const grouped = {};
+
+    items.forEach(item => {
+      const cat = item.category?.toLowerCase();
+      if (!cat || !COMPONENT_META[cat]) return;
+      if (!grouped[cat]) grouped[cat] = [];
+
+      // Derive missing price fields
+      if (!item.priceLocal && item.priceUSD != null) {
+        item.priceLocal = Math.round(item.priceUSD * rr.rate);
+      }
+      if (!item.priceUSD && item.priceLocal) {
+        item.priceUSD = Math.round(item.priceLocal / rr.rate);
+      }
+      // Handle free items (e.g. Ubuntu, stock coolers)
+      if (item.priceLocal == null) item.priceLocal = 0;
+      if (item.priceUSD  == null) item.priceUSD  = 0;
+
+      // Normalize tier
+      const tierMap = {
+        "entry": "budget", "entry-level": "budget", "budget": "budget",
+        "mid": "mid", "mid-range": "mid", "midrange": "mid",
+        "premium": "high", "high": "high", "flagship": "high"
+      };
+      item.tier = tierMap[item.tier?.toLowerCase()] || "mid";
+
+      // Ensure condition field exists
+      if (!item.condition) item.condition = "new";
+
+      grouped[cat].push(item);
+    });
+
+    // Verify all 14 categories are present
+    const missingCats = Object.keys(COMPONENT_META).filter(cat => !grouped[cat] || grouped[cat].length === 0);
+    if (missingCats.length > 0) {
+      console.warn("Gemini missing categories:", missingCats, "— filling from static DB");
+      // Fill missing categories from static DB rather than failing entirely
+      buildSmartRecommendations();
+      missingCats.forEach(cat => {
+        if (state.allOptions[cat]) grouped[cat] = state.allOptions[cat];
+      });
+    }
+
+    // Pad or trim each category to exactly 3 options
+    Object.keys(grouped).forEach(cat => {
+      const opts = grouped[cat];
+      // Sort by tier order so entry < mid < high
+      const tierOrder = { budget: 0, mid: 1, high: 2 };
+      opts.sort((a, b) => (tierOrder[a.tier] || 0) - (tierOrder[b.tier] || 0));
+      // Pad if fewer than 3
+      while (opts.length < 3) opts.push({ ...opts[opts.length - 1] });
+      grouped[cat] = opts.slice(0, 3);
+    });
+
+    state.allOptions      = grouped;
+    state.totalCategories = Object.keys(grouped).length;
+    geminiSucceeded = true;
+    console.log("✅ Gemini AI build loaded —", items.length, "components across", state.totalCategories, "categories");
+
+  } catch (err) {
+    console.warn("⚠️ Gemini fetch failed, using static DB fallback:", err.message);
     buildSmartRecommendations();
   }
 
@@ -286,6 +371,7 @@ Only return valid JSON, no markdown.`;
 
 // ══════════════════════════════════════════════
 //  MASTER COMPONENT DATABASE  (v4 — Flagship + Peripherals)
+//  Used as fallback when Gemini is unavailable
 // ══════════════════════════════════════════════
 const COMPONENT_DB = {
 
@@ -654,19 +740,18 @@ const COMPONENT_DB = {
 };
 
 // ══════════════════════════════════════════════
-//  SMART BUDGET-AWARE PICKER  (v4 — flagship tier)
+//  SMART BUDGET-AWARE PICKER  (static fallback)
 // ══════════════════════════════════════════════
 function buildSmartRecommendations() {
   const r = REGIONS[state.region];
   const b = state.budgetUSD;
   const p = state.purpose;
 
-  // Budget tier thresholds (in USD)
   const isUltra    = b < 300;
   const isLow      = b >= 300  && b < 700;
   const isMid      = b >= 700  && b < 1200;
   const isHigh     = b >= 1200 && b < 2500;
-  const isFlagship = b >= 2500;            // ← NEW: €2500+ / ~$2700+
+  const isFlagship = b >= 2500;
 
   function pick(cat) {
     const db = COMPONENT_DB[cat];
@@ -689,13 +774,11 @@ function buildSmartRecommendations() {
       o1 = db.high?.[0];
       o2 = db.high?.[db.high.length - 1];
     } else {
-      // FLAGSHIP budget — show flagship tier as top option
       o0 = db.high?.[0];
       o1 = db.high?.[db.high.length - 1] || db.high?.[0];
       o2 = db.flagship?.[0] || db.flagship?.[db.flagship?.length - 1] || db.high?.[db.high.length - 1];
     }
 
-    // Safety fallbacks
     o0 = o0 || db.budget?.[0] || db.mid?.[0] || db.ultraBudget?.[0];
     o1 = o1 || db.mid?.[0]    || db.high?.[0] || o0;
     o2 = o2 || db.high?.[0]   || db.mid?.[0]  || o1;
@@ -712,10 +795,8 @@ function buildSmartRecommendations() {
     if (COMPONENT_DB[cat]) raw[cat] = pick(cat);
   });
 
-  // ── Purpose tweaks ──────────────────────────
   if (p === "gaming") {
     if (isFlagship) {
-      // RTX 5090 for flagship gaming
       raw.gpu[2] = { ...(COMPONENT_DB.gpu.flagship?.[0] || COMPONENT_DB.gpu.high[2]), tier: "high" };
       raw.gpu[1] = { ...(COMPONENT_DB.gpu.flagship?.[1] || COMPONENT_DB.gpu.high[1]), tier: "mid"  };
       raw.cpu[2] = { ...(COMPONENT_DB.cpu.flagship?.[0] || COMPONENT_DB.cpu.high[0]), tier: "high" };
@@ -745,12 +826,10 @@ function buildSmartRecommendations() {
     raw.psu[1] = { ...(COMPONENT_DB.psu.mid?.[0] || COMPONENT_DB.psu.budget[1]), tier: "mid" };
   }
 
-  // Flagship PSU bump for RTX 5090 builds
   if (isFlagship && p === "gaming") {
     raw.psu[2] = { ...(COMPONENT_DB.psu.flagship?.[0] || COMPONENT_DB.psu.high[1]), tier: "high" };
   }
 
-  // Attach local prices
   const rr = REGIONS[state.region];
   Object.keys(raw).forEach(cat => {
     raw[cat].forEach(opt => {
@@ -796,7 +875,6 @@ function renderBuilder() {
     container.appendChild(block);
   });
 
-  // Click handlers
   document.querySelectorAll(".option-card").forEach(card => {
     card.addEventListener("click", () => {
       selectComponent(card.dataset.cat, parseInt(card.dataset.idx));
@@ -814,12 +892,13 @@ function renderBuilder() {
 
 function renderOptionCard(cat, opt, idx) {
   const r         = REGIONS[state.region];
-  const isOver    = state.budgetLocal > 0 && opt.priceLocal > state.budgetLocal * 0.35;
   const tierClass = { budget: "tier-budget", mid: "tier-mid", high: "tier-high" }[opt.tier] || "tier-budget";
   const tierLabel = { budget: "Entry", mid: "Mid-Range", high: "Premium" }[opt.tier] || opt.tier;
   const condClass = opt.condition === "new" ? "cond-new" : "cond-used";
   const condLabel = opt.condition === "new" ? "✦ New" : "↻ Used";
-  const priceStr  = opt.priceUSD === 0 ? "Free" : r.symbol + " " + formatLocal(opt.priceLocal || Math.round(opt.priceUSD * r.rate));
+  const priceStr  = (opt.priceUSD === 0 || opt.priceLocal === 0)
+    ? "Free"
+    : r.symbol + " " + formatLocal(opt.priceLocal || Math.round((opt.priceUSD || 0) * r.rate));
   const isPremium = opt.tier === "high";
   const usedWarn  = opt.condition === "used"
     ? `<div class="health-warning">🛡 Verify health &gt;85% before buying. Request diagnostic report from seller.</div>`
@@ -889,7 +968,9 @@ function updateSummary() {
     const opt = state.components[cat];
     if (!opt) return;
     const meta     = COMPONENT_META[cat];
-    const priceStr = opt.priceUSD === 0 ? "Free" : r.symbol + " " + formatLocal(Math.round((opt.priceUSD || 0) * r.rate));
+    const priceStr = (opt.priceUSD === 0 || opt.priceLocal === 0)
+      ? "Free"
+      : r.symbol + " " + formatLocal(Math.round((opt.priceUSD || 0) * r.rate));
     list.innerHTML += `
       <div class="summary-item">
         <span class="sum-icon">${meta.icon}</span>
@@ -909,8 +990,7 @@ function updateSummary() {
 //  SAVE → SHOW RECEIPT
 // ══════════════════════════════════════════════
 function saveBuild() {
-  const r       = REGIONS[state.region];
-  const saveBtn = $("save-btn");
+  const r = REGIONS[state.region];
 
   let totalUSD = 0;
   Object.values(state.components).forEach(o => { totalUSD += (o.priceUSD || 0); });
@@ -924,25 +1004,24 @@ function saveBuild() {
   const dateStr = now.toLocaleDateString("en-GB", { day:"2-digit", month:"long", year:"numeric" });
   const timeStr = now.toLocaleTimeString("en-GB", { hour:"2-digit", minute:"2-digit" });
 
-  // Save to localStorage
   try {
-    const record  = { buildId, savedAt: now.toISOString(), region: state.region, components: state.components, totalLocal };
+    const record   = { buildId, savedAt: now.toISOString(), region: state.region, components: state.components, totalLocal };
     const existing = JSON.parse(localStorage.getItem("forge_builds") || "[]");
     existing.push(record);
     localStorage.setItem("forge_builds", JSON.stringify(existing));
   } catch(e) {}
 
-  // Build receipt HTML
   $("receipt-id").textContent   = "Build ID: " + buildId;
   $("receipt-date").textContent = dateStr + " · " + timeStr;
 
-  // Items
   let itemsHTML = "";
   Object.keys(COMPONENT_META).forEach(cat => {
     const opt = state.components[cat];
     if (!opt) return;
     const meta     = COMPONENT_META[cat];
-    const priceStr = opt.priceUSD === 0 ? "Free" : r.symbol + " " + formatLocal(Math.round((opt.priceUSD || 0) * r.rate));
+    const priceStr = (opt.priceUSD === 0 || opt.priceLocal === 0)
+      ? "Free"
+      : r.symbol + " " + formatLocal(Math.round((opt.priceUSD || 0) * r.rate));
     itemsHTML += `
       <div class="receipt-row">
         <div class="receipt-row-left">
@@ -956,7 +1035,6 @@ function saveBuild() {
   });
   $("receipt-items").innerHTML = itemsHTML;
 
-  // Totals
   $("receipt-totals").innerHTML = `
     <div class="receipt-total-row"><span>Components Subtotal</span><span>${r.symbol} ${formatLocal(totalLocal)}</span></div>
     <div class="receipt-total-row"><span>Assembly Fee (~7%)</span><span>${r.symbol} ${formatLocal(assemblyFee)}</span></div>
@@ -967,7 +1045,6 @@ function saveBuild() {
     </div>
   `;
 
-  // Show modal
   $("receipt-modal").classList.remove("hidden");
 }
 
