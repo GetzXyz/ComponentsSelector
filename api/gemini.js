@@ -16,8 +16,8 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
           generationConfig: {
-            temperature: 0.4,
-            maxOutputTokens: 2048,
+            temperature: 0.2,      // lower = more precise, less hallucination
+            maxOutputTokens: 8192, // was 2048 — caused truncated JSON for 42 items
           },
         }),
       }
