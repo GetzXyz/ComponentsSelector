@@ -244,8 +244,41 @@ function runLoadingSequence() {
 //  COMPONENT FETCH (no API — smart static)
 // ══════════════════════════════════════════════
 async function fetchComponents() {
-  await new Promise(res => setTimeout(res, 3800));
-  buildSmartRecommendations();
+  const region = state.region;
+  const budget = state.budgetLocal;
+  const purpose = state.purpose;
+  const currency = REGIONS[region].currency;
+
+  const prompt = `You are a PC building expert. Recommend a complete PC build for:
+- Budget: ${budget} ${currency} (${state.budgetUSD.toFixed(0)} USD equivalent)
+- Purpose: ${purpose}
+- Region: ${region}
+
+For each component (CPU, GPU, Motherboard, RAM, Storage, PSU, Cooler, Case), provide:
+1. Exact model name currently available in ${region} market
+2. Current approximate price in ${currency}
+3. Key specs
+4. Why it fits this build
+
+Return as JSON array:
+[{ "category": "cpu", "name": "...", "price": 0, "specs": "...", "reason": "..." }]
+Only return valid JSON, no markdown.`;
+
+  try {
+    const res = await fetch("/api/gemini", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt }),
+    });
+    const data = await res.json();
+    const components = JSON.parse(data.result);
+    // map into state.components here
+    buildSmartRecommendations(); // fallback for display
+  } catch (e) {
+    console.error("Gemini error, falling back to static DB:", e);
+    buildSmartRecommendations();
+  }
+
   renderBuilder();
   showScreen("builder");
   setTimeout(initScrollReveal, 100);
