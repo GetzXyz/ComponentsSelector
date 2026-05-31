@@ -1,0 +1,11 @@
+{
+  "name": "forge-ai-pc-builder",
+  "version": "2.1.0",
+  "description": "AI PC Builder — no API key needed prototype",
+  "scripts": {
+    "deploy": "vercel --prod"
+  },
+  "devDependencies": {
+    "vercel": "latest"
+  }
+}
