@@ -3,118 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FORGE — NEON FORGE</title>
-  <meta name="description" content="Build your legendary PC in the neon grid." />
+  <title>FORGE — AI PC Builder</title>
+  <meta name="description" content="Build your perfect PC. Enter your budget and get the best components — new and used — priced for your region." />
+  <meta property="og:title" content="FORGE — AI PC Builder" />
+  <meta property="og:description" content="Smart PC building tool with regional pricing for Pakistan and worldwide." />
   <link rel="icon" type="image/x-icon" href="favicon.ico" />
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&amp;family=DM+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <style>
-    :root {
-      --neon-cyan: #00f0ff;
-      --neon-pink: #ff00aa;
-      --neon-green: #b0ff4d;
-      --bg: #0a0a12;
-      --glass: rgba(20, 22, 40, 0.75);
-      --surface: rgba(15, 18, 35, 0.9);
-    }
-    body {
-      background: linear-gradient(135deg, #0a0a12 0%, #1a0033 100%);
-      color: #e0e0ff;
-      font-family: 'DM Mono', monospace;
-    }
-    .cyber-text {
-      font-family: 'Orbitron', sans-serif;
-      font-weight: 700;
-      text-shadow: 0 0 15px var(--neon-cyan);
-    }
-    .neon-glow {
-      color: var(--neon-cyan);
-      text-shadow: 
-        0 0 10px var(--neon-cyan),
-        0 0 20px var(--neon-cyan),
-        0 0 40px var(--neon-pink);
-    }
-    .glass-panel {
-      background: var(--glass);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(0, 240, 255, 0.25);
-      box-shadow: 0 8px 32px rgba(0, 240, 255, 0.15);
-    }
-    .option-card, .summary-panel {
-      transition: all 0.4s ease;
-    }
-    .option-card:hover {
-      border-color: var(--neon-cyan);
-      box-shadow: 0 0 25px var(--neon-cyan);
-      transform: translateY(-6px) scale(1.02);
-    }
-    .cta-btn {
-      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
-      color: #000;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      position: relative;
-      overflow: hidden;
-    }
-    .cta-btn:hover {
-      box-shadow: 0 0 30px var(--neon-cyan);
-      transform: translateY(-2px);
-    }
-    .back-btn {
-      border: 1px solid var(--neon-cyan);
-      color: var(--neon-cyan);
-    }
-    .back-btn:hover {
-      background: var(--neon-cyan);
-      color: #000;
-      box-shadow: 0 0 20px var(--neon-cyan);
-    }
-    .hero-text {
-      font-size: 3.2rem;
-      line-height: 1.1;
-    }
-  </style>
 </head>
 <body>
 
-  <!-- CURSOR GLOW + PARTICLES -->
+  <!-- CURSOR GLOW -->
   <div id="cursor-glow"></div>
+
+  <!-- PARTICLE CANVAS -->
   <canvas id="particle-canvas"></canvas>
 
   <!-- BUDGET WARNING MODAL -->
   <div id="budget-modal" class="modal-overlay hidden">
-    <div class="modal-card glass-panel">
+    <div class="modal-card">
       <div class="modal-icon">⚠</div>
-      <h2 class="modal-title">BUDGET TOO LOW</h2>
+      <h2 class="modal-title">Budget Too Low</h2>
       <p class="modal-body">The minimum budget to build a functional PC is <strong id="modal-min-amount">₨ 27,850</strong>.<br/>Please increase your budget to continue.</p>
+      <div class="modal-bar"></div>
       <button class="modal-btn" id="modal-close-btn">Got it, I'll adjust</button>
     </div>
   </div>
 
   <!-- RECEIPT MODAL -->
   <div id="receipt-modal" class="modal-overlay hidden">
-    <div class="receipt-card glass-panel">
+    <div class="receipt-card">
       <div class="receipt-header">
-        <div class="receipt-brand neon-glow">⬡ FORGE</div>
-        <div class="receipt-title">BUILD RECEIPT</div>
+        <div class="receipt-brand">⬡ FORGE</div>
+        <div class="receipt-title">Build Receipt</div>
         <div class="receipt-id" id="receipt-id"></div>
         <div class="receipt-date" id="receipt-date"></div>
       </div>
-      <div class="receipt-divider"></div>
+      <div class="receipt-divider dashed"></div>
       <div id="receipt-items" class="receipt-items"></div>
-      <div class="receipt-divider"></div>
+      <div class="receipt-divider dashed"></div>
       <div class="receipt-totals" id="receipt-totals"></div>
       <div class="receipt-divider"></div>
       <div class="receipt-notes">
-        <p>🔧 Technician assembly fee may apply (~5-10% depending on shop)</p>
-        <p>🛡️ For used parts — verify health above 85% before buying</p>
+        <p>🔧 Add ~7% for technician assembly fees</p>
+        <p>🌡️ Budget extra for thermal paste &amp; cables</p>
+        <p>🛡️ For used parts — verify health above 85%</p>
         <p>📦 Prices may vary by region &amp; availability</p>
         <p>🎮 Peripherals shown are estimates — check local stock</p>
       </div>
+      <div class="receipt-divider dashed"></div>
       <div class="receipt-footer">
-        <p class="neon-glow">Thank you for building with FORGE</p>
-        <p class="receipt-tagline">forge.build — YOUR PC, YOUR RULES</p>
+        <p>Thank you for using FORGE</p>
+        <p class="receipt-tagline">forge.build — Your PC, Your Rules</p>
       </div>
       <div class="receipt-actions">
         <button class="receipt-print-btn" onclick="window.print()">🖨 Print Receipt</button>
@@ -125,18 +66,18 @@
 
   <!-- ONBOARDING SCREEN -->
   <div id="screen-onboarding" class="screen active">
-    <header class="site-header glass-panel">
-      <div class="brand"><span class="brand-mark">⬡</span><span class="brand-name neon-glow">FORGE</span></div>
-      <span class="header-tagline">NEON PC BUILDER</span>
+    <header class="site-header">
+      <div class="brand"><span class="brand-mark">⬡</span><span class="brand-name">FORGE</span></div>
+      <span class="header-tagline">AI PC Builder</span>
     </header>
 
     <div class="onboarding-container">
       <div class="onboarding-hero">
-        <h1 class="hero-text cyber-text">BUILD YOUR<br/><span class="neon-glow">LEGEND</span></h1>
-        <p class="subtitle">Enter your budget. We forge the ultimate high-performance PC in the neon grid.</p>
+        <h1 class="hero-text">Build your<br/><em>perfect PC.</em></h1>
+        <p class="subtitle">Enter your budget. We find the best real-world components — new &amp; used — priced for your region.</p>
       </div>
 
-      <div class="form-block glass-panel">
+      <div class="form-block">
         <div class="field">
           <label>Your Country / Region</label>
           <div class="select-wrap">
@@ -151,13 +92,14 @@
             </select>
             <span class="select-arrow">↓</span>
           </div>
+          <span class="field-note">Used only to convert prices to your currency.</span>
         </div>
 
         <div class="field">
           <label>Your Total Budget <span id="currency-label" class="currency-tag">PKR</span></label>
           <div class="budget-input-wrap">
             <span id="budget-symbol" class="budget-symbol">₨</span>
-            <input type="number" id="budget-input" placeholder="150000" min="1000" />
+            <input type="number" id="budget-input" value="150000" min="1000" />
           </div>
         </div>
 
@@ -172,28 +114,31 @@
         </div>
 
         <button id="start-btn" class="cta-btn">
-          <span>ENTER THE GRID →</span>
+          <span>Find My Components</span>
+          <span class="cta-arrow">→</span>
         </button>
       </div>
 
-      <p class="privacy-note">🔒 No data stored. Budget used only for component matching.</p>
+      <p class="privacy-note">🔒 We don't store or share your info. Budget &amp; country are used only to show relevant parts.</p>
     </div>
 
     <footer class="site-footer">
-      <span>⬡ FORGE NEON</span>
+      <span>⬡ FORGE AI PC Builder</span>
+      <span class="footer-sep">·</span>
+      <span>Component prices &amp; availability may vary by region, store, and market conditions. Always verify before purchasing.</span>
     </footer>
   </div>
 
   <!-- LOADING SCREEN -->
   <div id="screen-loading" class="screen">
-    <div class="loading-container glass-panel">
+    <div class="loading-container">
       <div class="loading-spinner">
         <div class="spinner-ring r1"></div>
         <div class="spinner-ring r2"></div>
-        <span class="spinner-icon neon-glow">⬡</span>
+        <span class="spinner-icon">⬡</span>
       </div>
-      <h2 class="cyber-text">ACCESSING MARKET GRID...</h2>
-      <p>Forging optimal components for your budget</p>
+      <h2 id="loading-headline">Searching the market...</h2>
+      <p id="loading-sub">Finding the best components for your budget</p>
       <div class="loading-steps">
         <div class="lstep" id="ls1">Analysing budget range</div>
         <div class="lstep" id="ls2">Fetching component data</div>
@@ -205,53 +150,56 @@
 
   <!-- BUILDER SCREEN -->
   <div id="screen-builder" class="screen">
-    <header class="builder-header glass-panel">
+    <header class="builder-header">
       <div class="header-brand">
         <span class="brand-mark small">⬡</span>
-        <span class="brand-name neon-glow">FORGE</span>
+        <span class="brand-name">FORGE</span>
       </div>
       <div class="header-meta">
         <span id="header-purpose" class="meta-tag"></span>
         <span id="header-budget" class="meta-budget"></span>
       </div>
-      <button id="back-btn" class="back-btn">← NEW BUILD</button>
+      <button id="back-btn" class="back-btn">← New Build</button>
     </header>
 
     <div class="builder-layout">
       <div class="builder-left">
         <div class="section-intro scroll-reveal">
-          <h2 class="cyber-text">SELECT YOUR COMPONENTS</h2>
-          <p>Choose one from each category. New = retail. Used = marketplace — verify health >85%.</p>
+          <h2>Select your components</h2>
+          <p>Choose one from each category — including peripherals for a complete battle-station. <span class="tag-new">New</span> = retail box. <span class="tag-used">Used</span> = marketplace — verify health above 85% before buying.</p>
         </div>
         <div id="components-container"></div>
       </div>
 
       <div class="builder-right">
-        <div class="summary-panel glass-panel">
+        <div class="summary-panel">
           <div class="summary-header">
-            <h3 class="cyber-text">YOUR BUILD</h3>
+            <h3>Your Build</h3>
             <div class="completeness-bar"><div id="completeness-fill" style="width:0%"></div></div>
             <span id="completeness-text" class="completeness-text">0 / 0 selected</span>
           </div>
-          <div class="budget-display glass-panel">
+          <div class="budget-display">
             <div class="budget-row"><span>Budget</span><span id="sum-budget" class="val-neutral">—</span></div>
             <div class="budget-row"><span>Build Total</span><span id="sum-total" class="val-primary">—</span></div>
             <div class="budget-row remaining"><span>Remaining</span><span id="sum-remaining" class="val-good">—</span></div>
           </div>
           <div id="summary-list" class="summary-list"></div>
           <div class="summary-tips">
-            <div class="tip"><span class="tip-icon">🔧</span><p id="tip-assembly">Technician assembly fee may apply (~5-10%)</p></div>
-            <div class="tip"><span class="tip-icon">🛡️</span><p>For used parts — verify health above 85%</p></div>
-            <div class="tip"><span class="tip-icon">📦</span><p>Prices may vary by region &amp; availability</p></div>
+            <div class="tip"><span class="tip-icon">🔧</span><p id="tip-assembly">Add ~7% for technician assembly fees.</p></div>
+            <div class="tip"><span class="tip-icon">🌡️</span><p>Budget extra for <strong>thermal paste</strong> if self-building.</p></div>
+            <div class="tip"><span class="tip-icon">🛡️</span><p>For used parts — only buy if <strong>health is above 85%</strong>. Ask the seller for diagnostics.</p></div>
+            <div class="tip"><span class="tip-icon">📦</span><p>Used components may need extra for shipping or local pickup.</p></div>
           </div>
-          <button id="save-btn" class="save-btn" disabled>GENERATE RECEIPT ↗</button>
+          <button id="save-btn" class="save-btn" disabled>Generate Build Receipt ↗</button>
           <div id="save-result" class="save-result hidden"></div>
         </div>
       </div>
     </div>
 
     <footer class="site-footer builder-footer">
-      <span>⬡ FORGE NEON — Prices are estimates. Always verify locally.</span>
+      <span>⬡ FORGE AI PC Builder</span>
+      <span class="footer-sep">·</span>
+      <span>Component prices &amp; availability vary by region, retailer, and market conditions. Verify all prices before purchase. Used component health should be confirmed above 85% before buying.</span>
     </footer>
   </div>
 
