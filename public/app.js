@@ -1,2679 +1,547 @@
-============================================
-
-   FORGE — AI PC Builder  v3.0
-
-   Full-screen, animated, receipt-ready
-
-   ============================================ */
-
-
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-
-
-:root {
-
-  --bg: #080808;
-
-  --surface: #101010;
-
-  --surface2: #161616;
-
-  --surface3: #1c1c1c;
-
-  --border: #1e1e1e;
-
-  --border-hover: #2e2e2e;
-
-  --text: #f2f2f2;
-
-  --text-muted: #5a5a5a;
-
-  --text-dim: #333333;
-
-  --text-body: #c8c8c8;
-
-  --accent: #d4f04a;
-
-  --accent-dark: #b8d63a;
-
-  --accent-glow: rgba(212,240,74,0.07);
-
-  --accent-glow2: rgba(212,240,74,0.15);
-
-  --new: #4affd4;
-
-  --new-bg: rgba(74,255,212,0.07);
-
-  --used: #ffaa4a;
-
-  --used-bg: rgba(255,170,74,0.07);
-
-  --danger: #ff4a4a;
-
-  --danger-bg: rgba(255,74,74,0.08);
-
-  --good: #4affd4;
-
-  --premium: #c084fc;
-
-  --premium-bg: rgba(192,132,252,0.08);
-
-  --radius: 10px;
-
-  --radius-lg: 16px;
-
-  --font: 'Syne', 'DM Sans', sans-serif;
-
-  --body: 'DM Sans', sans-serif;
-
-  --mono: 'DM Mono', monospace;
-
-  --header-h: 60px;
-
-}
-
-
-
-html { font-size: 16px; scroll-behavior: smooth; }
-
-
-
-body {
-
-  font-family: var(--body);
-
-  background: var(--bg);
-
-  color: var(--text);
-
-  min-height: 100vh;
-
-  width: 100%;
-
-  overflow-x: hidden;
-
-  cursor: default;
-
-}
-
-
-
-/* ── CUSTOM CURSOR GLOW (ambient only — real cursor still shows) ─── */
-
-#cursor-glow {
-
-  position: fixed;
-
-  width: 380px; height: 380px;
-
-  border-radius: 50%;
-
-  background: radial-gradient(circle, rgba(212,240,74,0.08) 0%, transparent 70%);
-
-  pointer-events: none;
-
-  transform: translate(-50%, -50%);
-
-  transition: opacity 0.3s;
-
-  z-index: 0;
-
-  top: 0; left: 0;
-
-}
-
-
-
-/* ── PARTICLE CANVAS ───────────────────────── */
-
-#particle-canvas {
-
-  position: fixed;
-
-  inset: 0;
-
-  pointer-events: none;
-
-  z-index: 0;
-
-  opacity: 0.35;
-
-}
-
-
-
-/* ── SCREENS ───────────────────────────────── */
-
-.screen {
-
-  display: none;
-
-  min-height: 100vh;
-
-  width: 100%;
-
-  flex-direction: column;
-
-  position: relative;
-
-  z-index: 1;
-
-}
-
-.screen.active { display: flex; }
-
-
-
-/* ── SITE HEADER ───────────────────────────── */
-
-.site-header {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 12px;
-
-  padding: 1.25rem 2.5rem;
-
-  border-bottom: 1px solid var(--border);
-
-  flex-shrink: 0;
-
-}
-
-
-
-.brand {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-}
-
-
-
-.brand-mark {
-
-  color: var(--accent);
-
-  font-size: 1.4rem;
-
-  line-height: 1;
-
-  animation: hexPulse 3s ease infinite;
-
-}
-
-
-
-@keyframes hexPulse {
-
-  0%,100% { text-shadow: 0 0 0px var(--accent); }
-
-  50% { text-shadow: 0 0 18px rgba(212,240,74,0.5); }
-
-}
-
-
-
-.brand-name {
-
-  font-family: var(--font);
-
-  font-size: 0.85rem;
-
-  font-weight: 800;
-
-  letter-spacing: 0.3em;
-
-  color: var(--text);
-
-}
-
-
-
-.header-tagline {
-
-  font-family: var(--body);
-
-  font-size: 0.75rem;
-
-  color: var(--text-muted);
-
-  letter-spacing: 0.05em;
-
-  margin-left: 4px;
-
-}
-
-
-
-/* ── SITE FOOTER ───────────────────────────── */
-
-.site-footer {
-
-  display: flex;
-
-  flex-wrap: wrap;
-
-  align-items: center;
-
-  gap: 8px;
-
-  padding: 1rem 2.5rem;
-
-  border-top: 1px solid var(--border);
-
-  font-family: var(--body);
-
-  font-size: 0.72rem;
-
-  color: var(--text-dim);
-
-  line-height: 1.6;
-
-  margin-top: auto;
-
-}
-
-
-
-.footer-sep { color: var(--border-hover); }
-
-
-
-.builder-footer { flex-wrap: wrap; }
-
-
-
-/* ── ONBOARDING ────────────────────────────── */
-
-#screen-onboarding {
-
-  align-items: stretch;
-
-  background: var(--bg);
-
-}
-
-
-
-.onboarding-container {
-
-  flex: 1;
-
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: center;
-
-  align-items: center;
-
-  padding: 3rem 1.5rem;
-
-  width: 100%;
-
-  max-width: 560px;
-
-  margin: 0 auto;
-
-  animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
-
-}
-
-
-
-.onboarding-hero { margin-bottom: 2.5rem; text-align: center; }
-
-
-
-.hero-text {
-
-  font-family: var(--font);
-
-  font-size: clamp(3rem, 7vw, 5rem);
-
-  font-weight: 800;
-
-  line-height: 1.05;
-
-  letter-spacing: -0.04em;
-
-  color: var(--text);
-
-  margin-bottom: 1rem;
-
-}
-
-
-
-.hero-text em {
-
-  font-style: italic;
-
-  color: var(--accent);
-
-  position: relative;
-
-}
-
-
-
-.subtitle {
-
-  font-family: var(--body);
-
-  font-size: 1rem;
-
-  line-height: 1.65;
-
-  color: var(--text-muted);
-
-  font-weight: 400;
-
-  max-width: 420px;
-
-  margin: 0 auto;
-
-}
-
-
-
-/* ── FORM ──────────────────────────────────── */
-
-.form-block {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 1.4rem;
-
-  width: 100%;
-
-}
-
-
-
-.field { display: flex; flex-direction: column; gap: 7px; }
-
-
-
-.field label {
-
-  font-family: var(--body);
-
-  font-size: 0.72rem;
-
-  font-weight: 600;
-
-  letter-spacing: 0.12em;
-
-  text-transform: uppercase;
-
-  color: var(--text-muted);
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-}
-
-
-
-.currency-tag {
-
-  font-family: var(--mono);
-
-  font-size: 0.68rem;
-
-  background: var(--surface2);
-
-  border: 1px solid var(--border);
-
-  padding: 2px 7px;
-
-  border-radius: 4px;
-
-  color: var(--accent);
-
-}
-
-
-
-.select-wrap { position: relative; }
-
-
-
-.select-wrap select,
-
-input[type="number"] {
-
-  width: 100%;
-
-  background: var(--surface);
-
-  border: 1px solid var(--border);
-
-  color: var(--text);
-
-  font-family: var(--body);
-
-  font-size: 1rem;
-
-  font-weight: 500;
-
-  padding: 0.875rem 1rem;
-
-  border-radius: var(--radius);
-
-  outline: none;
-
-  appearance: none;
-
-  -webkit-appearance: none;
-
-  transition: border-color 0.2s, box-shadow 0.2s;
-
-}
-
-
-
-.select-wrap select:focus,
-
-input[type="number"]:focus {
-
-  border-color: var(--accent);
-
-  box-shadow: 0 0 0 3px rgba(212,240,74,0.08);
-
-}
-
-
-
-.select-arrow {
-
-  position: absolute;
-
-  right: 1rem; top: 50%;
-
-  transform: translateY(-50%);
-
-  color: var(--text-muted);
-
-  font-size: 0.7rem;
-
-  pointer-events: none;
-
-}
-
-
-
-.field-note {
-
-  font-family: var(--body);
-
-  font-size: 0.72rem;
-
-  color: var(--text-dim);
-
-}
-
-
-
-.budget-input-wrap { position: relative; }
-
-
-
-.budget-symbol {
-
-  position: absolute;
-
-  left: 1rem; top: 50%;
-
-  transform: translateY(-50%);
-
-  font-family: var(--mono);
-
-  font-size: 1.1rem;
-
-  color: var(--accent);
-
-  pointer-events: none;
-
-  z-index: 1;
-
-}
-
-
-
-.budget-input-wrap input {
-
-  padding-left: 2.4rem;
-
-  font-family: var(--mono);
-
-  font-size: 1.5rem;
-
-  font-weight: 500;
-
-  color: var(--accent);
-
-  letter-spacing: 0.02em;
-
-}
-
-
-
-input[type=number]::-webkit-inner-spin-button,
-
-input[type=number]::-webkit-outer-spin-button { opacity: 0; }
-
-
-
-.purpose-grid {
-
-  display: grid;
-
-  grid-template-columns: 1fr 1fr;
-
-  gap: 8px;
-
-}
-
-
-
-.purpose-btn {
-
-  background: var(--surface);
-
-  border: 1px solid var(--border);
-
-  color: var(--text-muted);
-
-  font-family: var(--body);
-
-  font-size: 0.85rem;
-
-  font-weight: 500;
-
-  padding: 0.75rem 0.5rem;
-
-  border-radius: var(--radius);
-
-  cursor: pointer;
-
-  transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1);
-
-  text-align: center;
-
-}
-
-
-
-.purpose-btn:hover {
-
-  border-color: var(--border-hover);
-
-  color: var(--text);
-
-  transform: translateY(-2px) scale(1.04);
-
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-
-}
-
-
-
-.purpose-btn:active { transform: scale(0.96); }
-
-
-
-.purpose-btn.active {
-
-  background: var(--accent-glow);
-
-  border-color: var(--accent);
-
-  color: var(--accent);
-
-  transform: scale(1.03);
-
-  box-shadow: 0 0 16px rgba(212,240,74,0.15);
-
-}
-
-
-
-.cta-btn {
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  width: 100%;
-
-  background: var(--accent);
-
-  color: #080808;
-
-  font-family: var(--font);
-
-  font-size: 1rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.04em;
-
-  padding: 1.1rem 1.5rem;
-
-  border: none;
-
-  border-radius: var(--radius);
-
-  cursor: pointer;
-
-  transition: background 0.2s, transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
-
-  margin-top: 0.5rem;
-
-  position: relative;
-
-  overflow: hidden;
-
-}
-
-
-
-.cta-btn::after {
-
-  content: '';
-
-  position: absolute;
-
-  inset: 0;
-
-  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
-
-  pointer-events: none;
-
-}
-
-
-
-.cta-btn:hover {
-
-  background: var(--accent-dark);
-
-  box-shadow: 0 6px 32px rgba(212,240,74,0.35);
-
-  transform: translateY(-2px) scale(1.02);
-
-}
-
-
-
-.cta-btn:active {
-
-  transform: scale(0.97);
-
-  box-shadow: 0 2px 12px rgba(212,240,74,0.2);
-
-}
-
-
-
-.cta-arrow { font-size: 1.1rem; transition: transform 0.2s; }
-
-.cta-btn:hover .cta-arrow { transform: translateX(6px); }
-
-
-
-.privacy-note {
-
-  font-family: var(--body);
-
-  text-align: center;
-
-  font-size: 0.72rem;
-
-  color: var(--text-dim);
-
-  margin-top: 1.5rem;
-
-}
-
-
-
-/* ── MODAL BASE ────────────────────────────── */
-
-.modal-overlay {
-
-  position: fixed;
-
-  inset: 0;
-
-  background: rgba(0,0,0,0.75);
-
-  backdrop-filter: blur(8px);
-
-  -webkit-backdrop-filter: blur(8px);
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  z-index: 9999;
-
-  padding: 1rem;
-
-  animation: fadeIn 0.2s ease;
-
-}
-
-
-
-.modal-overlay.hidden { display: none; }
-
-
-
-/* ── BUDGET WARNING MODAL ──────────────────── */
-
-.modal-card {
-
-  background: var(--surface);
-
-  border: 1px solid rgba(255,74,74,0.3);
-
-  border-radius: var(--radius-lg);
-
-  padding: 2.5rem 2rem;
-
-  max-width: 380px;
-
-  width: 100%;
-
-  text-align: center;
-
-  animation: modalPop 0.35s cubic-bezier(0.16,1,0.3,1) both;
-
-  box-shadow: 0 0 60px rgba(255,74,74,0.12);
-
-}
-
-
-
-.modal-icon {
-
-  font-size: 2.5rem;
-
-  margin-bottom: 1rem;
-
-  animation: iconShake 0.5s ease 0.2s both;
-
-}
-
-
-
-@keyframes iconShake {
-
-  0%,100% { transform: rotate(0); }
-
-  20% { transform: rotate(-8deg); }
-
-  40% { transform: rotate(8deg); }
-
-  60% { transform: rotate(-4deg); }
-
-  80% { transform: rotate(4deg); }
-
-}
-
-
-
-.modal-title {
-
-  font-family: var(--font);
-
-  font-size: 1.4rem;
-
-  font-weight: 800;
-
-  color: var(--danger);
-
-  margin-bottom: 0.75rem;
-
-  letter-spacing: -0.02em;
-
-}
-
-
-
-.modal-body {
-
-  font-family: var(--body);
-
-  font-size: 0.92rem;
-
-  line-height: 1.65;
-
-  color: var(--text-muted);
-
-  margin-bottom: 1.5rem;
-
-}
-
-
-
-.modal-body strong { color: var(--text); }
-
-
-
-.modal-bar {
-
-  width: 100%;
-
-  height: 2px;
-
-  background: linear-gradient(90deg, transparent, var(--danger), transparent);
-
-  margin-bottom: 1.5rem;
-
-  opacity: 0.4;
-
-}
-
-
-
-.modal-btn {
-
-  width: 100%;
-
-  background: var(--danger);
-
-  color: #fff;
-
-  font-family: var(--font);
-
-  font-size: 0.9rem;
-
-  font-weight: 700;
-
-  padding: 0.9rem;
-
-  border: none;
-
-  border-radius: var(--radius);
-
-  cursor: pointer;
-
-  transition: all 0.2s;
-
-}
-
-
-
-.modal-btn:hover { background: #e03a3a; }
-
-
-
-/* ── RECEIPT MODAL ─────────────────────────── */
-
-.receipt-card {
-
-  background: #fafaf5;
-
-  color: #111;
-
-  border-radius: var(--radius-lg);
-
-  max-width: 420px;
-
-  width: 100%;
-
-  max-height: 90vh;
-
-  overflow-y: auto;
-
-  animation: modalPop 0.35s cubic-bezier(0.16,1,0.3,1) both;
-
-  font-family: var(--mono);
-
-  box-shadow: 0 20px 80px rgba(0,0,0,0.6);
-
-}
-
-
-
-.receipt-header {
-
-  padding: 1.75rem 1.5rem 1rem;
-
-  text-align: center;
-
-  border-bottom: none;
-
-}
-
-
-
-.receipt-brand {
-
-  font-family: var(--font);
-
-  font-size: 1.1rem;
-
-  font-weight: 800;
-
-  letter-spacing: 0.2em;
-
-  color: #111;
-
-  margin-bottom: 4px;
-
-}
-
-
-
-.receipt-title {
-
-  font-size: 0.7rem;
-
-  letter-spacing: 0.2em;
-
-  text-transform: uppercase;
-
-  color: #666;
-
-  margin-bottom: 8px;
-
-}
-
-
-
-.receipt-id {
-
-  font-size: 0.75rem;
-
-  color: #333;
-
-  font-weight: 500;
-
-}
-
-
-
-.receipt-date {
-
-  font-size: 0.7rem;
-
-  color: #888;
-
-  margin-top: 3px;
-
-}
-
-
-
-.receipt-divider {
-
-  border: none;
-
-  border-top: 1px solid #ccc;
-
-  margin: 0 1.5rem;
-
-}
-
-
-
-.receipt-divider.dashed {
-
-  border-top-style: dashed;
-
-  border-color: #bbb;
-
-}
-
-
-
-.receipt-items {
-
-  padding: 0.75rem 1.5rem;
-
-}
-
-
-
-.receipt-row {
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: flex-start;
-
-  padding: 6px 0;
-
-  border-bottom: 1px dotted #ddd;
-
-  gap: 8px;
-
-}
-
-
-
-.receipt-row:last-child { border-bottom: none; }
-
-
-
-.receipt-row-left { flex: 1; min-width: 0; }
-
-
-
-.receipt-cat {
-
-  font-size: 0.62rem;
-
-  text-transform: uppercase;
-
-  letter-spacing: 0.1em;
-
-  color: #888;
-
-}
-
-
-
-.receipt-name {
-
-  font-size: 0.78rem;
-
-  font-weight: 500;
-
-  color: #111;
-
-  line-height: 1.3;
-
-}
-
-
-
-.receipt-cond {
-
-  font-size: 0.62rem;
-
-  text-transform: uppercase;
-
-  letter-spacing: 0.05em;
-
-  color: #888;
-
-  margin-top: 1px;
-
-}
-
-
-
-.receipt-price {
-
-  font-size: 0.85rem;
-
-  font-weight: 500;
-
-  color: #111;
-
-  white-space: nowrap;
-
-  flex-shrink: 0;
-
-}
-
-
-
-.receipt-totals {
-
-  padding: 0.75rem 1.5rem;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 6px;
-
-}
-
-
-
-.receipt-total-row {
-
-  display: flex;
-
-  justify-content: space-between;
-
-  font-size: 0.8rem;
-
-  color: #444;
-
-}
-
-
-
-.receipt-total-row.grand {
-
-  font-size: 1rem;
-
-  font-weight: 600;
-
-  color: #111;
-
-  padding-top: 6px;
-
-  border-top: 1px solid #ccc;
-
-  margin-top: 4px;
-
-}
-
-
-
-.receipt-notes {
-
-  padding: 0.75rem 1.5rem;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 5px;
-
-}
-
-
-
-.receipt-notes p {
-
-  font-size: 0.7rem;
-
-  color: #666;
-
-  line-height: 1.5;
-
-}
-
-
-
-.receipt-footer {
-
-  padding: 0.75rem 1.5rem;
-
-  text-align: center;
-
-}
-
-
-
-.receipt-footer p {
-
-  font-size: 0.72rem;
-
-  color: #666;
-
-}
-
-
-
-.receipt-tagline {
-
-  font-size: 0.68rem;
-
-  color: #aaa;
-
-  margin-top: 3px;
-
-}
-
-
-
-.receipt-actions {
-
-  display: flex;
-
-  gap: 8px;
-
-  padding: 1rem 1.5rem 1.5rem;
-
-}
-
-
-
-.receipt-print-btn, .receipt-close-btn {
-
-  flex: 1;
-
-  padding: 0.75rem;
-
-  border-radius: var(--radius);
-
-  font-family: var(--font);
-
-  font-size: 0.82rem;
-
-  font-weight: 700;
-
-  cursor: pointer;
-
-  transition: all 0.2s;
-
-  border: none;
-
-}
-
-
-
-.receipt-print-btn {
-
-  background: #111;
-
-  color: #fafaf5;
-
-}
-
-
-
-.receipt-print-btn:hover { background: #333; }
-
-
-
-.receipt-close-btn {
-
-  background: #e8e8e0;
-
-  color: #333;
-
-}
-
-
-
-.receipt-close-btn:hover { background: #d8d8d0; }
-
-
-
-/* ── LOADING ───────────────────────────────── */
-
-#screen-loading {
-
-  align-items: center;
-
-  justify-content: center;
-
-  background: var(--bg);
-
-}
-
-
-
-.loading-container {
-
-  text-align: center;
-
-  max-width: 360px;
-
-  padding: 2rem;
-
-}
-
-
-
-.loading-spinner {
-
-  position: relative;
-
-  width: 80px; height: 80px;
-
-  margin: 0 auto 2.5rem;
-
-}
-
-
-
-.spinner-ring {
-
-  position: absolute;
-
-  border-radius: 50%;
-
-  border: 2px solid transparent;
-
-}
-
-
-
-.spinner-ring.r1 {
-
-  inset: 0;
-
-  border-top-color: var(--accent);
-
-  animation: spin 1s linear infinite;
-
-}
-
-
-
-.spinner-ring.r2 {
-
-  inset: 12px;
-
-  border-bottom-color: rgba(212,240,74,0.3);
-
-  animation: spin 1.5s linear infinite reverse;
-
-}
-
-
-
-.spinner-icon {
-
-  position: absolute; inset: 0;
-
-  display: flex; align-items: center; justify-content: center;
-
-  font-size: 1.4rem;
-
-  color: var(--accent);
-
-}
-
-
-
-#screen-loading h2 {
-
-  font-family: var(--font);
-
-  font-size: 1.5rem;
-
-  font-weight: 700;
-
-  margin-bottom: 0.5rem;
-
-  letter-spacing: -0.02em;
-
-}
-
-
-
-#screen-loading p {
-
-  font-family: var(--body);
-
-  color: var(--text-muted);
-
-  font-size: 0.9rem;
-
-  margin-bottom: 2rem;
-
-}
-
-
-
-.loading-steps {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 6px;
-
-  text-align: left;
-
-}
-
-
-
-.lstep {
-
-  font-family: var(--body);
-
-  font-size: 0.82rem;
-
-  color: var(--text-dim);
-
-  padding: 7px 12px;
-
-  border-radius: 8px;
-
-  border: 1px solid transparent;
-
-  transition: all 0.35s ease;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-}
-
-
-
-.lstep::before {
-
-  content: '○';
-
-  font-size: 0.6rem;
-
-  flex-shrink: 0;
-
-  transition: all 0.3s;
-
-}
-
-
-
-.lstep.active {
-
-  color: var(--accent);
-
-  background: var(--accent-glow);
-
-  border-color: rgba(212,240,74,0.15);
-
-}
-
-
-
-.lstep.active::before { content: '◉'; color: var(--accent); }
-
-
-
-.lstep.done { color: var(--good); }
-
-.lstep.done::before { content: '●'; color: var(--good); }
-
-
-
-/* ── BUILDER HEADER ────────────────────────── */
-
-.builder-header {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 1rem;
-
-  padding: 0 2rem;
-
-  height: var(--header-h);
-
-  border-bottom: 1px solid var(--border);
-
-  background: rgba(8,8,8,0.9);
-
-  backdrop-filter: blur(12px);
-
-  position: sticky; top: 0; z-index: 100;
-
-  flex-shrink: 0;
-
-}
-
-
-
-.brand-mark.small { font-size: 1rem; }
-
-
-
-.header-meta {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  flex: 1;
-
-  justify-content: center;
-
-}
-
-
-
-.meta-tag {
-
-  font-family: var(--body);
-
-  font-size: 0.72rem;
-
-  font-weight: 600;
-
-  letter-spacing: 0.1em;
-
-  text-transform: uppercase;
-
-  background: var(--surface2);
-
-  border: 1px solid var(--border);
-
-  padding: 4px 12px;
-
-  border-radius: 20px;
-
-  color: var(--text-muted);
-
-}
-
-
-
-.meta-budget {
-
-  font-family: var(--mono);
-
-  font-size: 0.88rem;
-
-  font-weight: 500;
-
-  color: var(--accent);
-
-}
-
-
-
-.back-btn {
-
-  font-family: var(--body);
-
-  font-size: 0.8rem;
-
-  font-weight: 600;
-
-  color: var(--text-muted);
-
-  background: none;
-
-  border: 1px solid var(--border);
-
-  padding: 6px 14px;
-
-  border-radius: 20px;
-
-  cursor: pointer;
-
-  transition: all 0.2s;
-
-  white-space: nowrap;
-
-}
-
-
-
-.back-btn:hover { border-color: var(--border-hover); color: var(--text); }
-
-
-
-/* ── BUILDER LAYOUT ────────────────────────── */
-
-.builder-layout {
-
-  display: grid;
-
-  grid-template-columns: 1fr 320px;
-
-  flex: 1;
-
-  width: 100%;
-
-  min-height: 0;
-
-}
-
-
-
-.builder-left {
-
-  padding: 2rem 2.5rem;
-
-  border-right: 1px solid var(--border);
-
-  overflow-y: auto;
-
-}
-
-
-
-.builder-right {
-
-  padding: 1.5rem;
-
-  position: sticky;
-
-  top: var(--header-h);
-
-  height: calc(100vh - var(--header-h));
-
-  overflow-y: auto;
-
-  background: var(--surface);
-
-  border-left: 1px solid var(--border);
-
-}
-
-
-
-.section-intro {
-
-  margin-bottom: 2.5rem;
-
-  padding-bottom: 1.5rem;
-
-  border-bottom: 1px solid var(--border);
-
-}
-
-
-
-.section-intro h2 {
-
-  font-family: var(--font);
-
-  font-size: 1.8rem;
-
-  font-weight: 800;
-
-  letter-spacing: -0.03em;
-
-  margin-bottom: 0.5rem;
-
-}
-
-
-
-.section-intro p {
-
-  font-family: var(--body);
-
-  color: var(--text-muted);
-
-  font-size: 0.9rem;
-
-  line-height: 1.6;
-
-}
-
-
-
-.tag-new {
-
-  font-family: var(--mono);
-
-  font-size: 0.72rem;
-
-  background: var(--new-bg);
-
-  color: var(--new);
-
-  padding: 2px 7px;
-
-  border-radius: 4px;
-
-  border: 1px solid rgba(74,255,212,0.2);
-
-}
-
-
-
-.tag-used {
-
-  font-family: var(--mono);
-
-  font-size: 0.72rem;
-
-  background: var(--used-bg);
-
-  color: var(--used);
-
-  padding: 2px 7px;
-
-  border-radius: 4px;
-
-  border: 1px solid rgba(255,170,74,0.2);
-
-}
-
-
-
-/* ── CATEGORY BLOCKS ───────────────────────── */
-
-.category-block {
-
-  margin-bottom: 2.5rem;
-
-  opacity: 0;
-
-  transform: translateY(20px);
-
-  transition: opacity 0.5s ease, transform 0.5s ease;
-
-}
-
-
-
-.category-block.revealed {
-
-  opacity: 1;
-
-  transform: translateY(0);
-
-}
-
-
-
-.category-label {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 10px;
-
-  margin-bottom: 1rem;
-
-}
-
-
-
-.cat-icon {
-
-  width: 34px; height: 34px;
-
-  background: var(--surface2);
-
-  border: 1px solid var(--border);
-
-  border-radius: 9px;
-
-  display: flex; align-items: center; justify-content: center;
-
-  font-size: 1rem;
-
-  flex-shrink: 0;
-
-}
-
-
-
-.cat-name {
-
-  font-family: var(--body);
-
-  font-size: 0.72rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.15em;
-
-  text-transform: uppercase;
-
-  color: var(--text-muted);
-
-}
-
-
-
-.cat-selected-badge {
-
-  margin-left: auto;
-
-  font-family: var(--mono);
-
-  font-size: 0.68rem;
-
-  color: var(--accent);
-
-  background: var(--accent-glow);
-
-  border: 1px solid rgba(212,240,74,0.2);
-
-  padding: 2px 9px;
-
-  border-radius: 20px;
-
-  display: none;
-
-  max-width: 160px;
-
-  white-space: nowrap;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-
-}
-
-
-
-.cat-selected-badge.visible { display: block; }
-
-
-
-/* ── OPTIONS GRID ──────────────────────────── */
-
-.options-grid {
-
-  display: grid;
-
-  grid-template-columns: repeat(3, 1fr);
-
-  gap: 10px;
-
-}
-
-
-
-.option-card {
-
-  background: var(--surface);
-
-  border: 1px solid var(--border);
-
-  border-radius: var(--radius-lg);
-
-  padding: 1.1rem;
-
-  cursor: pointer;
-
-  transition: border-color 0.18s, background 0.18s, transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s;
-
-  position: relative;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 8px;
-
-  transform-origin: center bottom;
-
-}
-
-
-
-.option-card:hover {
-
-  border-color: var(--border-hover);
-
-  background: var(--surface2);
-
-  transform: translateY(-4px) scale(1.01);
-
-  box-shadow: 0 8px 28px rgba(0,0,0,0.35);
-
-}
-
-
-
-.option-card.selected {
-
-  border-color: var(--accent);
-
-  background: var(--accent-glow);
-
-  box-shadow: 0 0 0 1px rgba(212,240,74,0.2), 0 4px 20px rgba(212,240,74,0.08);
-
-}
-
-
-
-.option-card.selected::after {
-
-  content: '✓';
-
-  position: absolute;
-
-  top: 10px; right: 10px;
-
-  width: 20px; height: 20px;
-
-  background: var(--accent);
-
-  color: #080808;
-
-  font-size: 0.65rem;
-
-  font-weight: 700;
-
-  border-radius: 50%;
-
-  display: flex; align-items: center; justify-content: center;
-
-}
-
-
-
-.option-card.premium-card {
-
-  border-color: rgba(192,132,252,0.25);
-
-}
-
-
-
-.option-card.premium-card:hover {
-
-  border-color: rgba(192,132,252,0.5);
-
-}
-
-
-
-.option-card.over-budget {
-
-  opacity: 0.65;
-
-}
-
-
-
-.over-budget-badge {
-
-  position: absolute;
-
-  top: -1px; left: -1px; right: -1px;
-
-  background: rgba(255,74,74,0.1);
-
-  border: 1px solid rgba(255,74,74,0.2);
-
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-
-  font-family: var(--body);
-
-  font-size: 0.62rem;
-
-  font-weight: 600;
-
-  color: var(--danger);
-
-  text-align: center;
-
-  padding: 3px;
-
-  letter-spacing: 0.05em;
-
-}
-
-
-
-.option-tier {
-
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 5px;
-
-  font-family: var(--body);
-
-  font-size: 0.62rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.1em;
-
-  text-transform: uppercase;
-
-  padding: 2px 8px;
-
-  border-radius: 20px;
-
-  align-self: flex-start;
-
-  margin-top: 4px;
-
-}
-
-
-
-.tier-budget { background: var(--new-bg); color: var(--new); border: 1px solid rgba(74,255,212,0.2); }
-
-.tier-mid    { background: var(--accent-glow2); color: var(--accent); border: 1px solid rgba(212,240,74,0.2); }
-
-.tier-high   { background: var(--premium-bg); color: var(--premium); border: 1px solid rgba(192,132,252,0.2); }
-
-
-
-.option-name {
-
-  font-family: var(--body);
-
-  font-size: 0.88rem;
-
-  font-weight: 600;
-
-  line-height: 1.3;
-
-  color: var(--text);
-
-}
-
-
-
-.option-specs {
-
-  font-family: var(--mono);
-
-  font-size: 0.7rem;
-
-  color: var(--text-muted);
-
-  line-height: 1.55;
-
-  flex: 1;
-
-}
-
-
-
-.option-footer {
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: space-between;
-
-  padding-top: 8px;
-
-  border-top: 1px solid var(--border);
-
-  margin-top: auto;
-
-}
-
-
-
-.option-condition {
-
-  font-family: var(--body);
-
-  font-size: 0.62rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.08em;
-
-  text-transform: uppercase;
-
-}
-
-
-
-.cond-new  { color: var(--new); }
-
-.cond-used { color: var(--used); }
-
-
-
-.option-price {
-
-  font-family: var(--mono);
-
-  font-size: 0.88rem;
-
-  font-weight: 500;
-
-  color: var(--text);
-
-}
-
-
-
-.option-card.selected .option-price { color: var(--accent); }
-
-
-
-/* Used health warning */
-
-.health-warning {
-
-  font-family: var(--body);
-
-  font-size: 0.68rem;
-
-  color: var(--used);
-
-  background: var(--used-bg);
-
-  border: 1px solid rgba(255,170,74,0.15);
-
-  border-radius: 6px;
-
-  padding: 4px 8px;
-
-  line-height: 1.4;
-
-}
-
-
-
-/* ── SUMMARY PANEL ─────────────────────────── */
-
-.summary-panel {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 1.1rem;
-
-  height: 100%;
-
-}
-
-
-
-.summary-header h3 {
-
-  font-family: var(--body);
-
-  font-size: 0.7rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.15em;
-
-  text-transform: uppercase;
-
-  color: var(--text-muted);
-
-  margin-bottom: 10px;
-
-}
-
-
-
-.completeness-bar {
-
-  width: 100%;
-
-  height: 3px;
-
-  background: var(--border);
-
-  border-radius: 2px;
-
-  margin-bottom: 6px;
-
-  overflow: hidden;
-
-}
-
-
-
-.completeness-bar div {
-
-  height: 100%;
-
-  background: var(--accent);
-
-  border-radius: 2px;
-
-  transition: width 0.4s cubic-bezier(0.16,1,0.3,1);
-
-}
-
-
-
-.completeness-text {
-
-  font-family: var(--mono);
-
-  font-size: 0.7rem;
-
-  color: var(--text-muted);
-
-}
-
-
-
-.budget-display {
-
-  background: var(--surface2);
-
-  border: 1px solid var(--border);
-
-  border-radius: var(--radius);
-
-  padding: 1rem;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 8px;
-
-}
-
-
-
-.budget-row {
-
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  font-family: var(--body);
-
-  font-size: 0.82rem;
-
-  color: var(--text-muted);
-
-}
-
-
-
-.budget-row.remaining {
-
-  padding-top: 8px;
-
-  border-top: 1px solid var(--border);
-
-  font-weight: 600;
-
-}
-
-
-
-.val-neutral { font-family: var(--mono); color: var(--text); font-size: 0.9rem; }
-
-.val-primary { font-family: var(--mono); color: var(--text); font-size: 0.95rem; font-weight: 600; }
-
-.val-good    { font-family: var(--mono); color: var(--good); font-size: 0.95rem; font-weight: 600; }
-
-.val-danger  { font-family: var(--mono); color: var(--danger); font-size: 0.95rem; font-weight: 600; }
-
-
-
-.summary-list {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 4px;
-
-  overflow-y: auto;
-
-  flex: 1;
-
-  min-height: 0;
-
-}
-
-
-
-.summary-item {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 7px;
-
-  padding: 5px 0;
-
-  border-bottom: 1px solid var(--border);
-
-}
-
-
-
-.summary-item:last-child { border-bottom: none; }
-
-.sum-icon { font-size: 0.85rem; flex-shrink: 0; }
-
-.sum-info { flex: 1; min-width: 0; }
-
-
-
-.sum-cat {
-
-  font-family: var(--body);
-
-  font-size: 0.62rem;
-
-  font-weight: 600;
-
-  letter-spacing: 0.1em;
-
-  text-transform: uppercase;
-
-  color: var(--text-dim);
-
-}
-
-
-
-.sum-name {
-
-  font-family: var(--body);
-
-  font-size: 0.78rem;
-
-  font-weight: 500;
-
-  color: var(--text);
-
-  white-space: nowrap;
-
-  overflow: hidden;
-
-  text-overflow: ellipsis;
-
-}
-
-
-
-.sum-price {
-
-  font-family: var(--mono);
-
-  font-size: 0.78rem;
-
-  color: var(--text-muted);
-
-  flex-shrink: 0;
-
-}
-
-
-
-.summary-tips {
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 6px;
-
-}
-
-
-
-.tip {
-
-  display: flex;
-
-  gap: 8px;
-
-  align-items: flex-start;
-
-  background: var(--surface2);
-
-  border: 1px solid var(--border);
-
-  border-radius: var(--radius);
-
-  padding: 7px 10px;
-
-}
-
-
-
-.tip-icon { font-size: 0.8rem; flex-shrink: 0; line-height: 1.6; }
-
-
-
-.tip p {
-
-  font-family: var(--body);
-
-  font-size: 0.73rem;
-
-  line-height: 1.55;
-
-  color: var(--text-muted);
-
-}
-
-
-
-.tip p strong { color: var(--text); }
-
-
-
-.save-btn {
-
-  width: 100%;
-
-  background: var(--accent);
-
-  color: #080808;
-
-  font-family: var(--font);
-
-  font-size: 0.88rem;
-
-  font-weight: 700;
-
-  letter-spacing: 0.04em;
-
-  padding: 0.9rem;
-
-  border: none;
-
-  border-radius: var(--radius);
-
-  cursor: pointer;
-
-  transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1);
-
-  flex-shrink: 0;
-
-}
-
-
-
-.save-btn:disabled {
-
-  background: var(--surface2);
-
-  color: var(--text-dim);
-
-  cursor: not-allowed;
-
-}
-
-
-
-.save-btn:not(:disabled):hover {
-
-  background: var(--accent-dark);
-
-  box-shadow: 0 6px 28px rgba(212,240,74,0.3);
-
-  transform: translateY(-2px) scale(1.02);
-
-}
-
-
-
-.save-btn:not(:disabled):active {
-
-  transform: scale(0.97);
-
-}
-
-
-
-.save-result {
-
-  font-family: var(--mono);
-
-  font-size: 0.75rem;
-
-  padding: 8px 10px;
-
-  border-radius: var(--radius);
-
-  text-align: center;
-
-  flex-shrink: 0;
-
-}
-
-
-
-.save-result.hidden { display: none; }
-
-.save-result.success { background: var(--new-bg); border: 1px solid rgba(74,255,212,0.2); color: var(--new); }
-
-.save-result.error   { background: var(--danger-bg); border: 1px solid rgba(255,74,74,0.2); color: var(--danger); }
-
-
-
-/* ── SCROLL REVEAL ─────────────────────────── */
-
-.scroll-reveal {
-
-  opacity: 0;
-
-  transform: translateY(20px);
-
-  transition: opacity 0.6s ease, transform 0.6s ease;
-
-}
-
-
-
-.scroll-reveal.revealed {
-
-  opacity: 1;
-
-  transform: translateY(0);
-
-}
-
-
-
-/* ── ANIMATIONS ────────────────────────────── */
-
-@keyframes fadeUp {
-
-  from { opacity: 0; transform: translateY(20px); }
-
-  to   { opacity: 1; transform: translateY(0); }
-
-}
-
-
-
-@keyframes fadeIn {
-
-  from { opacity: 0; }
-
-  to   { opacity: 1; }
-
-}
-
-
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-
-
-@keyframes modalPop {
-
-  from { opacity: 0; transform: scale(0.92) translateY(10px); }
-
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-
-}
-
-
-
-/* ── PRINT STYLES ──────────────────────────── */
-
-@media print {
-
-  body > *:not(#receipt-modal) { display: none !important; }
-
-  #receipt-modal { position: static !important; background: none !important; backdrop-filter: none !important; }
-
-  .receipt-actions { display: none !important; }
-
-  .receipt-card { box-shadow: none !important; max-height: none !impnotortant; }
-
-}
-
-
-
-/* ── RESPONSIVE ────────────────────────────── */
-
-@media (max-width: 960px) {
-
-  .builder-layout { grid-template-columns: 1fr; }
-
-  .builder-right {
-
-    position: static;
-
-    height: auto;
-
-    border-left: none;
-
-    border-top: 1px solid var(--border);
-
+/* =============================================
+   FORGE — AI PC Builder  v5.0
+   Gemini AI powered + smart static fallback
+   ============================================= */
+
+// ── REGION CONFIG ──────────────────────────────
+const REGIONS = {
+  PK: { currency: "PKR", symbol: "₨",  rate: 278.5, minBudget: 20000 },
+  US: { currency: "USD", symbol: "$",  rate: 1.0,   minBudget: 80    },
+  GB: { currency: "GBP", symbol: "£",  rate: 0.79,  minBudget: 65    },
+  EU: { currency: "EUR", symbol: "€",  rate: 0.92,  minBudget: 75    },
+  IN: { currency: "INR", symbol: "₹",  rate: 83.5,  minBudget: 6000  },
+  CA: { currency: "CAD", symbol: "C$", rate: 1.36,  minBudget: 110   },
+  AU: { currency: "AUD", symbol: "A$", rate: 1.52,  minBudget: 120   },
+};
+
+const COMPONENT_META = {
+  cpu:        { icon: "🔲", label: "Processor (CPU)"         },
+  gpu:        { icon: "🎮", label: "Graphics Card (GPU)"      },
+  mb:         { icon: "🔌", label: "Motherboard"               },
+  ram:        { icon: "💾", label: "Memory (RAM)"              },
+  storage:    { icon: "💿", label: "Storage (SSD/HDD)"        },
+  psu:        { icon: "⚡", label: "Power Supply (PSU)"       },
+  cooler:     { icon: "❄️", label: "CPU Cooler"               },
+  case:       { icon: "🖥️", label: "PC Case"                  },
+  monitor:    { icon: "🖵", label: "Monitor"                  },
+  keyboard:   { icon: "⌨️", label: "Keyboard"                 },
+  mouse:      { icon: "🖱️", label: "Mouse"                    },
+  headset:    { icon: "🎧", label: "Headset / Audio"          },
+  networking: { icon: "📡", label: "Networking (WiFi/Router)" },
+  os:         { icon: "💻", label: "Operating System"         },
+};
+
+// ── APP STATE ──────────────────────────────────
+const state = {
+  region: "PK",
+  budgetLocal: 150000,
+  budgetUSD: 0,
+  purpose: "gaming",
+  components: {},
+  allOptions: {},
+  totalCategories: 0,
+};
+
+const $ = id => document.getElementById(id);
+const formatLocal = num => Number(num).toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+function getBudgetTier(budgetUSD) {
+  if (budgetUSD < 120)  return "scrappy";
+  if (budgetUSD < 220)  return "ultraBudget";
+  if (budgetUSD < 400)  return "budget";
+  if (budgetUSD < 800)  return "mid";
+  if (budgetUSD < 1800) return "high";
+  return "flagship";
+}
+
+// ── CURSOR GLOW + PARTICLES ────────────────────
+function initCursor() {
+  const glow = $("cursor-glow");
+  if (!glow) return;
+  document.addEventListener("mousemove", e => {
+    glow.style.left = e.clientX + "px";
+    glow.style.top  = e.clientY + "px";
+  });
+}
+
+function initParticles() {
+  const canvas = $("particle-canvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  let W = canvas.width  = window.innerWidth;
+  let H = canvas.height = window.innerHeight;
+
+  window.addEventListener("resize", () => {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  });
+
+  const DOTS = 40;
+  const dots = Array.from({ length: DOTS }, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    r: Math.random() * 1.2 + 0.3,
+    dx: (Math.random() - 0.5) * 0.25,
+    dy: (Math.random() - 0.5) * 0.25,
+    o: Math.random() * 0.4 + 0.1,
+  }));
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    dots.forEach(d => {
+      d.x += d.dx; d.y += d.dy;
+      if (d.x < 0) d.x = W; if (d.x > W) d.x = 0;
+      if (d.y < 0) d.y = H; if (d.y > H) d.y = 0;
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(212,240,74,${d.o})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+function initScrollReveal() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add("revealed");
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll(".scroll-reveal, .category-block").forEach(el => observer.observe(el));
+}
+
+function showBudgetModal(minAmount, symbol) {
+  const minAmtEl = $("modal-min-amount");
+  if (minAmtEl) minAmtEl.textContent = symbol + " " + Math.round(minAmount).toLocaleString();
+  const bModal = $("budget-modal");
+  if (bModal) bModal.classList.remove("hidden");
+}
+function hideBudgetModal() {
+  const bModal = $("budget-modal");
+  if (bModal) bModal.classList.add("hidden");
+}
+
+// ── INITIALIZATION ─────────────────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  initCursor();
+  initParticles();
+  setupOnboarding();
+
+  const closeBtn = $("modal-close-btn");
+  if (closeBtn) closeBtn.addEventListener("click", hideBudgetModal);
+  
+  const bModal = $("budget-modal");
+  if (bModal) bModal.addEventListener("click", e => { if (e.target === bModal) hideBudgetModal(); });
+
+  const rcBtn = $("receipt-close-btn");
+  if (rcBtn) rcBtn.addEventListener("click", () => $("receipt-modal").classList.add("hidden"));
+
+  const rModal = $("receipt-modal");
+  if (rModal) rModal.addEventListener("click", e => { if (e.target === rModal) rModal.classList.add("hidden"); });
+});
+
+function setupOnboarding() {
+  const regionSel = $("region-select");
+  const budgetInp = $("budget-input");
+  if (!regionSel || !budgetInp) return;
+
+  regionSel.addEventListener("change", () => {
+    const r = REGIONS[regionSel.value];
+    $("budget-symbol").textContent  = r.symbol;
+    $("currency-label").textContent = r.currency;
+  });
+
+  document.querySelectorAll(".purpose-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".purpose-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.purpose = btn.dataset.purpose;
+    });
+  });
+
+  const startBtn = $("start-btn");
+  if (startBtn) {
+    startBtn.addEventListener("click", () => {
+      state.region      = regionSel.value;
+      state.budgetLocal = parseFloat(budgetInp.value) || 0;
+      state.budgetUSD   = state.budgetLocal / REGIONS[state.region].rate;
+      const r = REGIONS[state.region];
+
+      if (state.budgetLocal < r.minBudget) {
+        showBudgetModal(r.minBudget, r.symbol);
+        return;
+      }
+
+      showScreen("loading");
+      runLoadingSequence();
+      fetchComponents();
+    });
+  }
+}
+
+function showScreen(name) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  const map = { onboarding: "screen-onboarding", loading: "screen-loading", builder: "screen-builder" };
+  const target = $(map[name]);
+  if (target) target.classList.add("active");
+}
+
+function runLoadingSequence() {
+  const steps  = ["ls1","ls2","ls3","ls4"];
+  const labels = ["Analysing budget range", "Fetching component data", "Matching compatibility", "Calculating value tiers"];
+  let i = 0;
+  const iv = setInterval(() => {
+    if (i > 0) {
+      const prev = $(steps[i-1]);
+      if (prev) {
+        prev.classList.remove("active");
+        prev.classList.add("done");
+        prev.textContent = "✓ " + labels[i-1];
+      }
+    }
+    if (i < steps.length) {
+      const curr = $(steps[i]);
+      if (curr) {
+        curr.classList.add("active");
+        curr.textContent = labels[i];
+      }
+      i++;
+    } else {
+      clearInterval(iv);
+    }
+  }, 700);
+}
+
+function getBudgetDistribution(budgetUSD, purpose, tier) {
+  const pCaps = {
+    scrappy:     { monitor: 40, keyboard: 4,  mouse: 4,  headset: 5,  networking: 5  },
+    ultraBudget: { monitor: 60, keyboard: 6,  mouse: 5,  headset: 8,  networking: 8  },
+    budget:      { monitor: 95, keyboard: 15, mouse: 12, headset: 18, networking: 15 },
+    mid:         { monitor: 180,keyboard: 55, mouse: 45, headset: 60, networking: 40 },
+    high:        { monitor: 400,keyboard: 120,mouse: 100,headset: 150,networking: 100},
+    flagship:    { monitor: 800,keyboard: 250,mouse: 180,headset: 300,networking: 250},
+  };
+  const alloc = {
+    scrappy:     { cpu: 0.22, gpu: 0.28, mb: 0.12, ram: 0.10, storage: 0.08, psu: 0.08, cooler: 0.04, case: 0.08 },
+    ultraBudget: { cpu: 0.22, gpu: 0.28, mb: 0.12, ram: 0.10, storage: 0.08, psu: 0.08, cooler: 0.04, case: 0.08 },
+    budget:      { cpu: 0.20, gpu: 0.30, mb: 0.10, ram: 0.10, storage: 0.08, psu: 0.08, cooler: 0.04, case: 0.10 },
+    mid:         { cpu: 0.18, gpu: 0.32, mb: 0.10, ram: 0.08, storage: 0.08, psu: 0.07, cooler: 0.05, case: 0.12 },
+    high:        { cpu: 0.16, gpu: 0.35, mb: 0.10, ram: 0.08, storage: 0.08, psu: 0.07, cooler: 0.06, case: 0.10 },
+    flagship:    { cpu: 0.14, gpu: 0.38, mb: 0.10, ram: 0.08, storage: 0.08, psu: 0.07, cooler: 0.06, case: 0.09 },
+  };
+
+  const a = alloc[tier] || alloc.budget;
+  const p = pCaps[tier] || pCaps.budget;
+  const coreTotal = Object.values(a).reduce((s, v) => s + v, 0);
+  const peripheralTotal = Object.values(p).reduce((s, v) => s + v, 0);
+  const coreUSD = Math.max(0, budgetUSD - peripheralTotal - 15);
+
+  return {
+    cpu: Math.round(coreUSD * (a.cpu / coreTotal)), gpu: Math.round(coreUSD * (a.gpu / coreTotal)),
+    mb: Math.round(coreUSD * (a.mb / coreTotal)), ram: Math.round(coreUSD * (a.ram / coreTotal)),
+    storage: Math.round(coreUSD * (a.storage / coreTotal)), psu: Math.round(coreUSD * (a.psu / coreTotal)),
+    cooler: Math.round(coreUSD * (a.cooler / coreTotal)), case: Math.round(coreUSD * (a.case / coreTotal)),
+    monitor: p.monitor, keyboard: p.keyboard, mouse: p.mouse, headset: p.headset, networking: p.networking, os: 15
+  };
+}
+
+async function fetchComponents() {
+  buildSmartRecommendations(); 
+  renderBuilder();
+  showScreen("builder");
+  setTimeout(initScrollReveal, 100);
+}
+
+// ── MASTER FALLBACK DATABASE ───────────────────
+const COMPONENT_DB = {
+  cpu: {
+    scrappy:     [{ name: "Intel Core i5-6500 (Used)", specs: "4c/4t · 3.2GHz", priceUSD: 22 }, { name: "AMD Ryzen 3 1200", specs: "4c/4t", priceUSD: 18 }],
+    ultraBudget: [{ name: "Intel Core i3-10100F", specs: "4c/8t · 4.3GHz boost", priceUSD: 45 }],
+    budget:      [{ name: "AMD Ryzen 5 5600", specs: "6c/12t · 32MB Cache", priceUSD: 100 }],
+    mid:         [{ name: "Intel Core i5-13600K", specs: "14c/20t · 5.1GHz", priceUSD: 250 }],
+    high:        [{ name: "AMD Ryzen 7 7800X3D", specs: "8c/16t · 3D V-Cache", priceUSD: 370 }],
+    flagship:    [{ name: "AMD Ryzen 9 9950X3D", specs: "16c/32t · Enthusiast", priceUSD: 649 }]
+  },
+  gpu: {
+    scrappy:     [{ name: "NVIDIA GTX 1050 Ti 4GB", specs: "GDDR5 Entry", priceUSD: 40 }],
+    ultraBudget: [{ name: "AMD RX 580 8GB (Used)", specs: "1080p Budget Gaming", priceUSD: 65 }],
+    budget:      [{ name: "AMD RX 6600 8GB", specs: "GDDR6 · Raytracing support", priceUSD: 170 }],
+    mid:         [{ name: "NVIDIA RTX 4070 12GB", specs: "1440p Fluid · DLSS 3", priceUSD: 550 }],
+    high:        [{ name: "NVIDIA RTX 4080 Super", specs: "4K High Frame Rates", priceUSD: 999 }],
+    flagship:    [{ name: "NVIDIA GeForce RTX 5090", specs: "32GB GDDR7 · 8K Ready", priceUSD: 1999 }]
+  },
+  mb: {
+    scrappy:     [{ name: "H110M Motherboard", specs: "DDR4 · Micro-ATX", priceUSD: 22 }],
+    ultraBudget: [{ name: "Gigabyte A520M S2H", specs: "AM4 budget base", priceUSD: 65 }],
+    budget:      [{ name: "ASRock B550M Pro4", specs: "Dual M.2 slots", priceUSD: 85 }],
+    mid:         [{ name: "ASUS TUF B650-Plus WiFi", specs: "DDR5 · ATX gaming layout", priceUSD: 175 }],
+    high:        [{ name: "MSI MEG Z790 Godlike", specs: "Extreme power design", priceUSD: 650 }],
+    flagship:    [{ name: "ASUS ROG Crosshair X870E", specs: "PCIe 5.0 · WiFi 7 ready", priceUSD: 550 }]
+  },
+  ram: {
+    scrappy:     [{ name: "8GB DDR4 2666MHz", specs: "Value RAM module", priceUSD: 12 }],
+    ultraBudget: [{ name: "16GB DDR4 3200MHz (2x8GB)", specs: "Dual channel performance", priceUSD: 32 }],
+    budget:      [{ name: "16GB DDR4 3600MHz CL16", specs: "Low latency kit", priceUSD: 45 }],
+    mid:         [{ name: "32GB DDR5 6000MHz CL30", specs: "Next-gen sweet-spot", priceUSD: 105 }],
+    high:        [{ name: "64GB DDR5 6400MHz High-Speed", specs: "Enthusiast tuning profile", priceUSD: 210 }],
+    flagship:    [{ name: "128GB DDR5 Workstation Grade", specs: "Quad capacity configuration", priceUSD: 450 }]
+  },
+  storage: {
+    scrappy: [{ name: "256GB SATA SSD", specs: "Fast boot drives", priceUSD: 14 }],
+    ultraBudget: [{ name: "512GB NVMe M.2 SSD", specs: "1500MB/s speeds", priceUSD: 28 }],
+    budget: [{ name: "1TB NVMe PCIe 4.0 SSD", specs: "3500MB/s speeds", priceUSD: 55 }],
+    mid: [{ name: "2TB high speed Gen4 SSD", specs: "7000MB/s gaming speed", priceUSD: 125 }],
+    high: [{ name: "4TB Gen4 Enterprise SSD", specs: "Maximum file vaulting", priceUSD: 260 }],
+    flagship: [{ name: "8TB PCIe 5.0 Ultimate NVMe", specs: "14000MB/s extreme read", priceUSD: 799 }]
+  },
+  psu: {
+    scrappy: [{ name: "400W Standard Unit", specs: "Basic power supply", priceUSD: 15 }],
+    ultraBudget: [{ name: "500W 80+ Bronze certified", specs: "Reliable entry juice", priceUSD: 35 }],
+    budget: [{ name: "650W 80+ Bronze rated PSU", specs: "Mid range headroom", priceUSD: 55 }],
+    mid: [{ name: "750W 80+ Gold Fully Modular", specs: "Clean cable management", priceUSD: 95 }],
+    high: [{ name: "1000W 80+ Platinum ATX 3.0", specs: "Heavy GPU safe delivery", priceUSD: 180 }],
+    flagship: [{ name: "1600W Titanium Smart Unit", specs: "Unmatched performance stability", priceUSD: 399 }]
+  },
+  cooler: {
+    scrappy: [{ name: "Intel Stock Cooler", specs: "Bundled thermal unit", priceUSD: 0 }],
+    ultraBudget: [{ name: "Basic Air Cooler", specs: "90mm generic fan solution", priceUSD: 12 }],
+    budget: [{ name: "Thermalright Assassin X 120", specs: "4 copper heatpipes", priceUSD: 20 }],
+    mid: [{ name: "240mm Liquid AIO Cooler", specs: "Closed loop RGB unit", priceUSD: 75 }],
+    high: [{ name: "360mm Premium Liquid AIO", specs: "LCD pump setup config", priceUSD: 140 }],
+    flagship: [{ name: "Custom Dual Loop Water Rig", specs: "Hardline thermal craft", priceUSD: 450 }]
+  },
+  case: {
+    scrappy: [{ name: "Standard Office ATX Case", specs: "Minimalist black box", priceUSD: 15 }],
+    ultraBudget: [{ name: "Budget Mesh Case", specs: "2x front fans built-in", priceUSD: 30 }],
+    budget: [{ name: "Montech AIR 903 Base", specs: "High airflow layout structure", priceUSD: 65 }],
+    mid: [{ name: "Corsair 4000D Airflow", specs: "Premium structural design", priceUSD: 90 }],
+    high: [{ name: "Lian Li O11 Dynamic EVO", specs: "Panoramic glass layout window", priceUSD: 160 }],
+    flagship: [{ name: "HYTE Y70 Touch Screen Case", specs: "Built-in dynamic dashboard screen", priceUSD: 280 }]
+  },
+  monitor: {
+    scrappy: [{ name: "20\" Used Office LCD", specs: "1600x900 resolution standard", priceUSD: 25 }],
+    ultraBudget: [{ name: "22\" 1080p 75Hz Monitor", specs: "FHD IPS display panel", priceUSD: 65 }],
+    budget: [{ name: "24\" 1080p 144Hz Gaming Display", specs: "1ms moving picture response", priceUSD: 110 }],
+    mid: [{ name: "27\" 1440p 165Hz IPS Panel", specs: "Crisp 2K resolution field", priceUSD: 220 }],
+    high: [{ name: "34\" Ultrawide QD-OLED 240Hz", specs: "Infinite visual depth contrast", priceUSD: 799 }],
+    flagship: [{ name: "ROG 49\" Super Ultrawide Dual-FHD", specs: "Massive surround sight curvature", priceUSD: 1199 }]
+  },
+  keyboard: {
+    scrappy: [{ name: "Membrane Slim Keyboard", specs: "Standard office setup keys", priceUSD: 5 }],
+    ultraBudget: [{ name: "RGB Membrane Keyboard", specs: "Backlit typing experience", priceUSD: 10 }],
+    budget: [{ name: "Budget Mechanical Keyboard", specs: "Blue clicky switch triggers", priceUSD: 25 }],
+    mid: [{ name: "Keychron K2 Wireless Mech", specs: "Gateron switches hot-swappable", priceUSD: 80 }],
+    high: [{ name: "Wooting 60HE Analog", specs: "Rapid trigger magnetic sensors", priceUSD: 175 }],
+    flagship: [{ name: "Custom Handcrafted Aluminum Mech", specs: "Lubed linear studio switches", priceUSD: 350 }]
+  },
+  mouse: {
+    scrappy: [{ name: "Wired Optical Mouse", specs: "3 buttons functionality", priceUSD: 4 }],
+    ultraBudget: [{ name: "Basic RGB Gaming Mouse", specs: "Adjustable DPI selector profiles", priceUSD: 8 }],
+    budget: [{ name: "Logitech G102 Lightsync", specs: "8000 max gaming DPI tracking", priceUSD: 22 }],
+    mid: [{ name: "Logitech G502 X Wireless", specs: "Ergonomic modular side grips", priceUSD: 90 }],
+    high: [{ name: "Razer DeathAdder V3 Pro", specs: "Ultra lightweight 63g build", priceUSD: 140 }],
+    flagship: [{ name: "Finalmouse Ultralight Carbon Magnesium", specs: "Enthusiast competitive grade chassis", priceUSD: 299 }]
+  },
+  headset: {
+    scrappy: [{ name: "Basic In-Ear Earphones", specs: "3.5mm standard audio jack", priceUSD: 4 }],
+    ultraBudget: [{ name: "Stereo Gaming Headset", specs: "Over ear soft cushion leather", priceUSD: 12 }],
+    budget: [{ name: "HyperX Cloud Stinger 2", specs: "Light comfort directional audio", priceUSD: 35 }],
+    mid: [{ name: "HyperX Cloud III Wireless", specs: "Massive 120 hour cell duration", priceUSD: 130 }],
+    high: [{ name: "SteelSeries Arctis Nova Pro", specs: "Dual cell active noise canceling", priceUSD: 299 }],
+    flagship: [{ name: "Sennheiser HD800S Studio Grade", specs: "Unmatched spatial acoustic soundscape", priceUSD: 1599 }]
+  },
+  networking: {
+    scrappy: [{ name: "Ethernet Cable LAN 5m", specs: "Direct mother link connection", priceUSD: 3 }],
+    ultraBudget: [{ name: "USB WiFi Adapter dongle", specs: "150Mbps basic legacy signal", priceUSD: 8 }],
+    budget: [{ name: "PCIe WiFi 5 Card Adapter", specs: "Dual band stable connection link", priceUSD: 18 }],
+    mid: [{ name: "PCIe WiFi 6E Bluetooth 5.3", specs: "Tri-band ultra clear download", priceUSD: 40 }],
+    high: [{ name: "Wi-Fi 7 Premium Desktop Adapter", specs: "Extreme multi-gig band channels", priceUSD: 95 }],
+    flagship: [{ name: "ASUS ROG Rapture Wi-Fi 7 Router Mesh", specs: "Dedicated 10G gaming networks arrays", priceUSD: 650 }]
+  },
+  os: {
+    scrappy: [{ name: "Ubuntu Linux OS Free", specs: "Open source community package", priceUSD: 0 }],
+    ultraBudget: [{ name: "Windows 11 Home OEM", specs: "Digital license product tier", priceUSD: 15 }],
+    budget: [{ name: "Windows 11 Home Key", specs: "Authentic license package build", priceUSD: 20 }],
+    mid: [{ name: "Windows 11 Pro Digital License", specs: "Advanced encryption systems enabled", priceUSD: 25 }],
+    high: [{ name: "Windows 11 Pro Retail Key", specs: "Transferable license across hardware setups", priceUSD: 40 }],
+    flagship: [{ name: "Windows 11 Pro Retail Box", specs: "Physical flash collector layout package", priceUSD: 120 }]
+  }
+};
+
+function buildSmartRecommendations() {
+  const tier = getBudgetTier(state.budgetUSD);
+  const raw = {};
+  
+  Object.keys(COMPONENT_META).forEach(cat => {
+    const db = COMPONENT_DB[cat];
+    if (!db) return;
+    const matchedArr = db[tier] || db.budget;
+    const baseObj = matchedArr[0];
+    
+    raw[cat] = [
+      { ...baseObj, name: baseObj.name + " (Eco)", priceLocal: Math.round(baseObj.priceUSD * 0.85 * REGIONS[state.region].rate), priceUSD: baseObj.priceUSD * 0.85, tier: "budget" },
+      { ...baseObj, name: baseObj.name, priceLocal: Math.round(baseObj.priceUSD * REGIONS[state.region].rate), priceUSD: baseObj.priceUSD, tier: "mid" },
+      { ...baseObj, name: baseObj.name + " (Pro)", priceLocal: Math.round(baseObj.priceUSD * 1.2 * REGIONS[state.region].rate), priceUSD: baseObj.priceUSD * 1.2, tier: "high" }
+    ];
+  });
+  
+  state.allOptions = raw;
+  state.totalCategories = Object.keys(raw).length;
+}
+
+function renderBuilder() {
+  const container = $("categories-container");
+  if (!container) return;
+  container.innerHTML = "";
+
+  Object.keys(state.allOptions).forEach(cat => {
+    const meta = COMPONENT_META[cat];
+    const options = state.allOptions[cat];
+    if (!meta || !options) return;
+
+    const block = document.createElement("div");
+    block.className = "category-block scroll-reveal";
+    block.innerHTML = `
+      <div class="category-header">
+        <div class="category-title">
+          <span class="category-icon">${meta.icon}</span>
+          <h3>${meta.label}</h3>
+        </div>
+        <span class="selection-badge" id="badge-${cat}">No selection</span>
+      </div>
+      <div class="options-grid" id="grid-${cat}">
+        ${options.map((opt, i) => renderOptionCard(cat, opt, i)).join("")}
+      </div>
+    `;
+    container.appendChild(block);
+  });
+
+  document.querySelectorAll(".option-card").forEach(card => {
+    card.addEventListener("click", () => {
+      selectComponent(card.dataset.cat, parseInt(card.dataset.idx));
+    });
+  });
+
+  // 🛡️ Safe Check: Prevents crash if back-btn doesn't exist in HTML
+  const backBtn = $("back-btn");
+  if (backBtn) {
+    backBtn.onclick = () => {
+      state.components = {};
+      showScreen("onboarding");
+    };
   }
 
-  .builder-left { border-right: none; padding: 1.5rem; }
+  // 🛡️ Safe Check: Prevents crash if save-btn doesn't exist in HTML
+  const saveBtn = $("save-btn");
+  if (saveBtn) {
+    saveBtn.onclick = saveBuild;
+  }
 
-  .options-grid { grid-template-columns: 1fr 1fr; }
-
+  updateSummary();
 }
 
+function renderOptionCard(cat, opt, idx) {
+  const r = REGIONS[state.region];
+  const tierClass = { budget: "tier-budget", mid: "tier-mid", high: "tier-high" }[opt.tier] || "tier-budget";
+  const tierLabel = { budget: "Entry", mid: "Mid-Range", high: "Premium" }[opt.tier] || opt.tier;
+  const priceStr = opt.priceUSD === 0 ? "Free" : r.symbol + " " + formatLocal(opt.priceLocal);
+  const isPremium = opt.tier === "high";
 
-
-@media (max-width: 600px) {
-
-  .options-grid { grid-template-columns: 1fr; }
-
-  .hero-text { font-size: 2.8rem; }
-
-  .site-header, .site-footer { padding: 1rem 1.25rem; }
-
-  .builder-header { padding: 0 1rem; }
-
-  .builder-left, .builder-right { padding: 1.25rem 1rem; }
-
+  return `
+    <div class="option-card${isPremium ? " premium-card" : ""}" data-cat="${cat}" data-idx="${idx}">
+      <span class="option-tier ${tierClass}">${tierLabel}</span>
+      <div class="option-name">${opt.name}</div>
+      <div class="option-specs">${opt.specs}</div>
+      <div class="option-footer">
+        <span class="option-condition cond-new">✦ Asset</span>
+        <span class="option-price">${priceStr}</span>
+      </div>
+    </div>
+  `;
 }
 
+function selectComponent(cat, idx) {
+  const option = state.allOptions[cat][idx];
+  state.components[cat] = option;
+  $(`grid-${cat}`).querySelectorAll(".option-card").forEach((card, i) => {
+    card.classList.toggle("selected", i === idx);
+  });
+  const badge = $(`badge-${cat}`);
+  if (badge) {
+    badge.textContent = option.name.split(" ").slice(0, 3).join(" ");
+    badge.classList.add("visible");
+  }
+  updateSummary();
+}
 
+function updateSummary() {
+  const list = $("summary-list");
+  if (!list) return;
+  list.innerHTML = "";
+  
+  const r = REGIONS[state.region];
+  let totalUSD = 0;
+  let selected = 0;
 
-/* Scrollbar */
+  Object.keys(COMPONENT_META).forEach(cat => {
+    const opt = state.components[cat];
+    if (!opt) return;
+    
+    selected++;
+    totalUSD += opt.priceUSD;
+    const meta = COMPONENT_META[cat];
+    const priceStr = opt.priceUSD === 0 ? "Free" : r.symbol + " " + formatLocal(opt.priceLocal);
+    
+    list.innerHTML += `
+      <div class="summary-item">
+        <span class="sum-icon">${meta.icon}</span>
+        <div class="sum-info">
+          <div class="sum-cat">${meta.label}</div>
+          <div class="sum-name">${opt.name}</div>
+        </div>
+        <span class="sum-price">${priceStr}</span>
+      </div>
+    `;
+  });
 
-::-webkit-scrollbar { width: 4px; height: 4px; }
+  const saveBtn = $("save-btn");
+  if (saveBtn) saveBtn.disabled = selected === 0;
+}
 
-::-webkit-scrollbar-track { background: transparent; }
+function saveBuild() {
+  const r = REGIONS[state.region];
+  let totalLocal = 0;
+  let itemsHTML = "";
 
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  Object.keys(state.components).forEach(cat => {
+    const opt = state.components[cat];
+    const meta = COMPONENT_META[cat];
+    totalLocal += opt.priceLocal;
+    const priceStr = opt.priceUSD === 0 ? "Free" : r.symbol + " " + formatLocal(opt.priceLocal);
+    itemsHTML += `
+      <div class="receipt-row">
+        <div class="receipt-row-left">
+          <div class="receipt-cat">${meta.label}</div>
+          <div class="receipt-name">${opt.name}</div>
+        </div>
+        <div class="receipt-price">${priceStr}</div>
+      </div>
+    `;
+  });
 
-::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+  const assemblyFee = Math.round(totalLocal * 0.05);
+  const grandTotal = totalLocal + assemblyFee;
+
+  $("receipt-items").innerHTML = itemsHTML;
+  $("receipt-totals").innerHTML = `
+    <div class="receipt-total-row"><span>Components Subtotal</span><span>${r.symbol} ${formatLocal(totalLocal)}</span></div>
+    <div class="receipt-total-row"><span>Assembly Setup Fee</span><span>${r.symbol} ${formatLocal(assemblyFee)}</span></div>
+    <div class="receipt-total-row grand"><span>TOTAL ESTIMATE</span><span>${r.symbol} ${formatLocal(grandTotal)}</span></div>
+  `;
+
+  $("receipt-modal").classList.remove("hidden");
+}
