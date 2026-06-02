@@ -11,6 +11,503 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+
+  <!-- ═══════════════════════════════════════════
+       FORGE BLACK + RED THEME OVERRIDE
+       These override the yellow/green accent in
+       style.css without touching that file at all.
+  ════════════════════════════════════════════ -->
+  <style>
+    :root {
+      /* Core palette */
+      --bg:            #060606;
+      --surface:       #0e0e0e;
+      --surface2:      #141414;
+      --surface3:      #1a0a0a;
+      --border:        #1f0a0a;
+      --border-hover:  #3a1010;
+
+      /* Text */
+      --text:          #f5f0f0;
+      --text-muted:    #6b4040;
+      --text-dim:      #2e1515;
+      --text-body:     #c8b0b0;
+
+      /* Accent — RED replaces yellow/green */
+      --accent:        #e02020;
+      --accent-dark:   #b81818;
+      --accent-glow:   rgba(224,32,32,0.08);
+      --accent-glow2:  rgba(224,32,32,0.18);
+
+      /* Status colours */
+      --new:           #ff6060;
+      --new-bg:        rgba(255,96,96,0.07);
+      --used:          #ff9944;
+      --used-bg:       rgba(255,153,68,0.07);
+      --danger:        #ff3030;
+      --danger-bg:     rgba(255,48,48,0.08);
+      --good:          #ff6060;
+      --premium:       #e870a0;
+      --premium-bg:    rgba(232,112,160,0.08);
+
+      /* Ticker */
+      --ticker-fire1:  #ff2200;
+      --ticker-fire2:  #ff8800;
+      --ticker-fire3:  #ffcc00;
+    }
+
+    /* ── Cursor glow in red ── */
+    #cursor-glow {
+      background: radial-gradient(circle, rgba(224,32,32,0.10) 0%, transparent 70%);
+    }
+
+    /* ── Particle colour override (handled in app.js — see prompt) ── */
+
+    /* ══════════════════════════════════════════
+       HOT ITEMS TICKER BANNER
+    ══════════════════════════════════════════ */
+    #hot-ticker-wrap {
+      position: relative;
+      width: 100%;
+      background: #0a0000;
+      border-top: 2px solid var(--ticker-fire1);
+      border-bottom: 2px solid var(--ticker-fire1);
+      overflow: hidden;
+      z-index: 100;
+      flex-shrink: 0;
+      /* Fire glow on borders */
+      box-shadow:
+        0 -3px 18px 2px rgba(255,34,0,0.55),
+        0  3px 18px 2px rgba(255,34,0,0.55);
+    }
+
+    /* animated fire shimmer on the border lines */
+    #hot-ticker-wrap::before,
+    #hot-ticker-wrap::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg,
+        var(--ticker-fire1), var(--ticker-fire2),
+        var(--ticker-fire3), var(--ticker-fire2),
+        var(--ticker-fire1));
+      background-size: 400% 100%;
+      animation: fireLine 2.5s linear infinite;
+    }
+    #hot-ticker-wrap::before { top: 0; }
+    #hot-ticker-wrap::after  { bottom: 0; }
+
+    @keyframes fireLine {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 400% 50%; }
+    }
+
+    .ticker-label {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      display: flex;
+      align-items: center;
+      padding: 0 14px 0 16px;
+      background: var(--ticker-fire1);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: #fff;
+      z-index: 2;
+      gap: 6px;
+      white-space: nowrap;
+      /* right edge fade */
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
+    }
+
+    .ticker-label .fire-emoji { animation: fireFlicker 0.7s ease-in-out infinite alternate; }
+    @keyframes fireFlicker {
+      from { opacity: 0.7; transform: scaleY(0.9); }
+      to   { opacity: 1.0; transform: scaleY(1.1); }
+    }
+
+    .ticker-track {
+      display: flex;
+      align-items: center;
+      height: 36px;
+      padding-left: 130px; /* clear the label */
+      overflow: hidden;
+    }
+
+    .ticker-inner {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      white-space: nowrap;
+      /* scroll animation driven by JS after items are injected */
+      will-change: transform;
+    }
+
+    .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 28px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #f5d0d0;
+      border-right: 1px solid rgba(224,32,32,0.2);
+    }
+
+    .ticker-item .ticker-name {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .ticker-item .ticker-hot {
+      color: var(--ticker-fire2);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+    }
+
+    .ticker-sep {
+      color: var(--ticker-fire1);
+      font-size: 1.1rem;
+      padding: 0 6px;
+      opacity: 0.5;
+    }
+
+    /* Fade masks on edges */
+    #hot-ticker-wrap .edge-fade-left,
+    #hot-ticker-wrap .edge-fade-right {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 60px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    #hot-ticker-wrap .edge-fade-left {
+      left: 130px;
+      background: linear-gradient(to right, #0a0000, transparent);
+    }
+    #hot-ticker-wrap .edge-fade-right {
+      right: 0;
+      background: linear-gradient(to left, #0a0000, transparent);
+    }
+
+    /* ══════════════════════════════════════════
+       ANIMATED PC HERO  (onboarding screen)
+    ══════════════════════════════════════════ */
+    .pc-hero-scene {
+      position: relative;
+      width: 100%;
+      max-width: 560px;
+      height: 180px;
+      margin: 0 auto 2rem;
+      overflow: visible;
+    }
+
+    /* ── Floating brand logos ── */
+    .brand-float {
+      position: absolute;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--border-hover);
+      color: var(--text-muted);
+      background: var(--surface2);
+      white-space: nowrap;
+      pointer-events: none;
+      animation: floatBrand 4s ease-in-out infinite;
+    }
+
+    /* Individual positions + animation offsets */
+    .bf-intel   { left: 2%;   top: 8%;   animation-delay: 0.0s; }
+    .bf-amd     { left: 68%;  top: 5%;   animation-delay: 0.6s; color: #e03030; border-color: rgba(224,48,48,0.35); }
+    .bf-nvidia  { left: 48%;  top: 60%;  animation-delay: 1.1s; color: #76b900; border-color: rgba(118,185,0,0.3); }
+    .bf-rog     { left: 5%;   top: 62%;  animation-delay: 1.7s; color: #e02020; border-color: rgba(224,32,32,0.35); }
+    .bf-corsair { left: 72%;  top: 38%;  animation-delay: 0.4s; }
+    .bf-msi     { left: 28%;  top: 70%;  animation-delay: 2.0s; color: #e87020; border-color: rgba(232,112,32,0.3); }
+    .bf-gigabyte{ left: 1%;   top: 36%;  animation-delay: 1.4s; }
+    .bf-samsung { left: 55%;  top: 20%;  animation-delay: 0.9s; color: #1473e6; border-color: rgba(20,115,230,0.3); }
+    .bf-be_quiet{ left: 20%;  top: 18%;  animation-delay: 2.3s; }
+    .bf-seagate { left: 38%;  top: 42%;  animation-delay: 1.8s; }
+
+    @keyframes floatBrand {
+      0%,100% { transform: translateY(0px)   rotate(-1deg); opacity: 0.55; }
+      50%      { transform: translateY(-8px)  rotate(1deg);  opacity: 0.9;  }
+    }
+
+    /* ── PC Tower SVG container ── */
+    .pc-tower-wrap {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 90px;
+      height: 140px;
+    }
+
+    /* tower body */
+    .pc-tower {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(160deg, #1a0808 0%, #0d0303 100%);
+      border: 1px solid #3a1010;
+      border-radius: 8px 8px 4px 4px;
+      position: relative;
+      box-shadow:
+        0 0 30px rgba(224,32,32,0.25),
+        inset 0 1px 0 rgba(255,60,60,0.1);
+      overflow: hidden;
+    }
+
+    /* Animated RGB strip down the side */
+    .pc-rgb-strip {
+      position: absolute;
+      left: 10px; top: 20px; bottom: 20px;
+      width: 3px;
+      border-radius: 2px;
+      background: linear-gradient(180deg, #e02020, #ff8800, #e02020);
+      background-size: 100% 300%;
+      animation: rgbFlow 2s linear infinite;
+      box-shadow: 0 0 8px rgba(224,32,32,0.8);
+    }
+
+    @keyframes rgbFlow {
+      0%   { background-position: 0% 0%; }
+      100% { background-position: 0% 300%; }
+    }
+
+    /* Glass side panel glow */
+    .pc-glass {
+      position: absolute;
+      right: 6px; top: 14px; bottom: 14px;
+      width: 28px;
+      background: linear-gradient(180deg,
+        rgba(224,32,32,0.06) 0%,
+        rgba(224,32,32,0.12) 50%,
+        rgba(224,32,32,0.06) 100%);
+      border: 1px solid rgba(224,32,32,0.18);
+      border-radius: 4px;
+      animation: glassGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes glassGlow {
+      from { box-shadow: 0 0 8px rgba(224,32,32,0.2) inset; }
+      to   { box-shadow: 0 0 18px rgba(224,32,32,0.5) inset; }
+    }
+
+    /* Fan blades */
+    .pc-fan {
+      position: absolute;
+      right: 12px; top: 22px;
+      width: 20px; height: 20px;
+      animation: fanSpin 0.9s linear infinite;
+    }
+
+    .pc-fan-blade {
+      position: absolute;
+      width: 7px; height: 7px;
+      background: rgba(224,32,32,0.7);
+      border-radius: 50% 0;
+      top: 50%; left: 50%;
+    }
+    .pc-fan-blade:nth-child(1) { transform: rotate(0deg)   translate(4px, 0); }
+    .pc-fan-blade:nth-child(2) { transform: rotate(90deg)  translate(4px, 0); }
+    .pc-fan-blade:nth-child(3) { transform: rotate(180deg) translate(4px, 0); }
+    .pc-fan-blade:nth-child(4) { transform: rotate(270deg) translate(4px, 0); }
+
+    @keyframes fanSpin { to { transform: rotate(360deg); } }
+
+    /* Power LED blink */
+    .pc-led {
+      position: absolute;
+      left: 18px; bottom: 18px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #e02020;
+      box-shadow: 0 0 6px #e02020;
+      animation: ledBlink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes ledBlink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.2; }
+    }
+
+    /* Monitor on the right */
+    .pc-monitor-wrap {
+      position: absolute;
+      right: 2%;
+      top: 10px;
+      width: 70px;
+    }
+
+    .pc-monitor {
+      width: 70px; height: 48px;
+      background: #0a0000;
+      border: 1.5px solid #3a1010;
+      border-radius: 4px 4px 0 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Scan-line animation on screen */
+    .pc-screen-content {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg,
+        transparent 0%, rgba(224,32,32,0.06) 50%, transparent 100%);
+      background-size: 100% 8px;
+      animation: scanlines 1.8s linear infinite;
+    }
+
+    @keyframes scanlines {
+      from { background-position: 0 0; }
+      to   { background-position: 0 100px; }
+    }
+
+    .pc-screen-dot {
+      position: absolute;
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--ticker-fire2);
+      box-shadow: 0 0 4px var(--ticker-fire2);
+      bottom: 6px; right: 6px;
+      animation: ledBlink 2s ease-in-out infinite;
+    }
+
+    .pc-monitor-stand {
+      width: 14px; height: 8px;
+      background: #1a0808;
+      border: 1px solid #3a1010;
+      margin: 0 auto;
+      border-radius: 0 0 2px 2px;
+    }
+
+    .pc-monitor-base {
+      width: 30px; height: 3px;
+      background: #1a0808;
+      border: 1px solid #3a1010;
+      margin: 0 auto;
+      border-radius: 2px;
+    }
+
+    /* Keyboard hint at bottom */
+    .pc-keyboard-wrap {
+      position: absolute;
+      left: 2%;
+      bottom: 2px;
+      display: flex; gap: 2px; flex-wrap: wrap;
+      width: 60px;
+    }
+
+    .pc-key {
+      width: 6px; height: 5px;
+      background: #1a0808;
+      border: 1px solid #3a1010;
+      border-radius: 1px;
+      animation: keyGlow 3s ease-in-out infinite;
+    }
+
+    .pc-key:nth-child(odd)  { animation-delay: 0.3s; }
+    .pc-key:nth-child(3n)   { animation-delay: 0.8s; }
+
+    @keyframes keyGlow {
+      0%,100% { border-color: #3a1010; }
+      50%      { border-color: rgba(224,32,32,0.6); box-shadow: 0 0 3px rgba(224,32,32,0.4); }
+    }
+
+    /* ── Deselect instruction in builder ── */
+    .deselect-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(224,32,32,0.06);
+      border: 1px solid rgba(224,32,32,0.18);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: #e02020;
+      margin-top: 8px;
+    }
+
+    /* ── Back button already in HTML/app.js ── */
+    .back-btn {
+      background: transparent;
+      border: 1px solid var(--border-hover);
+      color: var(--text-muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.5rem 1.1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      letter-spacing: 0.02em;
+    }
+
+    .back-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 12px rgba(224,32,32,0.2);
+    }
+
+    /* ── Selected card in red theme ── */
+    .option-card.selected {
+      border-color: var(--accent) !important;
+      background: rgba(224,32,32,0.06) !important;
+      box-shadow: 0 0 16px rgba(224,32,32,0.18) !important;
+    }
+
+    /* Deselect × badge on selected cards */
+    .option-card.selected::after {
+      content: '✕ click to remove';
+      position: absolute;
+      top: 6px; right: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      color: var(--accent);
+      opacity: 0.7;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Loading screen accent ── */
+    .spinner-ring { border-color: rgba(224,32,32,0.15) !important; }
+    .spinner-ring.r1 { border-top-color: var(--accent) !important; }
+    .spinner-ring.r2 { border-right-color: rgba(224,32,32,0.5) !important; }
+    .lstep.active { color: var(--accent) !important; border-left-color: var(--accent) !important; }
+    .lstep.done   { color: #6b4040 !important; border-left-color: #3a1010 !important; }
+
+    /* ── CTA button red ── */
+    .cta-btn { background: var(--accent) !important; color: #fff !important; }
+    .cta-btn:hover { background: var(--accent-dark) !important; box-shadow: 0 6px 32px rgba(224,32,32,0.45) !important; }
+
+    .save-btn:not(:disabled) { background: var(--accent) !important; color: #fff !important; }
+    .save-btn:not(:disabled):hover { background: var(--accent-dark) !important; box-shadow: 0 6px 28px rgba(224,32,32,0.4) !important; }
+
+    /* ── Purpose buttons active red ── */
+    .purpose-btn.active {
+      background: var(--accent-glow) !important;
+      border-color: var(--accent) !important;
+      color: var(--accent) !important;
+      box-shadow: 0 0 16px rgba(224,32,32,0.2) !important;
+    }
+
+    /* ── Completeness bar red ── */
+    .completeness-bar div { background: var(--accent) !important; }
+
+    /* ── Brand mark pulse red ── */
+    @keyframes hexPulse {
+      0%,100% { text-shadow: 0 0 0px var(--accent); }
+      50%      { text-shadow: 0 0 18px rgba(224,32,32,0.6); }
+    }
+  </style>
 </head>
 <body>
 
@@ -64,6 +561,27 @@
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════════
+       HOT ITEMS TICKER BANNER
+       Rendered empty here — app.js populates it via
+       the Gemini web-search API call on page load.
+  ════════════════════════════════════════════════ -->
+  <div id="hot-ticker-wrap">
+    <div class="ticker-label">
+      <span class="fire-emoji">🔥</span>
+      HOT TODAY
+    </div>
+    <div class="ticker-track">
+      <!-- JS injects .ticker-inner here -->
+      <div class="ticker-inner" id="ticker-inner">
+        <!-- Placeholder items shown until API responds -->
+        <span class="ticker-item"><span class="ticker-hot">TRENDING</span> <span class="ticker-name">RTX 5090</span> · Fetching live data...</span>
+      </div>
+    </div>
+    <div class="edge-fade-left"></div>
+    <div class="edge-fade-right"></div>
+  </div>
+
   <!-- ONBOARDING SCREEN -->
   <div id="screen-onboarding" class="screen active">
     <header class="site-header">
@@ -76,6 +594,58 @@
         <h1 class="hero-text">Build your<br/><em>perfect PC.</em></h1>
         <p class="subtitle">Enter your budget. We find the best real-world components — new &amp; used — priced for your region.</p>
       </div>
+
+      <!-- ═══════════════════════════════
+           ANIMATED PC SCENE
+      ════════════════════════════════ -->
+      <div class="pc-hero-scene" aria-hidden="true">
+        <!-- Floating brand chips -->
+        <div class="brand-float bf-intel">INTEL</div>
+        <div class="brand-float bf-amd">AMD</div>
+        <div class="brand-float bf-nvidia">NVIDIA</div>
+        <div class="brand-float bf-rog">ROG</div>
+        <div class="brand-float bf-corsair">CORSAIR</div>
+        <div class="brand-float bf-msi">MSI</div>
+        <div class="brand-float bf-gigabyte">GIGABYTE</div>
+        <div class="brand-float bf-samsung">SAMSUNG</div>
+        <div class="brand-float bf-be_quiet">be quiet!</div>
+        <div class="brand-float bf-seagate">SEAGATE</div>
+
+        <!-- PC Tower -->
+        <div class="pc-tower-wrap">
+          <div class="pc-tower">
+            <div class="pc-rgb-strip"></div>
+            <div class="pc-glass"></div>
+            <div class="pc-fan">
+              <div class="pc-fan-blade"></div>
+              <div class="pc-fan-blade"></div>
+              <div class="pc-fan-blade"></div>
+              <div class="pc-fan-blade"></div>
+            </div>
+            <div class="pc-led"></div>
+          </div>
+        </div>
+
+        <!-- Monitor -->
+        <div class="pc-monitor-wrap">
+          <div class="pc-monitor">
+            <div class="pc-screen-content"></div>
+            <div class="pc-screen-dot"></div>
+          </div>
+          <div class="pc-monitor-stand"></div>
+          <div class="pc-monitor-base"></div>
+        </div>
+
+        <!-- Mini keyboard -->
+        <div class="pc-keyboard-wrap">
+          <!-- 20 keys -->
+          <div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div>
+          <div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div>
+          <div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div>
+          <div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div><div class="pc-key"></div>
+        </div>
+      </div>
+      <!-- /pc-hero-scene -->
 
       <div class="form-block">
         <div class="field">
@@ -159,6 +729,7 @@
         <span id="header-purpose" class="meta-tag"></span>
         <span id="header-budget" class="meta-budget"></span>
       </div>
+      <!-- BACK BUTTON -->
       <button id="back-btn" class="back-btn">← New Build</button>
     </header>
 
@@ -166,7 +737,13 @@
       <div class="builder-left">
         <div class="section-intro scroll-reveal">
           <h2>Select your components</h2>
-          <p>Choose one from each category — including peripherals for a complete battle-station. <span class="tag-new">New</span> = retail box. <span class="tag-used">Used</span> = marketplace — verify health above 85% before buying.</p>
+          <p>
+            Choose one from each category — including peripherals for a complete battle-station.
+            <span class="tag-new">New</span> = retail box.
+            <span class="tag-used">Used</span> = marketplace — verify health above 85% before buying.
+          </p>
+          <!-- DESELECT HINT -->
+          <span class="deselect-hint">💡 Click a selected component again to deselect it</span>
         </div>
         <div id="components-container"></div>
       </div>

@@ -1,5 +1,4 @@
-
-/* /* ============================================
+/* ============================================
    FORGE — AI PC Builder  v3.0
    Full-screen, animated, receipt-ready
    ============================================ */
@@ -1310,7 +1309,7 @@ input[type=number]::-webkit-outer-spin-button { opacity: 0; }
   body > *:not(#receipt-modal) { display: none !important; }
   #receipt-modal { position: static !important; background: none !important; backdrop-filter: none !important; }
   .receipt-actions { display: none !important; }
-  .receipt-card { box-shadow: none !important; max-height: none !impnotortant; }
+  .receipt-card { box-shadow: none !important; max-height: none !important; }
 }
 
 /* ── RESPONSIVE ────────────────────────────── */
@@ -1338,4 +1337,4 @@ input[type=number]::-webkit-outer-spin-button { opacity: 0; }
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border-hover); } 
+::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
