@@ -4,53 +4,99 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FORGE — AI PC Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
+  <!-- Animated background -->
   <canvas id="particle-canvas"></canvas>
   <div id="cursor-glow"></div>
 
+  <!-- Floating PC icons layer -->
+  <div id="floating-icons" aria-hidden="true"></div>
+
+  <!-- ===== SCREEN: ONBOARDING ===== -->
   <div id="screen-onboarding" class="screen active">
-    <h1>FORGE</h1>
-    <p class="tagline">Next-Generation AI Rig Assembly Configurator</p>
-    
-    <div class="input-group">
-      <label>Select Market Region</label>
-      <select id="region-select">
-        <option value="PK" selected>Pakistan (PKR)</option>
-        <option value="US">United States (USD)</option>
-        <option value="GB">United Kingdom (GBP)</option>
-        <option value="EU">Eurozone (EUR)</option>
-        <option value="IN">India (INR)</option>
-      </select>
-    </div>
+    <div class="onboarding-inner">
+      <div class="forge-hero">
+        <div class="forge-logo-wrap">
+          <div class="forge-logo-bg"></div>
+          <h1 class="forge-title">FORGE</h1>
+          <div class="forge-subtitle-line">
+            <span class="forge-line-left"></span>
+            <span class="forge-eyebrow">AI PC BUILDER</span>
+            <span class="forge-line-right"></span>
+          </div>
+        </div>
+        <p class="tagline">Next-Generation Rig Assembly Configurator</p>
+      </div>
 
-    <div class="input-group">
-      <label>Target Infrastructure Budget</label>
-      <div class="currency-input-wrapper">
-        <span id="budget-symbol">₨</span>
-        <input type="number" id="budget-input" value="150000" placeholder="Enter amount">
-        <span id="currency-label">PKR</span>
+      <div class="config-card">
+        <div class="input-group">
+          <label>Market Region</label>
+          <div class="select-wrapper">
+            <select id="region-select">
+              <option value="PK" selected>🇵🇰 Pakistan (PKR)</option>
+              <option value="US">🇺🇸 United States (USD)</option>
+              <option value="GB">🇬🇧 United Kingdom (GBP)</option>
+              <option value="EU">🇪🇺 Eurozone (EUR)</option>
+              <option value="IN">🇮🇳 India (INR)</option>
+            </select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Total System Budget <span class="label-hint">(full build including all parts)</span></label>
+          <div class="currency-input-wrapper">
+            <span id="budget-symbol">₨</span>
+            <input type="number" id="budget-input" value="150000">
+            <span id="currency-label">PKR</span>
+          </div>
+          <div class="budget-note" id="budget-note">
+            <span class="budget-note-icon">💡</span>
+            <span id="budget-note-text">Budget is distributed across all components — GPU, CPU, RAM, Storage, PSU & more.</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Primary Use Case</label>
+          <div class="purpose-grid">
+            <button class="purpose-btn active" data-purpose="gaming">
+              <span class="purpose-icon">⚡</span>
+              <span class="purpose-label">High FPS Gaming</span>
+            </button>
+            <button class="purpose-btn" data-purpose="creative">
+              <span class="purpose-icon">🎬</span>
+              <span class="purpose-label">Rendering & Production</span>
+            </button>
+            <button class="purpose-btn" data-purpose="workstation">
+              <span class="purpose-icon">🤖</span>
+              <span class="purpose-label">AI & Engineering</span>
+            </button>
+          </div>
+        </div>
+
+        <button id="start-btn" class="primary-btn">
+          <span class="btn-text">Build My Rig</span>
+          <span class="btn-icon">→</span>
+          <div class="btn-ripple"></div>
+        </button>
       </div>
     </div>
-
-    <div class="input-group">
-      <label>Primary Operational Intent</label>
-      <div class="purpose-grid">
-        <button class="purpose-btn active" data-purpose="gaming">⚡ High FPS Gaming</button>
-        <button class="purpose-btn" data-purpose="creative">🎬 Rendering & Production</button>
-        <button class="purpose-btn" data-purpose="workstation">🤖 AI Research & Engineering</button>
-      </div>
-    </div>
-
-    <button id="start-btn" class="primary-btn">Find My Components</button>
   </div>
 
+  <!-- ===== SCREEN: LOADING ===== -->
   <div id="screen-loading" class="screen">
     <div class="loader-box">
-      <div class="spinner"></div>
-      <h3>Assembling Matrix Catalogs...</h3>
+      <div class="forge-loader-logo">FORGE</div>
+      <div class="spinner-ring">
+        <div class="spinner-inner"></div>
+      </div>
+      <h3>Optimising Your Build...</h3>
+      <p class="loader-subtext">Distributing budget across all components</p>
       <div class="loading-steps">
         <p id="ls1">Analysing budget range</p>
         <p id="ls2">Fetching component data</p>
@@ -60,43 +106,79 @@
     </div>
   </div>
 
+  <!-- ===== SCREEN: BUILDER ===== -->
   <div id="screen-builder" class="screen">
+    <div class="builder-topbar">
+      <div class="builder-topbar-inner">
+        <div class="topbar-logo">FORGE</div>
+        <div class="topbar-meta">
+          <span id="topbar-budget-label" class="topbar-budget"></span>
+          <span id="topbar-purpose-label" class="topbar-purpose"></span>
+        </div>
+        <button id="back-btn" class="nav-btn">
+          <span>←</span> Reconfigure
+        </button>
+      </div>
+    </div>
+
     <div class="builder-layout">
-      
       <div class="builder-main">
         <div class="builder-header">
-          <button id="back-btn" class="nav-btn">← Modify Configurations</button>
-          <h2>Forge Hardware Grid</h2>
-          <p class="subtitle">Select your desired equipment line item for each infrastructure asset category below.</p>
+          <h2>Select Your Components</h2>
+          <p class="builder-header-sub">Prices are optimised for your total budget of <strong id="header-budget-display"></strong></p>
         </div>
         <div id="categories-container"></div>
       </div>
 
       <div class="builder-sidebar">
-        <h3>Live Specification Rig Summary</h3>
+        <div class="sidebar-header">
+          <h3>Your Build</h3>
+          <div class="sidebar-budget-bar">
+            <div class="bar-label">
+              <span>Budget Used</span>
+              <span id="sidebar-total-display">₨ 0</span>
+            </div>
+            <div class="budget-progress-track">
+              <div id="budget-progress-bar" class="budget-progress-fill"></div>
+            </div>
+            <div class="bar-sublabel">
+              <span id="sidebar-budget-of">of ₨ 150,000</span>
+              <span id="sidebar-budget-pct">0%</span>
+            </div>
+          </div>
+        </div>
         <div id="summary-list"></div>
-        <button id="save-btn" class="primary-btn" disabled>Compile Configuration Receipt</button>
+        <button id="save-btn" class="primary-btn" disabled>
+          <span class="btn-text">View Build Summary</span>
+          <span class="btn-icon">📋</span>
+        </button>
       </div>
-
     </div>
   </div>
 
+  <!-- ===== MODALS ===== -->
   <div id="budget-modal" class="modal hidden">
     <div class="modal-content">
-      <h4>Allocation Alert</h4>
-      <p>The input limit falls below baseline engineering viability thresholds. Minimum required distribution is <span id="modal-min-amount"></span>.</p>
-      <button id="modal-close-btn" class="secondary-btn">Adjust Allocation</button>
+      <div class="modal-icon">⚠️</div>
+      <h4>Budget Too Low</h4>
+      <p>Minimum required for a functional build is <strong><span id="modal-min-amount"></span></strong>.</p>
+      <button id="modal-close-btn" class="secondary-btn">Adjust Budget</button>
     </div>
   </div>
 
   <div id="receipt-modal" class="modal hidden">
     <div class="modal-content receipt-sheet">
-      <h3>Rig Deployment Bill of Materials</h3>
+      <div class="receipt-header">
+        <div class="receipt-logo">FORGE</div>
+        <h3>Build Summary</h3>
+      </div>
       <hr>
       <div id="receipt-items"></div>
       <hr>
       <div id="receipt-totals"></div>
-      <button id="receipt-close-btn" class="primary-btn" style="margin-top:20px">Finalize Design</button>
+      <div class="receipt-actions">
+        <button id="receipt-close-btn" class="primary-btn">Done</button>
+      </div>
     </div>
   </div>
 
