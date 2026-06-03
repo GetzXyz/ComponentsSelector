@@ -1,3 +1,4 @@
+cat > /home/claude/forge_output/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,11 +11,8 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Animated background -->
   <canvas id="particle-canvas"></canvas>
   <div id="cursor-glow"></div>
-
-  <!-- Floating PC icons layer -->
   <div id="floating-icons" aria-hidden="true"></div>
 
   <!-- ===== SCREEN: ONBOARDING ===== -->
@@ -34,6 +32,14 @@
       </div>
 
       <div class="config-card">
+
+        <!-- Customer Name -->
+        <div class="input-group">
+          <label>Your Name <span class="label-hint">(for bill generation only — not stored)</span></label>
+          <input type="text" id="customer-name" placeholder="e.g. Ahmed Khan" autocomplete="off" maxlength="60">
+        </div>
+
+        <!-- Region -->
         <div class="input-group">
           <label>Market Region</label>
           <div class="select-wrapper">
@@ -48,19 +54,21 @@
           </div>
         </div>
 
+        <!-- Budget -->
         <div class="input-group">
-          <label>Total System Budget <span class="label-hint">(full build including all parts)</span></label>
+          <label>Total System Budget <span class="label-hint">(entire build — all parts)</span></label>
           <div class="currency-input-wrapper">
             <span id="budget-symbol">₨</span>
             <input type="number" id="budget-input" value="150000">
             <span id="currency-label">PKR</span>
           </div>
-          <div class="budget-note" id="budget-note">
+          <div class="budget-note">
             <span class="budget-note-icon">💡</span>
-            <span id="budget-note-text">Budget is distributed across all components — GPU, CPU, RAM, Storage, PSU & more.</span>
+            <span id="budget-note-text">Budget is split intelligently — GPU, CPU, RAM, Storage, PSU & more.</span>
           </div>
         </div>
 
+        <!-- Use Case -->
         <div class="input-group">
           <label>Primary Use Case</label>
           <div class="purpose-grid">
@@ -79,6 +87,19 @@
           </div>
         </div>
 
+        <!-- Gemini API Key -->
+        <div class="input-group">
+          <label>Gemini API Key <span class="label-hint">(session-only — never stored)</span></label>
+          <div class="apikey-wrapper">
+            <input type="password" id="api-key-input" placeholder="AIza..." autocomplete="off">
+            <button type="button" id="toggle-key-btn" class="toggle-key-btn" title="Show/hide key">👁</button>
+          </div>
+          <div class="apikey-note">
+            <span>🔒</span>
+            <span>Key is used only this session to call Gemini. Clears on refresh. Without a key, fallback recommendations are used.</span>
+          </div>
+        </div>
+
         <button id="start-btn" class="primary-btn">
           <span class="btn-text">Build My Rig</span>
           <span class="btn-icon">→</span>
@@ -92,14 +113,12 @@
   <div id="screen-loading" class="screen">
     <div class="loader-box">
       <div class="forge-loader-logo">FORGE</div>
-      <div class="spinner-ring">
-        <div class="spinner-inner"></div>
-      </div>
-      <h3>Optimising Your Build...</h3>
-      <p class="loader-subtext">Distributing budget across all components</p>
+      <div class="spinner-ring"><div class="spinner-inner"></div></div>
+      <h3 id="loading-headline">Consulting AI...</h3>
+      <p class="loader-subtext" id="loading-subtext">Fetching live Gemini recommendations</p>
       <div class="loading-steps">
         <p id="ls1">Analysing budget range</p>
-        <p id="ls2">Fetching component data</p>
+        <p id="ls2">Querying Gemini AI</p>
         <p id="ls3">Matching compatibility</p>
         <p id="ls4">Calculating value tiers</p>
       </div>
@@ -114,10 +133,9 @@
         <div class="topbar-meta">
           <span id="topbar-budget-label" class="topbar-budget"></span>
           <span id="topbar-purpose-label" class="topbar-purpose"></span>
+          <span id="topbar-ai-badge" class="topbar-ai hidden">✦ AI Powered</span>
         </div>
-        <button id="back-btn" class="nav-btn">
-          <span>←</span> Reconfigure
-        </button>
+        <button id="back-btn" class="nav-btn"><span>←</span> Reconfigure</button>
       </div>
     </div>
 
@@ -125,7 +143,7 @@
       <div class="builder-main">
         <div class="builder-header">
           <h2>Select Your Components</h2>
-          <p class="builder-header-sub">Prices are optimised for your total budget of <strong id="header-budget-display"></strong></p>
+          <p class="builder-header-sub">Prices optimised for total budget of <strong id="header-budget-display"></strong></p>
         </div>
         <div id="categories-container"></div>
       </div>
@@ -149,14 +167,14 @@
         </div>
         <div id="summary-list"></div>
         <button id="save-btn" class="primary-btn" disabled>
-          <span class="btn-text">View Build Summary</span>
+          <span class="btn-text">Generate Invoice</span>
           <span class="btn-icon">📋</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ===== MODALS ===== -->
+  <!-- ===== MODAL: BUDGET TOO LOW ===== -->
   <div id="budget-modal" class="modal hidden">
     <div class="modal-content">
       <div class="modal-icon">⚠️</div>
@@ -166,18 +184,58 @@
     </div>
   </div>
 
+  <!-- ===== MODAL: RECEIPT / INVOICE ===== -->
   <div id="receipt-modal" class="modal hidden">
-    <div class="modal-content receipt-sheet">
-      <div class="receipt-header">
-        <div class="receipt-logo">FORGE</div>
-        <h3>Build Summary</h3>
+    <div class="modal-content receipt-sheet" id="receipt-printable">
+
+      <!-- Invoice Header -->
+      <div class="invoice-header">
+        <div class="invoice-logo">FORGE</div>
+        <div class="invoice-tagline">AI PC Build Invoice</div>
       </div>
-      <hr>
+
+      <!-- Customer Info -->
+      <div class="invoice-meta">
+        <div class="invoice-meta-row">
+          <span class="imeta-label">Customer</span>
+          <span class="imeta-val" id="invoice-customer">—</span>
+        </div>
+        <div class="invoice-meta-row">
+          <span class="imeta-label">Date &amp; Time</span>
+          <span class="imeta-val" id="invoice-datetime">—</span>
+        </div>
+        <div class="invoice-meta-row">
+          <span class="imeta-label">Currency</span>
+          <span class="imeta-val" id="invoice-currency">—</span>
+        </div>
+        <div class="invoice-meta-row">
+          <span class="imeta-label">Use Case</span>
+          <span class="imeta-val" id="invoice-purpose">—</span>
+        </div>
+      </div>
+
+      <hr class="invoice-divider">
+
+      <!-- Component table header -->
+      <div class="invoice-table-head">
+        <span>Component</span>
+        <span>Product</span>
+        <span>Price</span>
+      </div>
+
       <div id="receipt-items"></div>
-      <hr>
+
+      <hr class="invoice-divider">
       <div id="receipt-totals"></div>
-      <div class="receipt-actions">
-        <button id="receipt-close-btn" class="primary-btn">Done</button>
+
+      <!-- Actions (hidden when printing) -->
+      <div class="receipt-actions no-print">
+        <button id="print-btn" class="secondary-btn">
+          <span>🖨️</span> Print Invoice
+        </button>
+        <button id="receipt-close-btn" class="primary-btn">
+          Done
+        </button>
       </div>
     </div>
   </div>
