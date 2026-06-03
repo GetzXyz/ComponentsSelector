@@ -1,245 +1,217 @@
-cat > /home/claude/forge_output/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FORGE — AI PC Builder</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORGE — AI PC Builder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <canvas id="particle-canvas"></canvas>
-  <div id="cursor-glow"></div>
-  <div id="floating-icons" aria-hidden="true"></div>
+    <!-- Background Layers -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <div class="grid-overlay"></div>
+    <canvas id="particleCanvas"></canvas>
 
-  <!-- ===== SCREEN: ONBOARDING ===== -->
-  <div id="screen-onboarding" class="screen active">
-    <div class="onboarding-inner">
-      <div class="forge-hero">
-        <div class="forge-logo-wrap">
-          <div class="forge-logo-bg"></div>
-          <h1 class="forge-title">FORGE</h1>
-          <div class="forge-subtitle-line">
-            <span class="forge-line-left"></span>
-            <span class="forge-eyebrow">AI PC BUILDER</span>
-            <span class="forge-line-right"></span>
-          </div>
-        </div>
-        <p class="tagline">Next-Generation Rig Assembly Configurator</p>
-      </div>
+    <div class="app-container">
 
-      <div class="config-card">
-
-        <!-- Customer Name -->
-        <div class="input-group">
-          <label>Your Name <span class="label-hint">(for bill generation only — not stored)</span></label>
-          <input type="text" id="customer-name" placeholder="e.g. Ahmed Khan" autocomplete="off" maxlength="60">
-        </div>
-
-        <!-- Region -->
-        <div class="input-group">
-          <label>Market Region</label>
-          <div class="select-wrapper">
-            <select id="region-select">
-              <option value="PK" selected>🇵🇰 Pakistan (PKR)</option>
-              <option value="US">🇺🇸 United States (USD)</option>
-              <option value="GB">🇬🇧 United Kingdom (GBP)</option>
-              <option value="EU">🇪🇺 Eurozone (EUR)</option>
-              <option value="IN">🇮🇳 India (INR)</option>
-            </select>
-            <span class="select-arrow">▾</span>
-          </div>
-        </div>
-
-        <!-- Budget -->
-        <div class="input-group">
-          <label>Total System Budget <span class="label-hint">(entire build — all parts)</span></label>
-          <div class="currency-input-wrapper">
-            <span id="budget-symbol">₨</span>
-            <input type="number" id="budget-input" value="150000">
-            <span id="currency-label">PKR</span>
-          </div>
-          <div class="budget-note">
-            <span class="budget-note-icon">💡</span>
-            <span id="budget-note-text">Budget is split intelligently — GPU, CPU, RAM, Storage, PSU & more.</span>
-          </div>
-        </div>
-
-        <!-- Use Case -->
-        <div class="input-group">
-          <label>Primary Use Case</label>
-          <div class="purpose-grid">
-            <button class="purpose-btn active" data-purpose="gaming">
-              <span class="purpose-icon">⚡</span>
-              <span class="purpose-label">High FPS Gaming</span>
-            </button>
-            <button class="purpose-btn" data-purpose="creative">
-              <span class="purpose-icon">🎬</span>
-              <span class="purpose-label">Rendering & Production</span>
-            </button>
-            <button class="purpose-btn" data-purpose="workstation">
-              <span class="purpose-icon">🤖</span>
-              <span class="purpose-label">AI & Engineering</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Gemini API Key -->
-        <div class="input-group">
-          <label>Gemini API Key <span class="label-hint">(session-only — never stored)</span></label>
-          <div class="apikey-wrapper">
-            <input type="password" id="api-key-input" placeholder="AIza..." autocomplete="off">
-            <button type="button" id="toggle-key-btn" class="toggle-key-btn" title="Show/hide key">👁</button>
-          </div>
-          <div class="apikey-note">
-            <span>🔒</span>
-            <span>Key is used only this session to call Gemini. Clears on refresh. Without a key, fallback recommendations are used.</span>
-          </div>
-        </div>
-
-        <button id="start-btn" class="primary-btn">
-          <span class="btn-text">Build My Rig</span>
-          <span class="btn-icon">→</span>
-          <div class="btn-ripple"></div>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== SCREEN: LOADING ===== -->
-  <div id="screen-loading" class="screen">
-    <div class="loader-box">
-      <div class="forge-loader-logo">FORGE</div>
-      <div class="spinner-ring"><div class="spinner-inner"></div></div>
-      <h3 id="loading-headline">Consulting AI...</h3>
-      <p class="loader-subtext" id="loading-subtext">Fetching live Gemini recommendations</p>
-      <div class="loading-steps">
-        <p id="ls1">Analysing budget range</p>
-        <p id="ls2">Querying Gemini AI</p>
-        <p id="ls3">Matching compatibility</p>
-        <p id="ls4">Calculating value tiers</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== SCREEN: BUILDER ===== -->
-  <div id="screen-builder" class="screen">
-    <div class="builder-topbar">
-      <div class="builder-topbar-inner">
-        <div class="topbar-logo">FORGE</div>
-        <div class="topbar-meta">
-          <span id="topbar-budget-label" class="topbar-budget"></span>
-          <span id="topbar-purpose-label" class="topbar-purpose"></span>
-          <span id="topbar-ai-badge" class="topbar-ai hidden">✦ AI Powered</span>
-        </div>
-        <button id="back-btn" class="nav-btn"><span>←</span> Reconfigure</button>
-      </div>
-    </div>
-
-    <div class="builder-layout">
-      <div class="builder-main">
-        <div class="builder-header">
-          <h2>Select Your Components</h2>
-          <p class="builder-header-sub">Prices optimised for total budget of <strong id="header-budget-display"></strong></p>
-        </div>
-        <div id="categories-container"></div>
-      </div>
-
-      <div class="builder-sidebar">
-        <div class="sidebar-header">
-          <h3>Your Build</h3>
-          <div class="sidebar-budget-bar">
-            <div class="bar-label">
-              <span>Budget Used</span>
-              <span id="sidebar-total-display">₨ 0</span>
+        <!-- Floating Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="logo-icon">⚡</span>
+                <h1 class="logo-text">FORGE<span class="accent-dot">.</span></h1>
             </div>
-            <div class="budget-progress-track">
-              <div id="budget-progress-bar" class="budget-progress-fill"></div>
+            <div class="system-status">
+                <span class="status-dot pulsing"></span>
+                <span class="status-text">SYSTEMS ONLINE</span>
             </div>
-            <div class="bar-sublabel">
-              <span id="sidebar-budget-of">of ₨ 150,000</span>
-              <span id="sidebar-budget-pct">0%</span>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="workspace">
+
+            <!-- VIEW 1: CONFIGURATION FORM -->
+            <section id="onboardingView" class="view active">
+                <div class="welcome-hero">
+                    <h2>ENGINEER YOUR ULTIMATE RIG</h2>
+                    <p>Input your parameters. Let our artificial intelligence forge the perfect silicon blueprint custom-tailored to your exact operational thresholds.</p>
+                </div>
+
+                <form id="configForm" class="forge-form" novalidate>
+                    <!-- Budget Section -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span class="sec-num">01</span>
+                            <h3>FINANCIAL CAP</h3>
+                        </div>
+                        <div class="budget-input-wrapper">
+                            <span class="currency-indicator">PKR</span>
+                            <input type="number" id="budgetInput" required min="30000" max="5000000" placeholder="e.g., 180000" step="5000" autocomplete="off">
+                        </div>
+                        <p class="field-hint">Minimum threshold: 30,000 PKR. Recommended for modern computing: 80,000+ PKR.</p>
+                        <p class="field-error" id="budgetError"></p>
+                    </div>
+
+                    <!-- Primary Purpose -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <span class="sec-num">02</span>
+                            <h3>OPERATIONAL PROFILE</h3>
+                        </div>
+                        <div class="options-grid card-selector">
+                            <label class="selectable-card active">
+                                <input type="radio" name="purpose" value="gaming" checked>
+                                <div class="card-content">
+                                    <div class="card-icon">🎮</div>
+                                    <h4>GAMING</h4>
+                                    <p>Prioritizes high frame rates, graphical fidelity, and GPU thermal headroom.</p>
+                                </div>
+                            </label>
+
+                            <label class="selectable-card">
+                                <input type="radio" name="purpose" value="editing">
+                                <div class="card-content">
+                                    <div class="card-icon">🎬</div>
+                                    <h4>CREATIVE WORK</h4>
+                                    <p>Optimized for multi-core rendering, heavy timeline scrubbing, and vast RAM pools.</p>
+                                </div>
+                            </label>
+
+                            <label class="selectable-card">
+                                <input type="radio" name="purpose" value="coding">
+                                <div class="card-content">
+                                    <div class="card-icon">💻</div>
+                                    <h4>DEVELOPMENT</h4>
+                                    <p>Tailored for rapid compilation speeds, container clustering, and robust multitasking.</p>
+                                </div>
+                            </label>
+
+                            <label class="selectable-card">
+                                <input type="radio" name="purpose" value="office">
+                                <div class="card-content">
+                                    <div class="card-icon">💼</div>
+                                    <h4>OFFICE / STUDY</h4>
+                                    <p>Cost-efficient build maximizing energy efficiency, snappiness, and general utility.</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="forge-submit-btn" id="submitBtn">
+                        <span class="btn-text">INITIALIZE FORGE SEQUENCE</span>
+                        <span class="btn-glitch-effect"></span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- VIEW 2: LOADING CORE -->
+            <section id="loadingView" class="view">
+                <div class="matrix-loader-container">
+                    <div class="cyber-spinner"></div>
+                    <div class="matrix-terminal">
+                        <div class="terminal-line" data-delay="0">>> INITIALIZING NEURAL ENGINE CONNECTION...</div>
+                        <div class="terminal-line" data-delay="1000">>> PARSING RUNTIME PARAMETERS AND THERMAL BOUNDARIES...</div>
+                        <div class="terminal-line" data-delay="2200">>> QUERYING SILICON TIERS AGAINST LIVE METRICS...</div>
+                        <div class="terminal-line" data-delay="3500">>> ALLOCATING HARDWARE COEFFICIENTS AND OVERCLOCK BUDGETS...</div>
+                        <div class="terminal-line" data-delay="4800">>> INJECTING RE-ENTRY SAFEGUARDS...</div>
+                        <div class="terminal-line" data-delay="5500">>> BLUEPRINT ARCHITECTURE FINALIZED. RENDERING MATRIX...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW 3: RESULTS PLATFORM -->
+            <section id="resultsView" class="view">
+                <!-- Top Actions Bar -->
+                <div class="results-actions-bar">
+                    <button id="backToConfigBtn" class="action-secondary-btn">
+                        ← MODIFY PARAMETERS
+                    </button>
+                    <button id="openInvoiceBtn" class="action-primary-btn">
+                        📑 GENERATE BILL OF MATERIALS
+                    </button>
+                </div>
+
+                <!-- Split Architecture View -->
+                <div class="results-split-layout">
+                    <!-- Left: Parts Matrix -->
+                    <div class="parts-matrix-column">
+                        <div class="column-title-ribbon">
+                            <h3>COMPOSED HARDWARE MATRIX</h3>
+                        </div>
+                        <div class="components-grid" id="partsContainer">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Right: AI Insights -->
+                    <div class="ai-insights-column">
+                        <div class="column-title-ribbon special-ribbon">
+                            <h3>AI METRIC ARCHITECTURE</h3>
+                        </div>
+
+                        <div class="insights-card">
+                            <h4>STRATEGIC ARCHITECTURE SUMMARY</h4>
+                            <p id="aiSummaryText" class="ai-paragraph">Analyzing configurations...</p>
+                        </div>
+
+                        <div class="insights-card">
+                            <h4>EXPECTED SYSTEM PERFORMANCE</h4>
+                            <p id="aiPerformanceText" class="ai-paragraph">Calculating operational capabilities...</p>
+                        </div>
+
+                        <div class="insights-card">
+                            <h4>FUTURE EXPANSION SCALABILITY</h4>
+                            <p id="aiUpgradeText" class="ai-paragraph">Assessing forward compatibility pathways...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- INVOICE MODAL -->
+    <div class="modal-overlay" id="invoiceModal" role="dialog" aria-modal="true" aria-labelledby="invoiceTitle">
+        <div class="modal-frame receipt-box">
+            <button class="close-modal-btn" id="closeInvoiceBtn" aria-label="Close invoice">×</button>
+
+            <div class="receipt-header">
+                <h2 id="invoiceTitle">FORGE DIGITAL RECEIPT</h2>
+                <p class="receipt-timestamp" id="invoiceTimestamp">DATETIME: --/--/---- --:--</p>
+                <div class="bar-separator">========================================</div>
             </div>
-          </div>
+
+            <div class="receipt-body" id="invoiceItemsContainer">
+                <!-- Dynamically populated -->
+            </div>
+
+            <div class="receipt-footer">
+                <div class="bar-separator">========================================</div>
+                <div class="total-summary-block">
+                    <div class="summary-line">
+                        <span>HARDWARE COMBINED TOTAL:</span>
+                        <span id="invoiceHardwareTotal">0 PKR</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>TECHNICAL ASSEMBLY FEE:</span>
+                        <span id="invoiceAssemblyFee">0 PKR</span>
+                    </div>
+                    <div class="summary-line grand-total-line">
+                        <span>GRAND ESCALATED TOTAL:</span>
+                        <span id="invoiceGrandTotal">0 PKR</span>
+                    </div>
+                </div>
+                <div class="bar-separator">========================================</div>
+                <p class="receipt-footer-tagline">THANK YOU FOR CHOOSING FORGE. SYSTEM BLUEPRINTS EXPORTED SECURELY.</p>
+                <button class="print-receipt-btn" onclick="window.print()">🖨️ SEND TO PHYSICAL PRINTER</button>
+            </div>
         </div>
-        <div id="summary-list"></div>
-        <button id="save-btn" class="primary-btn" disabled>
-          <span class="btn-text">Generate Invoice</span>
-          <span class="btn-icon">📋</span>
-        </button>
-      </div>
     </div>
-  </div>
 
-  <!-- ===== MODAL: BUDGET TOO LOW ===== -->
-  <div id="budget-modal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-icon">⚠️</div>
-      <h4>Budget Too Low</h4>
-      <p>Minimum required for a functional build is <strong><span id="modal-min-amount"></span></strong>.</p>
-      <button id="modal-close-btn" class="secondary-btn">Adjust Budget</button>
-    </div>
-  </div>
-
-  <!-- ===== MODAL: RECEIPT / INVOICE ===== -->
-  <div id="receipt-modal" class="modal hidden">
-    <div class="modal-content receipt-sheet" id="receipt-printable">
-
-      <!-- Invoice Header -->
-      <div class="invoice-header">
-        <div class="invoice-logo">FORGE</div>
-        <div class="invoice-tagline">AI PC Build Invoice</div>
-      </div>
-
-      <!-- Customer Info -->
-      <div class="invoice-meta">
-        <div class="invoice-meta-row">
-          <span class="imeta-label">Customer</span>
-          <span class="imeta-val" id="invoice-customer">—</span>
-        </div>
-        <div class="invoice-meta-row">
-          <span class="imeta-label">Date &amp; Time</span>
-          <span class="imeta-val" id="invoice-datetime">—</span>
-        </div>
-        <div class="invoice-meta-row">
-          <span class="imeta-label">Currency</span>
-          <span class="imeta-val" id="invoice-currency">—</span>
-        </div>
-        <div class="invoice-meta-row">
-          <span class="imeta-label">Use Case</span>
-          <span class="imeta-val" id="invoice-purpose">—</span>
-        </div>
-      </div>
-
-      <hr class="invoice-divider">
-
-      <!-- Component table header -->
-      <div class="invoice-table-head">
-        <span>Component</span>
-        <span>Product</span>
-        <span>Price</span>
-      </div>
-
-      <div id="receipt-items"></div>
-
-      <hr class="invoice-divider">
-      <div id="receipt-totals"></div>
-
-      <!-- Actions (hidden when printing) -->
-      <div class="receipt-actions no-print">
-        <button id="print-btn" class="secondary-btn">
-          <span>🖨️</span> Print Invoice
-        </button>
-        <button id="receipt-close-btn" class="primary-btn">
-          Done
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script src="app.js"></script>
+    <script src="gemini.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

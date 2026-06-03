@@ -1,131 +1,124 @@
-// ═══════════════════════════════════════════════════════
-//  FORGE — Gemini API Handler  v2.0
-//  Route 1: POST /api/gemini     → component recommendations
-//  Route 2: POST /api/hot-items  → trending PC hardware today
-// ═══════════════════════════════════════════════════════
+/**
+ * FORGE — GEMINI INTELLIGENCE DISPATCH MODULE
+ * Isolated API gateway layer consumed by app.js
+ *
+ * ⚠️  SETUP REQUIRED:
+ *     Replace the placeholder below with your real Gemini API key.
+ *     Never commit a live key to version control.
+ *     For production, proxy requests through a backend to protect the key.
+ */
 
-// ── Route 1: Component build (existing) ─────────────────
-export async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).end("Method Not Allowed");
+// ─── CONFIG ──────────────────────────────────────────────────────────────────
 
-  const { prompt } = req.body;
-  if (!prompt) return res.status(400).json({ error: "Missing prompt" });
+const FORGE_GEMINI_MODEL   = "gemini-2.0-flash";
+const FORGE_GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; // <── replace this
 
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: "GEMINI_API_KEY environment variable is not set" });
+const FORGE_GEMINI_ENDPOINT =
+    `https://generativelanguage.googleapis.com/v1beta/models/${FORGE_GEMINI_MODEL}:generateContent?key=${FORGE_GEMINI_API_KEY}`;
 
-  try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: {
-            temperature: 0.2,
-            maxOutputTokens: 8192,
-          },
-        }),
-      }
-    );
+// ─── SYSTEM INSTRUCTIONS ─────────────────────────────────────────────────────
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error("Gemini API error:", data);
-      return res.status(500).json({ error: data });
-    }
-
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    if (!text) return res.status(500).json({ error: "Empty response from Gemini" });
-
-    res.status(200).json({ result: text });
-  } catch (err) {
-    console.error("Handler error:", err);
-    res.status(500).json({ error: err.message });
+const FORGE_SYSTEM_INSTRUCTION = `You are FORGE, an elite hardware optimization algorithm specializing in the Pakistani PC market.
+Your task is to return a strict JSON object with PC components optimized for the given budget and use case.
+All prices must be in PKR and realistic for Pakistani retail market (2024–2025).
+Do NOT output markdown. Do NOT wrap in backticks. Return raw JSON only.
+Output schema (follow EXACTLY, no extra fields):
+{
+  "parts": [
+    { "cat": "CPU",     "name": "Exact Model Name", "price": 45000, "icon": "🔳" },
+    { "cat": "GPU",     "name": "Exact Model Name", "price": 85000, "icon": "🎮" },
+    { "cat": "RAM",     "name": "Exact Model Name", "price": 12000, "icon": "⚡" },
+    { "cat": "Storage", "name": "Exact Model Name", "price": 14000, "icon": "💾" },
+    { "cat": "Chassis", "name": "Exact Model Name", "price":  5000, "icon": "📦" },
+    { "cat": "Power",   "name": "Exact Model Name", "price":  8000, "icon": "🔌" }
+  ],
+  "insights": {
+    "summary":     "2–3 sentences on overall configuration strategy",
+    "performance": "Specific frame rate targets, rendering speeds, or workload capabilities",
+    "upgrades":    "Clear, specific upgrade pathway for the next tier"
   }
 }
-
-export default handler;
-
-// ── Route 2: Hot items today ────────────────────────────
-//
-//  Register this as a separate endpoint in your framework:
-//    Next.js:   /pages/api/hot-items.js  → export default hotItemsHandler
-//    Express:   app.post('/api/hot-items', hotItemsHandler)
-//
-// ───────────────────────────────────────────────────────
-export async function hotItemsHandler(req, res) {
-  if (req.method !== "POST") return res.status(405).end("Method Not Allowed");
-
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: "GEMINI_API_KEY not set" });
-
-  // Prompt: ask Gemini to use its grounding/web-search tool to find
-  // today's hottest PC hardware items and return strict JSON.
-  const prompt = `You are a PC hardware expert. Search the web right now and find the TOP 10 hottest / most-talked-about PC hardware items trending TODAY (${new Date().toISOString().slice(0, 10)}). Include GPUs, CPUs, RAM, monitors, peripherals, and any big new releases.
-
-Return ONLY a JSON array — no markdown, no explanation, no backticks. Schema:
-[
-  { "name": "RTX 5090", "category": "GPU", "badge": "NEW RELEASE", "reason": "Just launched, fastest GPU ever" },
-  ...
-]
-
 Rules:
-- Exactly 10 items
-- badge must be one of: NEW RELEASE | PRICE DROP | BEST SELLER | HOT DEAL | JUST ANNOUNCED
-- Keep "reason" under 8 words
-- Real products only — no hallucinations
-- category must be one of: GPU | CPU | RAM | SSD | Monitor | Keyboard | Mouse | Headset | Cooler | PSU | Case | Motherboard`;
+- Sum of all part prices must be BELOW the stated budget (leave ~5–10% buffer for taxes/shipping)
+- Include 4–7 parts; never duplicate a category
+- Use real, currently-available part names with correct model numbers
+- Choose components that make architectural sense together (matching socket, DDR gen, PCIe gen, etc.)`;
 
-  try {
-    const response = await fetch(
-      // Use gemini-2.0-flash with Google Search grounding for live web data
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
-      {
+// ─── PUBLIC API ───────────────────────────────────────────────────────────────
+
+/**
+ * Calls the Gemini API and returns a parsed blueprint object.
+ * Throws on network error, non-OK HTTP status, or unparseable JSON.
+ *
+ * @param {number} budget   - Total PKR budget entered by user
+ * @param {string} purpose  - One of: gaming | editing | coding | office
+ * @returns {Promise<{parts: Array, insights: {summary, performance, upgrades}}>}
+ */
+async function contactForgeIntelligenceEngine(budget, purpose) {
+    if (!FORGE_GEMINI_API_KEY || FORGE_GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
+        throw new Error("API key not configured. Please set FORGE_GEMINI_API_KEY in gemini.js");
+    }
+
+    const userPrompt =
+        `Generate a complete PC build for a budget of ${budget.toLocaleString()} PKR, ` +
+        `optimized for ${purpose}. ` +
+        `Ensure total component cost stays at least 5% below ${budget.toLocaleString()} PKR. ` +
+        `Use real 2024–2025 Pakistani market prices.`;
+
+    const requestBody = {
+        contents: [
+            { parts: [{ text: userPrompt }] }
+        ],
+        generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.4,
+            topP: 0.9
+        },
+        systemInstruction: {
+            parts: [{ text: FORGE_SYSTEM_INSTRUCTION }]
+        }
+    };
+
+    const response = await fetch(FORGE_GEMINI_ENDPOINT, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          tools: [{ googleSearch: {} }],          // ← enables live web search grounding
-          generationConfig: {
-            temperature: 0.1,                      // very low — we want factual results
-            maxOutputTokens: 2048,
-          },
-        }),
-      }
-    );
+        body: JSON.stringify(requestBody)
+    });
+
+    if (!response.ok) {
+        const errBody = await response.text().catch(() => "");
+        throw new Error(`Gemini API error ${response.status}: ${errBody.slice(0, 200)}`);
+    }
 
     const data = await response.json();
 
-    if (!response.ok) {
-      console.error("Gemini hot-items error:", data);
-      return res.status(500).json({ error: data });
+    // Extract text from Gemini response structure
+    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!rawText) {
+        throw new Error("Gemini returned an empty or malformed response.");
     }
 
-    const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    if (!raw) return res.status(500).json({ error: "Empty response" });
+    // Defensively strip any stray markdown fences
+    const cleanText = rawText
+        .trim()
+        .replace(/^```(?:json)?\s*/i, "")
+        .replace(/\s*```$/,           "")
+        .trim();
 
-    // Strip any accidental ```json fences
-    const clean = raw.replace(/```json|```/gi, "").trim();
-
-    let items;
+    let parsed;
     try {
-      items = JSON.parse(clean);
-    } catch (parseErr) {
-      console.error("JSON parse error:", parseErr, "\nRaw:", clean);
-      return res.status(500).json({ error: "Could not parse hot-items JSON", raw: clean });
+        parsed = JSON.parse(cleanText);
+    } catch (e) {
+        throw new Error(`Failed to parse Gemini JSON: ${e.message}`);
     }
 
-    // Validate shape minimally
-    if (!Array.isArray(items)) {
-      return res.status(500).json({ error: "Expected JSON array", raw: clean });
+    // Basic shape validation before returning
+    if (!Array.isArray(parsed.parts) || parsed.parts.length === 0) {
+        throw new Error("Gemini response missing valid parts array.");
+    }
+    if (!parsed.insights?.summary) {
+        throw new Error("Gemini response missing insights block.");
     }
 
-    return res.status(200).json({ items });
-  } catch (err) {
-    console.error("hotItemsHandler error:", err);
-    return res.status(500).json({ error: err.message });
-  }
+    return parsed;
 }
