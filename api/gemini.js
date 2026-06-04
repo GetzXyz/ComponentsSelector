@@ -7,7 +7,7 @@
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 
-const FORGE_GEMINI_MODEL    = "gemini-2.0-flash";
+const FORGE_GEMINI_MODEL = "gemini-2.0-flash-lite";
 const FORGE_GEMINI_API_KEY = "AQ.Ab8RN6Jqs8M8q2eDFfhcCjyklxfsMCftq6i0oA5vbGEOA8Wajg";
 const FORGE_GEMINI_ENDPOINT =
     `https://generativelanguage.googleapis.com/v1beta/models/${FORGE_GEMINI_MODEL}:generateContent?key=${FORGE_GEMINI_API_KEY}`;

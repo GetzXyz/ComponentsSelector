@@ -531,7 +531,7 @@ async function handleFormSubmit(e){
 // ── Gemini API CALL ──────────────────────────────────────────────────────────
 async function fetchBuildFromGemini(budgetPKR,purpose){
   const API_KEY="AQ.Ab8RN6Jqs8M8q2eDFfhcCjyklxfsMCftq6i0oA5vbGEOA8Wajg";
-  const MODEL="gemini-2.0-flash";
+ const MODEL="gemini-2.0-flash-lite";
   const ENDPOINT=`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
   const tier=getBudgetTier(budgetPKR);
