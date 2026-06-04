@@ -505,27 +505,37 @@ async function handleFormSubmit(e){
   navigateTo("loadingView");
   runTerminal();
 
-  try{
-   STATE.blueprint=await fetchBuildFromGemini(budgetPKR,purpose);
-  }catch(err){
-    console.warn("AI error — using fallback:",err.message);
-    STATE.blueprint=buildFallback(budgetPKR,purpose);
-  }
+ let usedAI = false;
+try {
+  STATE.blueprint = await fetchBuildFromGemini(budgetPKR, purpose);
+  usedAI = true;
+} catch(err) {
+  console.warn("AI error — using fallback:", err.message);
+  console.error("FULL ERROR:", err);
+  STATE.blueprint = buildFallback(budgetPKR, purpose);
+  usedAI = false;
+}
 
-  setTimeout(()=>{
-    renderResults(STATE.blueprint);
-    updateBuildSummary();
-    navigateTo("resultsView");
-    const ind=document.getElementById("aiSourceIndicator");
-    const txt=document.getElementById("aiSourceText");
-    if(ind&&txt){
-      ind.style.display="flex";
-     txt.textContent=STATE.blueprint._aiPowered
-  ?"✓ Fetching data from live web via Gemini AI"
-  :"⚠ Using cached data — Gemini API not connected";
+setTimeout(() => {
+  renderResults(STATE.blueprint);
+  updateBuildSummary();
+  navigateTo("resultsView");
+  const ind = document.getElementById("aiSourceIndicator");
+  const txt = document.getElementById("aiSourceText");
+  if (ind && txt) {
+    ind.style.display = "flex";
+    if (usedAI) {
+      txt.textContent = "✓ Fetching LIVE data via Gemini AI + Google Search";
+      ind.style.borderColor = "rgba(0,230,118,.4)";
+      txt.style.color = "#00e676";
+    } else {
+      txt.textContent = "⚠ Using cached data — Gemini API not connected";
+      ind.style.borderColor = "rgba(255,183,0,.4)";
+      txt.style.color = "#ffb700";
     }
-    if(btn)btn.disabled=false;
-  },6200);
+  }
+  if (btn) btn.disabled = false;
+}, 6200);
 }
 
 // ── Gemini API CALL ──────────────────────────────────────────────────────────
