@@ -1,69 +1,176 @@
 /**
- * FORGE — GEMINI INTELLIGENCE DISPATCH MODULE
- * Isolated API gateway layer consumed by app.js
- *
- * ⚠️  SETUP REQUIRED:
- *     Replace the placeholder below with your real Gemini API key.
- *     Never commit a live key to version control.
- *     For production, proxy requests through a backend to protect the key.
+ * FORGE — GEMINI INTELLIGENCE DISPATCH MODULE v4.0
+ * Live internet search + multi-currency + budget-aware builds + 3 options per category
  */
+
+"use strict";
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 
-const FORGE_GEMINI_MODEL   = "gemini-2.0-flash";
-const FORGE_GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; // <── replace this
+const FORGE_GEMINI_MODEL    = "gemini-2.0-flash";
+const FORGE_GEMINI_API_KEY  = "YOUR_GEMINI_API_KEY_HERE"; // <── replace this
 
 const FORGE_GEMINI_ENDPOINT =
     `https://generativelanguage.googleapis.com/v1beta/models/${FORGE_GEMINI_MODEL}:generateContent?key=${FORGE_GEMINI_API_KEY}`;
 
-// ─── SYSTEM INSTRUCTIONS ─────────────────────────────────────────────────────
+// ─── CURRENCY CONFIG ─────────────────────────────────────────────────────────
 
-const FORGE_SYSTEM_INSTRUCTION = `You are FORGE, an elite hardware optimization algorithm specializing in the Pakistani PC market.
-Your task is to return a strict JSON object with PC components optimized for the given budget and use case.
-All prices must be in PKR and realistic for Pakistani retail market (2024–2025).
-Do NOT output markdown. Do NOT wrap in backticks. Return raw JSON only.
-Output schema (follow EXACTLY, no extra fields):
-{
-  "parts": [
-    { "cat": "CPU",     "name": "Exact Model Name", "price": 45000, "icon": "🔳" },
-    { "cat": "GPU",     "name": "Exact Model Name", "price": 85000, "icon": "🎮" },
-    { "cat": "RAM",     "name": "Exact Model Name", "price": 12000, "icon": "⚡" },
-    { "cat": "Storage", "name": "Exact Model Name", "price": 14000, "icon": "💾" },
-    { "cat": "Chassis", "name": "Exact Model Name", "price":  5000, "icon": "📦" },
-    { "cat": "Power",   "name": "Exact Model Name", "price":  8000, "icon": "🔌" }
-  ],
-  "insights": {
-    "summary":     "2–3 sentences on overall configuration strategy",
-    "performance": "Specific frame rate targets, rendering speeds, or workload capabilities",
-    "upgrades":    "Clear, specific upgrade pathway for the next tier"
-  }
+const CURRENCIES = {
+    PKR: { symbol: "Rs",  name: "Pakistani Rupee",     rate: 1        },
+    USD: { symbol: "$",   name: "US Dollar",           rate: 0.0036   },
+    EUR: { symbol: "€",   name: "Euro",                rate: 0.0033   },
+    GBP: { symbol: "£",   name: "British Pound",       rate: 0.0028   },
+    AED: { symbol: "د.إ", name: "UAE Dirham",          rate: 0.0131   },
+    SAR: { symbol: "ر.س", name: "Saudi Riyal",         rate: 0.0134   },
+    CAD: { symbol: "C$",  name: "Canadian Dollar",     rate: 0.0049   },
+    AUD: { symbol: "A$",  name: "Australian Dollar",   rate: 0.0055   }
+};
+
+let activeCurrency = "PKR";
+
+function setActiveCurrency(code) {
+    if (CURRENCIES[code]) activeCurrency = code;
 }
-Rules:
-- Sum of all part prices must be BELOW the stated budget (leave ~5–10% buffer for taxes/shipping)
-- Include 4–7 parts; never duplicate a category
-- Use real, currently-available part names with correct model numbers
-- Choose components that make architectural sense together (matching socket, DDR gen, PCIe gen, etc.)`;
+
+function getActiveCurrency() {
+    return activeCurrency;
+}
+
+/**
+ * Convert a PKR value to the currently active currency.
+ * @param {number} pkrAmount
+ * @returns {number}
+ */
+function convertFromPKR(pkrAmount) {
+    const rate = CURRENCIES[activeCurrency]?.rate ?? 1;
+    return pkrAmount * rate;
+}
+
+/**
+ * Convert an amount in the active currency back to PKR.
+ * @param {number} amount
+ * @returns {number}
+ */
+function convertToPKR(amount) {
+    const rate = CURRENCIES[activeCurrency]?.rate ?? 1;
+    return Math.round(amount / rate);
+}
+
+/**
+ * Format a PKR value in the current currency.
+ * @param {number} pkrAmount
+ * @returns {string}
+ */
+function formatPrice(pkrAmount) {
+    const cur  = CURRENCIES[activeCurrency];
+    const val  = convertFromPKR(pkrAmount);
+    const opts = { minimumFractionDigits: 0, maximumFractionDigits: 0 };
+    return `${cur.symbol}${val.toLocaleString(undefined, opts)}`;
+}
+
+/**
+ * Format a raw value that is already in the active currency.
+ * @param {number} currencyAmount
+ * @returns {string}
+ */
+function formatRaw(currencyAmount) {
+    const cur  = CURRENCIES[activeCurrency];
+    const opts = { minimumFractionDigits: 0, maximumFractionDigits: 0 };
+    return `${cur.symbol}${currencyAmount.toLocaleString(undefined, opts)}`;
+}
+
+// ─── TIER DETECTION ──────────────────────────────────────────────────────────
+
+function getBudgetTier(budgetPKR) {
+    if (budgetPKR <  80000)  return "entry";
+    if (budgetPKR < 200000)  return "budget";
+    if (budgetPKR < 400000)  return "mid-range";
+    if (budgetPKR < 700000)  return "high-end";
+    if (budgetPKR < 1200000) return "enthusiast";
+    return "flagship";
+}
+
+// ─── SYSTEM INSTRUCTION ──────────────────────────────────────────────────────
+
+function buildSystemInstruction(budgetPKR, purpose) {
+    const tier = getBudgetTier(budgetPKR);
+
+    const allocationGuide = purpose === "gaming"
+        ? `GPU: 35-45%, CPU: 20-25%, Motherboard: 8-12%, RAM: 5-10%, Storage: 5-10%, PSU: 5-8%, Case: 2-5%, remaining for peripherals (monitor, keyboard, mouse, headset).`
+        : `CPU: 30-35%, GPU: 15-20%, Motherboard: 10-12%, RAM: 10-15%, Storage: 8-12%, PSU: 5-8%, Case: 2-5%, remaining for peripherals.`;
+
+    const tierGuidance = {
+        entry:      "Entry-level (low budget): Prioritize strong CPU, GPU, RAM, Storage. Use basic or no case. Skip expensive peripherals entirely if needed. Every rupee counts.",
+        budget:     "Budget build: Solid mid-entry components. AMD or Intel budget CPUs. GTX 1660 / RX 6600 class GPU. Functional case and basic peripherals.",
+        "mid-range":"Mid-range (300k-400k PKR): RTX 3060/3060 Ti / RX 6700 XT class. Ryzen 5 5600X / i5-12600K CPU tier. Good quality case, decent peripherals.",
+        "high-end":  "High-end (400k-700k PKR): RTX 3080 Used / RTX 3080 Ti Used / RTX 4070 New / RTX 5060 New. Ryzen 7 5800X3D / i7-12700K class. Quality peripherals including a 144Hz+ monitor.",
+        enthusiast: "Enthusiast (700k-1.2M PKR): RTX 4080 / RTX 4070 Ti / RTX 5070 class. Ryzen 9 7900X / i9-13900K. Premium peripherals, 1440p 165Hz+ monitor.",
+        flagship:   "Flagship (1.2M+ PKR): RTX 5090 / RTX 4090 / RTX 5080 class. Ryzen 9 9950X / i9-14900K / Threadripper. Ultra-premium everything, 4K 144Hz+ display, premium peripherals."
+    };
+
+    return `You are FORGE, an elite AI PC hardware analyst with access to live internet pricing data.
+Your task: generate a complete PC build recommendation list from REAL, CURRENT Pakistani market prices (2024–2025).
+Budget tier: ${tier.toUpperCase()} — ${tierGuidance[tier]}
+
+BUDGET ALLOCATION for ${purpose}: ${allocationGuide}
+
+CRITICAL RULES:
+1. Return ONLY raw JSON — no markdown, no backticks, no preamble.
+2. Provide EXACTLY 3 options per category (New, Used/Alternative, Best Value).
+3. All prices in PKR based on real Pakistani market rates.
+4. Total of recommended selections must stay within 95% of the budget.
+5. NEVER recommend the same product in all 3 slots.
+6. Scale hardware dramatically with budget — do NOT give same parts for 100k and 500k builds.
+7. For entry budgets under 100k: skip expensive peripherals, maximize core hardware.
+8. Include condition: "New", "Used", or "Refurbished".
+9. For flagship budgets over 1.2M: after core build, allocate remaining to ultra-premium peripherals.
+10. Always include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals.
+
+OUTPUT SCHEMA (strictly follow):
+{
+  "tier": "${tier}",
+  "categories": [
+    {
+      "cat": "CPU",
+      "icon": "🔲",
+      "options": [
+        { "name": "Intel Core i5-13600K", "price": 58000, "condition": "New",  "badge": "RECOMMENDED", "note": "Best gaming IPC" },
+        { "name": "AMD Ryzen 5 5600X Used", "price": 28000, "condition": "Used", "badge": "BUDGET PICK", "note": "Great value" },
+        { "name": "Intel Core i5-12400F", "price": 35000, "condition": "New", "badge": "BEST VALUE", "note": "F-series, no iGPU" }
+      ]
+    },
+    ... (GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals)
+  ]
+}
+
+ICONS per category: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Case=📦, Monitor=🖥️, Peripherals=🎧`;
+}
 
 // ─── PUBLIC API ───────────────────────────────────────────────────────────────
 
 /**
- * Calls the Gemini API and returns a parsed blueprint object.
- * Throws on network error, non-OK HTTP status, or unparseable JSON.
- *
- * @param {number} budget   - Total PKR budget entered by user
- * @param {string} purpose  - One of: gaming | editing | coding | office
- * @returns {Promise<{parts: Array, insights: {summary, performance, upgrades}}>}
+ * Calls Gemini with Google Search grounding for live market data.
+ * @param {number} budgetPKR
+ * @param {string} purpose
+ * @returns {Promise<Object>}
  */
-async function contactForgeIntelligenceEngine(budget, purpose) {
+async function contactForgeIntelligenceEngine(budgetPKR, purpose) {
     if (!FORGE_GEMINI_API_KEY || FORGE_GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-        throw new Error("API key not configured. Please set FORGE_GEMINI_API_KEY in gemini.js");
+        throw new Error("API_KEY_NOT_SET");
     }
 
+    const tier = getBudgetTier(budgetPKR);
+    const budgetFormatted = budgetPKR.toLocaleString();
+
     const userPrompt =
-        `Generate a complete PC build for a budget of ${budget.toLocaleString()} PKR, ` +
-        `optimized for ${purpose}. ` +
-        `Ensure total component cost stays at least 5% below ${budget.toLocaleString()} PKR. ` +
-        `Use real 2024–2025 Pakistani market prices.`;
+        `Generate a complete PC build for a TOTAL budget of ${budgetFormatted} PKR optimized for ${purpose}.\n` +
+        `Budget tier: ${tier}.\n` +
+        `Search the internet for CURRENT Pakistani market prices (2024-2025).\n` +
+        `Include used/refurbished options where they provide better value.\n` +
+        `Total of all RECOMMENDED options combined must NOT exceed ${Math.round(budgetPKR * 0.93).toLocaleString()} PKR.\n` +
+        `Provide 3 realistic options per category scaled appropriately to this ${tier} budget.\n` +
+        `For Used options, use prices from OLX Pakistan or Daraz Pakistan.\n` +
+        `Return ONLY the JSON object, nothing else.`;
 
     const requestBody = {
         contents: [
@@ -71,53 +178,53 @@ async function contactForgeIntelligenceEngine(budget, purpose) {
         ],
         generationConfig: {
             responseMimeType: "application/json",
-            temperature: 0.4,
-            topP: 0.9
+            temperature: 0.3,
+            topP: 0.85
         },
         systemInstruction: {
-            parts: [{ text: FORGE_SYSTEM_INSTRUCTION }]
-        }
+            parts: [{ text: buildSystemInstruction(budgetPKR, purpose) }]
+        },
+        tools: [{ googleSearch: {} }]
     };
 
     const response = await fetch(FORGE_GEMINI_ENDPOINT, {
-        method: "POST",
+        method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody)
+        body:    JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
         const errBody = await response.text().catch(() => "");
-        throw new Error(`Gemini API error ${response.status}: ${errBody.slice(0, 200)}`);
+        throw new Error(`Gemini API error ${response.status}: ${errBody.slice(0, 300)}`);
     }
 
     const data = await response.json();
 
-    // Extract text from Gemini response structure
-    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!rawText) {
-        throw new Error("Gemini returned an empty or malformed response.");
+    // Extract text from Gemini response — search grounding may produce tool_code parts too
+    let rawText = "";
+    const parts = data?.candidates?.[0]?.content?.parts ?? [];
+    for (const p of parts) {
+        if (p.text) { rawText = p.text; break; }
     }
 
-    // Defensively strip any stray markdown fences
+    if (!rawText) throw new Error("Gemini returned empty response.");
+
+    // Strip any stray markdown fences
     const cleanText = rawText
         .trim()
         .replace(/^```(?:json)?\s*/i, "")
-        .replace(/\s*```$/,           "")
+        .replace(/\s*```$/, "")
         .trim();
 
     let parsed;
     try {
         parsed = JSON.parse(cleanText);
     } catch (e) {
-        throw new Error(`Failed to parse Gemini JSON: ${e.message}`);
+        throw new Error(`Failed to parse Gemini JSON: ${e.message}\nRaw: ${cleanText.slice(0, 300)}`);
     }
 
-    // Basic shape validation before returning
-    if (!Array.isArray(parsed.parts) || parsed.parts.length === 0) {
-        throw new Error("Gemini response missing valid parts array.");
-    }
-    if (!parsed.insights?.summary) {
-        throw new Error("Gemini response missing insights block.");
+    if (!Array.isArray(parsed.categories) || parsed.categories.length === 0) {
+        throw new Error("Gemini response missing categories array.");
     }
 
     return parsed;

@@ -10,55 +10,59 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Background Layers -->
     <div class="cursor-glow" id="cursorGlow"></div>
     <div class="grid-overlay"></div>
     <canvas id="particleCanvas"></canvas>
 
     <div class="app-container">
 
-        <!-- Floating Header -->
+        <!-- ── HEADER ── -->
         <header class="app-header">
             <div class="logo-area">
                 <span class="logo-icon">⚡</span>
                 <h1 class="logo-text">FORGE<span class="accent-dot">.</span></h1>
             </div>
-            <div class="system-status">
-                <span class="status-dot pulsing"></span>
-                <span class="status-text">SYSTEMS ONLINE</span>
+            <div class="header-right">
+                <div id="currencySelectorWrapper" class="currency-wrapper"></div>
+                <div class="system-status">
+                    <span class="status-dot pulsing"></span>
+                    <span class="status-text">SYSTEMS ONLINE</span>
+                </div>
             </div>
         </header>
 
-        <!-- Main Workspace -->
         <main class="workspace">
 
-            <!-- VIEW 1: CONFIGURATION FORM -->
+            <!-- ══════════════════════════════════
+                 VIEW 1 — CONFIGURATION
+            ══════════════════════════════════ -->
             <section id="onboardingView" class="view active">
                 <div class="welcome-hero">
                     <h2>ENGINEER YOUR ULTIMATE RIG</h2>
-                    <p>Input your parameters. Let our artificial intelligence forge the perfect silicon blueprint custom-tailored to your exact operational thresholds.</p>
+                    <p>Input your parameters. FORGE's AI queries live market data to build a precision, budget-scaled hardware blueprint.</p>
                 </div>
 
                 <form id="configForm" class="forge-form" novalidate>
-                    <!-- Budget Section -->
+
+                    <!-- YOUR BUDGET -->
                     <div class="form-section">
                         <div class="section-header">
                             <span class="sec-num">01</span>
-                            <h3>FINANCIAL CAP</h3>
+                            <h3>YOUR BUDGET</h3>
                         </div>
                         <div class="budget-input-wrapper">
-                            <span class="currency-indicator">PKR</span>
-                            <input type="number" id="budgetInput" required min="30000" max="5000000" placeholder="e.g., 180000" step="5000" autocomplete="off">
+                            <span class="currency-indicator" id="currencyIndicator">PKR</span>
+                            <input type="number" id="budgetInput" required min="0" placeholder="e.g., 180000" step="1000" autocomplete="off">
                         </div>
-                        <p class="field-hint">Minimum threshold: 30,000 PKR. Recommended for modern computing: 80,000+ PKR.</p>
+                        <p class="field-hint" id="budgetHint">Minimum: Rs30,000. Recommended: Rs80,000+</p>
                         <p class="field-error" id="budgetError"></p>
                     </div>
 
-                    <!-- Primary Purpose -->
+                    <!-- PRIMARY USE -->
                     <div class="form-section">
                         <div class="section-header">
                             <span class="sec-num">02</span>
-                            <h3>OPERATIONAL PROFILE</h3>
+                            <h3>PRIMARY USE</h3>
                         </div>
                         <div class="options-grid card-selector">
                             <label class="selectable-card active">
@@ -66,40 +70,36 @@
                                 <div class="card-content">
                                     <div class="card-icon">🎮</div>
                                     <h4>GAMING</h4>
-                                    <p>Prioritizes high frame rates, graphical fidelity, and GPU thermal headroom.</p>
+                                    <p>High frame rates, GPU-first allocation, graphical fidelity.</p>
                                 </div>
                             </label>
-
                             <label class="selectable-card">
                                 <input type="radio" name="purpose" value="editing">
                                 <div class="card-content">
                                     <div class="card-icon">🎬</div>
                                     <h4>CREATIVE WORK</h4>
-                                    <p>Optimized for multi-core rendering, heavy timeline scrubbing, and vast RAM pools.</p>
+                                    <p>Multi-core rendering, heavy RAM, timeline scrubbing.</p>
                                 </div>
                             </label>
-
                             <label class="selectable-card">
                                 <input type="radio" name="purpose" value="coding">
                                 <div class="card-content">
                                     <div class="card-icon">💻</div>
                                     <h4>DEVELOPMENT</h4>
-                                    <p>Tailored for rapid compilation speeds, container clustering, and robust multitasking.</p>
+                                    <p>Rapid compilation, containers, multitasking, big RAM.</p>
                                 </div>
                             </label>
-
                             <label class="selectable-card">
                                 <input type="radio" name="purpose" value="office">
                                 <div class="card-content">
                                     <div class="card-icon">💼</div>
                                     <h4>OFFICE / STUDY</h4>
-                                    <p>Cost-efficient build maximizing energy efficiency, snappiness, and general utility.</p>
+                                    <p>Cost-efficient, energy-saving, responsive daily driver.</p>
                                 </div>
                             </label>
                         </div>
                     </div>
 
-                    <!-- Submit Button -->
                     <button type="submit" class="forge-submit-btn" id="submitBtn">
                         <span class="btn-text">INITIALIZE FORGE SEQUENCE</span>
                         <span class="btn-glitch-effect"></span>
@@ -107,76 +107,82 @@
                 </form>
             </section>
 
-            <!-- VIEW 2: LOADING CORE -->
+            <!-- ══════════════════════════════════
+                 VIEW 2 — LOADING
+            ══════════════════════════════════ -->
             <section id="loadingView" class="view">
                 <div class="matrix-loader-container">
                     <div class="cyber-spinner"></div>
                     <div class="matrix-terminal">
-                        <div class="terminal-line" data-delay="0">>> INITIALIZING NEURAL ENGINE CONNECTION...</div>
-                        <div class="terminal-line" data-delay="1000">>> PARSING RUNTIME PARAMETERS AND THERMAL BOUNDARIES...</div>
-                        <div class="terminal-line" data-delay="2200">>> QUERYING SILICON TIERS AGAINST LIVE METRICS...</div>
-                        <div class="terminal-line" data-delay="3500">>> ALLOCATING HARDWARE COEFFICIENTS AND OVERCLOCK BUDGETS...</div>
-                        <div class="terminal-line" data-delay="4800">>> INJECTING RE-ENTRY SAFEGUARDS...</div>
-                        <div class="terminal-line" data-delay="5500">>> BLUEPRINT ARCHITECTURE FINALIZED. RENDERING MATRIX...</div>
+                        <div class="terminal-line" data-delay="0">>> INITIALIZING NEURAL ENGINE...</div>
+                        <div class="terminal-line" data-delay="900">>> QUERYING LIVE MARKET DATABASES...</div>
+                        <div class="terminal-line" data-delay="2000">>> SCRAPING DARAZ & OLX PRICING...</div>
+                        <div class="terminal-line" data-delay="3100">>> CALCULATING BUDGET ALLOCATION RATIOS...</div>
+                        <div class="terminal-line" data-delay="4000">>> DETECTING AVAILABLE NEW & USED OPTIONS...</div>
+                        <div class="terminal-line" data-delay="5000">>> OPTIMIZING COMPONENT BALANCE...</div>
+                        <div class="terminal-line" data-delay="5700">>> BLUEPRINT FINALIZED. RENDERING MATRIX...</div>
                     </div>
                 </div>
             </section>
 
-            <!-- VIEW 3: RESULTS PLATFORM -->
+            <!-- ══════════════════════════════════
+                 VIEW 3 — RESULTS (SPLIT LAYOUT)
+            ══════════════════════════════════ -->
             <section id="resultsView" class="view">
-                <!-- Top Actions Bar -->
+
                 <div class="results-actions-bar">
-                    <button id="backToConfigBtn" class="action-secondary-btn">
-                        ← MODIFY PARAMETERS
-                    </button>
-                    <button id="openInvoiceBtn" class="action-primary-btn">
-                        📑 GENERATE BILL OF MATERIALS
-                    </button>
+                    <button id="backToConfigBtn" class="action-secondary-btn">← MODIFY PARAMETERS</button>
+                    <button id="openInvoiceBtn" class="action-primary-btn">📑 GENERATE BILL OF MATERIALS</button>
                 </div>
 
-                <!-- Split Architecture View -->
+                <!-- SPLIT: Left (summary) + Right (matrix + options) -->
                 <div class="results-split-layout">
-                    <!-- Left: Parts Matrix -->
+
+                    <!-- ── LEFT: LIVE BUILD SUMMARY ── -->
+                    <aside class="build-summary-panel">
+                        <div class="summary-panel-header">
+                            <h3>YOUR BUILD</h3>
+                            <span class="summary-count" id="buildSummaryCount">0 components</span>
+                        </div>
+
+                        <div class="budget-bar-track">
+                            <div class="budget-bar-fill" id="budgetProgress" style="width:0%"></div>
+                        </div>
+                        <div class="budget-remaining" id="budgetRemaining">Select components to begin</div>
+
+                        <div class="summary-list" id="buildSummaryList">
+                            <div class="summary-empty">Select components to build your rig</div>
+                        </div>
+
+                        <div class="summary-total-block">
+                            <span class="summary-total-label">SELECTED TOTAL</span>
+                            <span class="summary-total-value" id="buildSummaryTotal">—</span>
+                        </div>
+                    </aside>
+
+                    <!-- ── RIGHT: COMPONENT MATRIX ── -->
                     <div class="parts-matrix-column">
                         <div class="column-title-ribbon">
-                            <h3>COMPOSED HARDWARE MATRIX</h3>
+                            <h3>HARDWARE MATRIX — SELECT YOUR COMPONENTS</h3>
+                            <span class="ribbon-hint">Click to select · Click again to deselect</span>
                         </div>
                         <div class="components-grid" id="partsContainer">
                             <!-- Injected by JS -->
                         </div>
                     </div>
 
-                    <!-- Right: AI Insights -->
-                    <div class="ai-insights-column">
-                        <div class="column-title-ribbon special-ribbon">
-                            <h3>AI METRIC ARCHITECTURE</h3>
-                        </div>
-
-                        <div class="insights-card">
-                            <h4>STRATEGIC ARCHITECTURE SUMMARY</h4>
-                            <p id="aiSummaryText" class="ai-paragraph">Analyzing configurations...</p>
-                        </div>
-
-                        <div class="insights-card">
-                            <h4>EXPECTED SYSTEM PERFORMANCE</h4>
-                            <p id="aiPerformanceText" class="ai-paragraph">Calculating operational capabilities...</p>
-                        </div>
-
-                        <div class="insights-card">
-                            <h4>FUTURE EXPANSION SCALABILITY</h4>
-                            <p id="aiUpgradeText" class="ai-paragraph">Assessing forward compatibility pathways...</p>
-                        </div>
-                    </div>
                 </div>
             </section>
 
         </main>
     </div>
 
-    <!-- INVOICE MODAL -->
+    <!-- ══════════════════════════════════════
+         INVOICE MODAL
+    ══════════════════════════════════════ -->
     <div class="modal-overlay" id="invoiceModal" role="dialog" aria-modal="true" aria-labelledby="invoiceTitle">
         <div class="modal-frame receipt-box">
-            <button class="close-modal-btn" id="closeInvoiceBtn" aria-label="Close invoice">×</button>
+            <button class="close-modal-btn" id="closeInvoiceBtn" aria-label="Close">×</button>
 
             <div class="receipt-header">
                 <h2 id="invoiceTitle">FORGE DIGITAL RECEIPT</h2>
@@ -184,29 +190,27 @@
                 <div class="bar-separator">========================================</div>
             </div>
 
-            <div class="receipt-body" id="invoiceItemsContainer">
-                <!-- Dynamically populated -->
-            </div>
+            <div class="receipt-body" id="invoiceItemsContainer"></div>
 
             <div class="receipt-footer">
                 <div class="bar-separator">========================================</div>
                 <div class="total-summary-block">
                     <div class="summary-line">
-                        <span>HARDWARE COMBINED TOTAL:</span>
-                        <span id="invoiceHardwareTotal">0 PKR</span>
+                        <span>HARDWARE TOTAL:</span>
+                        <span id="invoiceHardwareTotal">—</span>
                     </div>
                     <div class="summary-line">
-                        <span>TECHNICAL ASSEMBLY FEE:</span>
-                        <span id="invoiceAssemblyFee">0 PKR</span>
+                        <span>ASSEMBLY FEE:</span>
+                        <span id="invoiceAssemblyFee">—</span>
                     </div>
                     <div class="summary-line grand-total-line">
-                        <span>GRAND ESCALATED TOTAL:</span>
-                        <span id="invoiceGrandTotal">0 PKR</span>
+                        <span>GRAND TOTAL:</span>
+                        <span id="invoiceGrandTotal">—</span>
                     </div>
                 </div>
                 <div class="bar-separator">========================================</div>
-                <p class="receipt-footer-tagline">THANK YOU FOR CHOOSING FORGE. SYSTEM BLUEPRINTS EXPORTED SECURELY.</p>
-                <button class="print-receipt-btn" onclick="window.print()">🖨️ SEND TO PHYSICAL PRINTER</button>
+                <p class="receipt-footer-tagline">THANK YOU FOR CHOOSING FORGE. SYSTEM BLUEPRINTS EXPORTED.</p>
+                <button class="print-receipt-btn" onclick="window.print()">🖨️ PRINT RECEIPT</button>
             </div>
         </div>
     </div>
