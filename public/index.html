@@ -520,9 +520,9 @@ async function handleFormSubmit(e){
     const txt=document.getElementById("aiSourceText");
     if(ind&&txt){
       ind.style.display="flex";
-      txt.textContent=STATE.blueprint._aiPowered
-  ?"✓ Results powered by Claude AI with live web search"
-  :"⚠ Using cached data — add your Anthropic API key for live results";
+     txt.textContent=STATE.blueprint._aiPowered
+  ?"✓ Fetching data from live web via Gemini AI"
+  :"⚠ Using cached data — Gemini API not connected";
     }
     if(btn)btn.disabled=false;
   },6200);
