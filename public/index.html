@@ -1,221 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORGE — AI PC Builder</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FORGE — AI PC Builder</title>
+  <meta name="description" content="Build your perfect PC. Enter your budget and get the best components — new and used — priced for your region." />
+  <meta property="og:title" content="FORGE — AI PC Builder" />
+  <meta property="og:description" content="Smart PC building tool with regional pricing for Pakistan and worldwide." />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="cursor-glow" id="cursorGlow"></div>
-    <div class="grid-overlay"></div>
-    <canvas id="particleCanvas"></canvas>
 
-    <div class="app-container">
+  <!-- CURSOR GLOW -->
+  <div id="cursor-glow"></div>
 
-        <!-- ── HEADER ── -->
-        <header class="app-header">
-            <div class="logo-area">
-                <span class="logo-icon">⚡</span>
-                <h1 class="logo-text">FORGE<span class="accent-dot">.</span></h1>
-            </div>
-            <div class="header-right">
-                <div id="currencySelectorWrapper" class="currency-wrapper"></div>
-                <div class="system-status">
-                    <span class="status-dot pulsing"></span>
-                    <span class="status-text">SYSTEMS ONLINE</span>
-                </div>
-            </div>
-        </header>
+  <!-- PARTICLE CANVAS -->
+  <canvas id="particle-canvas"></canvas>
 
-        <main class="workspace">
-
-            <!-- ══════════════════════════════════
-                 VIEW 1 — CONFIGURATION
-            ══════════════════════════════════ -->
-            <section id="onboardingView" class="view active">
-                <div class="welcome-hero">
-                    <h2>ENGINEER YOUR ULTIMATE RIG</h2>
-                    <p>Input your parameters. FORGE's AI queries live market data to build a precision, budget-scaled hardware blueprint.</p>
-                </div>
-
-                <form id="configForm" class="forge-form" novalidate>
-
-                    <!-- YOUR BUDGET -->
-                    <div class="form-section">
-                        <div class="section-header">
-                            <span class="sec-num">01</span>
-                            <h3>YOUR BUDGET</h3>
-                        </div>
-                        <div class="budget-input-wrapper">
-                            <span class="currency-indicator" id="currencyIndicator">PKR</span>
-                            <input type="number" id="budgetInput" required min="0" placeholder="e.g., 180000" step="1000" autocomplete="off">
-                        </div>
-                        <p class="field-hint" id="budgetHint">Minimum: Rs30,000. Recommended: Rs80,000+</p>
-                        <p class="field-error" id="budgetError"></p>
-                    </div>
-
-                    <!-- PRIMARY USE -->
-                    <div class="form-section">
-                        <div class="section-header">
-                            <span class="sec-num">02</span>
-                            <h3>PRIMARY USE</h3>
-                        </div>
-                        <div class="options-grid card-selector">
-                            <label class="selectable-card active">
-                                <input type="radio" name="purpose" value="gaming" checked>
-                                <div class="card-content">
-                                    <div class="card-icon">🎮</div>
-                                    <h4>GAMING</h4>
-                                    <p>High frame rates, GPU-first allocation, graphical fidelity.</p>
-                                </div>
-                            </label>
-                            <label class="selectable-card">
-                                <input type="radio" name="purpose" value="editing">
-                                <div class="card-content">
-                                    <div class="card-icon">🎬</div>
-                                    <h4>CREATIVE WORK</h4>
-                                    <p>Multi-core rendering, heavy RAM, timeline scrubbing.</p>
-                                </div>
-                            </label>
-                            <label class="selectable-card">
-                                <input type="radio" name="purpose" value="coding">
-                                <div class="card-content">
-                                    <div class="card-icon">💻</div>
-                                    <h4>DEVELOPMENT</h4>
-                                    <p>Rapid compilation, containers, multitasking, big RAM.</p>
-                                </div>
-                            </label>
-                            <label class="selectable-card">
-                                <input type="radio" name="purpose" value="office">
-                                <div class="card-content">
-                                    <div class="card-icon">💼</div>
-                                    <h4>OFFICE / STUDY</h4>
-                                    <p>Cost-efficient, energy-saving, responsive daily driver.</p>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="forge-submit-btn" id="submitBtn">
-                        <span class="btn-text">INITIALIZE FORGE SEQUENCE</span>
-                        <span class="btn-glitch-effect"></span>
-                    </button>
-                </form>
-            </section>
-
-            <!-- ══════════════════════════════════
-                 VIEW 2 — LOADING
-            ══════════════════════════════════ -->
-            <section id="loadingView" class="view">
-                <div class="matrix-loader-container">
-                    <div class="cyber-spinner"></div>
-                    <div class="matrix-terminal">
-                        <div class="terminal-line" data-delay="0">>> INITIALIZING NEURAL ENGINE...</div>
-                        <div class="terminal-line" data-delay="900">>> QUERYING LIVE MARKET DATABASES...</div>
-                        <div class="terminal-line" data-delay="2000">>> SCRAPING DARAZ & OLX PRICING...</div>
-                        <div class="terminal-line" data-delay="3100">>> CALCULATING BUDGET ALLOCATION RATIOS...</div>
-                        <div class="terminal-line" data-delay="4000">>> DETECTING AVAILABLE NEW & USED OPTIONS...</div>
-                        <div class="terminal-line" data-delay="5000">>> OPTIMIZING COMPONENT BALANCE...</div>
-                        <div class="terminal-line" data-delay="5700">>> BLUEPRINT FINALIZED. RENDERING MATRIX...</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ══════════════════════════════════
-                 VIEW 3 — RESULTS (SPLIT LAYOUT)
-            ══════════════════════════════════ -->
-            <section id="resultsView" class="view">
-
-                <div class="results-actions-bar">
-                    <button id="backToConfigBtn" class="action-secondary-btn">← MODIFY PARAMETERS</button>
-                    <button id="openInvoiceBtn" class="action-primary-btn">📑 GENERATE BILL OF MATERIALS</button>
-                </div>
-
-                <!-- SPLIT: Left (summary) + Right (matrix + options) -->
-                <div class="results-split-layout">
-
-                    <!-- ── LEFT: LIVE BUILD SUMMARY ── -->
-                    <aside class="build-summary-panel">
-                        <div class="summary-panel-header">
-                            <h3>YOUR BUILD</h3>
-                            <span class="summary-count" id="buildSummaryCount">0 components</span>
-                        </div>
-
-                        <div class="budget-bar-track">
-                            <div class="budget-bar-fill" id="budgetProgress" style="width:0%"></div>
-                        </div>
-                        <div class="budget-remaining" id="budgetRemaining">Select components to begin</div>
-
-                        <div class="summary-list" id="buildSummaryList">
-                            <div class="summary-empty">Select components to build your rig</div>
-                        </div>
-
-                        <div class="summary-total-block">
-                            <span class="summary-total-label">SELECTED TOTAL</span>
-                            <span class="summary-total-value" id="buildSummaryTotal">—</span>
-                        </div>
-                    </aside>
-
-                    <!-- ── RIGHT: COMPONENT MATRIX ── -->
-                    <div class="parts-matrix-column">
-                        <div class="column-title-ribbon">
-                            <h3>HARDWARE MATRIX — SELECT YOUR COMPONENTS</h3>
-                            <span class="ribbon-hint">Click to select · Click again to deselect</span>
-                        </div>
-                        <div class="components-grid" id="partsContainer">
-                            <!-- Injected by JS -->
-                        </div>
-                    </div>
-
-                </div>
-            </section>
-
-        </main>
+  <!-- BUDGET WARNING MODAL -->
+  <div id="budget-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-icon">⚠</div>
+      <h2 class="modal-title">Budget Too Low</h2>
+      <p class="modal-body">The minimum budget to build a functional PC is <strong id="modal-min-amount">₨ 27,850</strong>.<br/>Please increase your budget to continue.</p>
+      <div class="modal-bar"></div>
+      <button class="modal-btn" id="modal-close-btn">Got it, I'll adjust</button>
     </div>
+  </div>
 
-    <!-- ══════════════════════════════════════
-         INVOICE MODAL
-    ══════════════════════════════════════ -->
-    <div class="modal-overlay" id="invoiceModal" role="dialog" aria-modal="true" aria-labelledby="invoiceTitle">
-        <div class="modal-frame receipt-box">
-            <button class="close-modal-btn" id="closeInvoiceBtn" aria-label="Close">×</button>
+  <!-- RECEIPT MODAL -->
+  <div id="receipt-modal" class="modal-overlay hidden">
+    <div class="receipt-card">
+      <div class="receipt-header">
+        <div class="receipt-brand">⬡ FORGE</div>
+        <div class="receipt-title">Build Receipt</div>
+        <div class="receipt-id" id="receipt-id"></div>
+        <div class="receipt-date" id="receipt-date"></div>
+      </div>
+      <div class="receipt-divider dashed"></div>
+      <div id="receipt-items" class="receipt-items"></div>
+      <div class="receipt-divider dashed"></div>
+      <div class="receipt-totals" id="receipt-totals"></div>
+      <div class="receipt-divider"></div>
+      <div class="receipt-notes">
+        <p>🔧 Add ~7% for technician assembly fees</p>
+        <p>🌡️ Budget extra for thermal paste &amp; cables</p>
+        <p>🛡️ For used parts — verify health above 85%</p>
+        <p>📦 Prices may vary by region &amp; availability</p>
+        <p>🎮 Peripherals shown are estimates — check local stock</p>
+      </div>
+      <div class="receipt-divider dashed"></div>
+      <div class="receipt-footer">
+        <p>Thank you for using FORGE</p>
+        <p class="receipt-tagline">forge.build — Your PC, Your Rules</p>
+      </div>
+      <div class="receipt-actions">
+        <button class="receipt-print-btn" onclick="window.print()">🖨 Print Receipt</button>
+        <button class="receipt-close-btn" id="receipt-close-btn">✕ Close</button>
+      </div>
+    </div>
+  </div>
 
-            <div class="receipt-header">
-                <h2 id="invoiceTitle">FORGE DIGITAL RECEIPT</h2>
-                <p class="receipt-timestamp" id="invoiceTimestamp">DATETIME: --/--/---- --:--</p>
-                <div class="bar-separator">========================================</div>
-            </div>
+  <!-- ONBOARDING SCREEN -->
+  <div id="screen-onboarding" class="screen active">
+    <header class="site-header">
+      <div class="brand"><span class="brand-mark">⬡</span><span class="brand-name">FORGE</span></div>
+      <span class="header-tagline">AI PC Builder</span>
+    </header>
 
-            <div class="receipt-body" id="invoiceItemsContainer"></div>
+    <div class="onboarding-container">
+      <div class="onboarding-hero">
+        <h1 class="hero-text">Build your<br/><em>perfect PC.</em></h1>
+        <p class="subtitle">Enter your budget. We find the best real-world components — new &amp; used — priced for your region.</p>
+      </div>
 
-            <div class="receipt-footer">
-                <div class="bar-separator">========================================</div>
-                <div class="total-summary-block">
-                    <div class="summary-line">
-                        <span>HARDWARE TOTAL:</span>
-                        <span id="invoiceHardwareTotal">—</span>
-                    </div>
-                    <div class="summary-line">
-                        <span>ASSEMBLY FEE:</span>
-                        <span id="invoiceAssemblyFee">—</span>
-                    </div>
-                    <div class="summary-line grand-total-line">
-                        <span>GRAND TOTAL:</span>
-                        <span id="invoiceGrandTotal">—</span>
-                    </div>
-                </div>
-                <div class="bar-separator">========================================</div>
-                <p class="receipt-footer-tagline">THANK YOU FOR CHOOSING FORGE. SYSTEM BLUEPRINTS EXPORTED.</p>
-                <button class="print-receipt-btn" onclick="window.print()">🖨️ PRINT RECEIPT</button>
-            </div>
+      <div class="form-block">
+        <div class="field">
+          <label>Your Country / Region</label>
+          <div class="select-wrap">
+            <select id="region-select">
+              <option value="PK">🇵🇰 Pakistan — PKR</option>
+              <option value="US">🇺🇸 United States — USD</option>
+              <option value="GB">🇬🇧 United Kingdom — GBP</option>
+              <option value="EU">🇪🇺 European Union — EUR</option>
+              <option value="IN">🇮🇳 India — INR</option>
+              <option value="CA">🇨🇦 Canada — CAD</option>
+              <option value="AU">🇦🇺 Australia — AUD</option>
+            </select>
+            <span class="select-arrow">↓</span>
+          </div>
+          <span class="field-note">Used only to convert prices to your currency.</span>
         </div>
+
+        <div class="field">
+          <label>Your Total Budget <span id="currency-label" class="currency-tag">PKR</span></label>
+          <div class="budget-input-wrap">
+            <span id="budget-symbol" class="budget-symbol">₨</span>
+            <input type="number" id="budget-input" value="150000" min="1000" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Build Purpose</label>
+          <div class="purpose-grid">
+            <button class="purpose-btn active" data-purpose="gaming">🎮 Gaming</button>
+            <button class="purpose-btn" data-purpose="work">💼 Work / Office</button>
+            <button class="purpose-btn" data-purpose="creative">🎨 Creative / Editing</button>
+            <button class="purpose-btn" data-purpose="general">⚡ General Use</button>
+          </div>
+        </div>
+
+        <button id="start-btn" class="cta-btn">
+          <span>Find My Components</span>
+          <span class="cta-arrow">→</span>
+        </button>
+      </div>
+
+      <p class="privacy-note">🔒 We don't store or share your info. Budget &amp; country are used only to show relevant parts.</p>
     </div>
 
-    <script src="gemini.js"></script>
-    <script src="app.js"></script>
+    <footer class="site-footer">
+      <span>⬡ FORGE AI PC Builder</span>
+      <span class="footer-sep">·</span>
+      <span>Component prices &amp; availability may vary by region, store, and market conditions. Always verify before purchasing.</span>
+    </footer>
+  </div>
+
+  <!-- LOADING SCREEN -->
+  <div id="screen-loading" class="screen">
+    <div class="loading-container">
+      <div class="loading-spinner">
+        <div class="spinner-ring r1"></div>
+        <div class="spinner-ring r2"></div>
+        <span class="spinner-icon">⬡</span>
+      </div>
+      <h2 id="loading-headline">Searching the market...</h2>
+      <p id="loading-sub">Finding the best components for your budget</p>
+      <div class="loading-steps">
+        <div class="lstep" id="ls1">Analysing budget range</div>
+        <div class="lstep" id="ls2">Fetching component data</div>
+        <div class="lstep" id="ls3">Matching compatibility</div>
+        <div class="lstep" id="ls4">Calculating value tiers</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUILDER SCREEN -->
+  <div id="screen-builder" class="screen">
+    <header class="builder-header">
+      <div class="header-brand">
+        <span class="brand-mark small">⬡</span>
+        <span class="brand-name">FORGE</span>
+      </div>
+      <div class="header-meta">
+        <span id="header-purpose" class="meta-tag"></span>
+        <span id="header-budget" class="meta-budget"></span>
+      </div>
+      <button id="back-btn" class="back-btn">← New Build</button>
+    </header>
+
+    <div class="builder-layout">
+      <div class="builder-left">
+        <div class="section-intro scroll-reveal">
+          <h2>Select your components</h2>
+          <p>Choose one from each category — including peripherals for a complete battle-station. <span class="tag-new">New</span> = retail box. <span class="tag-used">Used</span> = marketplace — verify health above 85% before buying.</p>
+        </div>
+        <div id="components-container"></div>
+      </div>
+
+      <div class="builder-right">
+        <div class="summary-panel">
+          <div class="summary-header">
+            <h3>Your Build</h3>
+            <div class="completeness-bar"><div id="completeness-fill" style="width:0%"></div></div>
+            <span id="completeness-text" class="completeness-text">0 / 0 selected</span>
+          </div>
+          <div class="budget-display">
+            <div class="budget-row"><span>Budget</span><span id="sum-budget" class="val-neutral">—</span></div>
+            <div class="budget-row"><span>Build Total</span><span id="sum-total" class="val-primary">—</span></div>
+            <div class="budget-row remaining"><span>Remaining</span><span id="sum-remaining" class="val-good">—</span></div>
+          </div>
+          <div id="summary-list" class="summary-list"></div>
+          <div class="summary-tips">
+            <div class="tip"><span class="tip-icon">🔧</span><p id="tip-assembly">Add ~7% for technician assembly fees.</p></div>
+            <div class="tip"><span class="tip-icon">🌡️</span><p>Budget extra for <strong>thermal paste</strong> if self-building.</p></div>
+            <div class="tip"><span class="tip-icon">🛡️</span><p>For used parts — only buy if <strong>health is above 85%</strong>. Ask the seller for diagnostics.</p></div>
+            <div class="tip"><span class="tip-icon">📦</span><p>Used components may need extra for shipping or local pickup.</p></div>
+          </div>
+          <button id="save-btn" class="save-btn" disabled>Generate Build Receipt ↗</button>
+          <div id="save-result" class="save-result hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer builder-footer">
+      <span>⬡ FORGE AI PC Builder</span>
+      <span class="footer-sep">·</span>
+      <span>Component prices &amp; availability vary by region, retailer, and market conditions. Verify all prices before purchase. Used component health should be confirmed above 85% before buying.</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
