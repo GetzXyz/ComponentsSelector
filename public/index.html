@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FORGE — AI PC Builder</title>
+<meta name="description" content="FORGE AI PC Builder — Get AI-powered PC build recommendations optimized for Pakistani market prices. Gaming or workstation builds across all budgets.">
+<meta property="og:title" content="FORGE AI PC Builder">
+<meta property="og:description" content="AI-powered PC build recommendations for Pakistani market — Gaming & Workstation">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#00f0ff">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -31,7 +40,7 @@
 
 body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-height:100vh;overflow-x:hidden}
 
-#particleCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.4}
+#particleCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.4;will-change:transform}
 .grid-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,240,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 .cursor-glow{position:fixed;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,240,255,.06) 0%,transparent 70%);pointer-events:none;transform:translate(-50%,-50%);z-index:1;transition:opacity .2s}
 
@@ -484,15 +493,34 @@ async function handleFormSubmit(e){
   e.preventDefault();
   const raw=parseFloat(document.getElementById("budgetInput").value);
   const cur=CURRENCIES[getActiveCurrency()];
+
+  // Strict input validation — reject NaN, Infinity, negatives, absurd values
+  if(!Number.isFinite(raw)||raw<=0||raw>100000000){
+    document.getElementById("budgetError").textContent="Please enter a valid budget amount.";
+    document.getElementById("budgetWrapper")?.classList.add("error-state");
+    document.getElementById("budgetInput").focus();
+    return;
+  }
+
   const budgetPKR=Math.round(raw/cur.rate);
   const purpose=document.querySelector('input[name="purpose"]:checked')?.value||"gaming";
   const minInCur=Math.round(30000*cur.rate);
 
-  if(!raw||raw<minInCur){
+  if(raw<minInCur){
     document.getElementById("budgetError").textContent=`Minimum budget is ${formatRaw(minInCur)}.`;
     document.getElementById("budgetWrapper")?.classList.add("error-state");
     document.getElementById("budgetInput").focus();
     return;
+  }
+
+  // Rate limit check — max 5 requests per minute
+  try{checkRateLimit();}
+  catch(err){
+    if(err.message.startsWith("RATE_LIMITED:")){
+      document.getElementById("budgetError").textContent=err.message.replace("RATE_LIMITED:","");
+      document.getElementById("budgetWrapper")?.classList.add("error-state");
+      return;
+    }
   }
 
   STATE.budgetPKR=budgetPKR;
@@ -505,44 +533,71 @@ async function handleFormSubmit(e){
   navigateTo("loadingView");
   runTerminal();
 
- let usedAI = false;
-try {
-  STATE.blueprint = await fetchBuildFromGemini(budgetPKR, purpose);
-  usedAI = true;
-} catch(err) {
-  console.warn("AI error — using fallback:", err.message);
-  console.error("FULL ERROR:", err);
-  STATE.blueprint = buildFallback(budgetPKR, purpose);
-  usedAI = false;
-}
+  const startTime=Date.now();
+  const MIN_LOADING_MS=2500;
 
-setTimeout(() => {
-  renderResults(STATE.blueprint);
-  updateBuildSummary();
-  navigateTo("resultsView");
-  const ind = document.getElementById("aiSourceIndicator");
-  const txt = document.getElementById("aiSourceText");
-  if (ind && txt) {
-    ind.style.display = "flex";
-    if (usedAI) {
-      txt.textContent = "✓ Fetching LIVE data via Gemini AI + Google Search";
-      ind.style.borderColor = "rgba(0,230,118,.4)";
-      txt.style.color = "#00e676";
-    } else {
-      txt.textContent = "⚠ Using cached data — Gemini API not connected";
-      ind.style.borderColor = "rgba(255,183,0,.4)";
-      txt.style.color = "#ffb700";
-    }
+  let usedAI=false;
+  try{
+    STATE.blueprint=await fetchBuildFromGemini(budgetPKR,purpose);
+    usedAI=true;
+  }catch(err){
+    console.warn("AI error — using fallback:",err.message);
+    console.error("FULL ERROR:",err);
+    STATE.blueprint=buildFallback(budgetPKR,purpose);
+    usedAI=false;
   }
-  if (btn) btn.disabled = false;
-}, 6200);
+
+  const elapsed=Date.now()-startTime;
+  const remaining=Math.max(0,MIN_LOADING_MS-elapsed);
+
+  setTimeout(()=>{
+    renderResults(STATE.blueprint);
+    updateBuildSummary();
+    navigateTo("resultsView");
+    const ind=document.getElementById("aiSourceIndicator");
+    const txt=document.getElementById("aiSourceText");
+    if(ind&&txt){
+      ind.style.display="flex";
+      if(usedAI){
+        txt.textContent="✓ Fetching LIVE data via Gemini AI + Google Search";
+        ind.style.borderColor="rgba(0,230,118,.4)";
+        txt.style.color="#00e676";
+      }else{
+        ind.innerHTML=`<span style="color:#ffb700;">⚠ Using cached data — Gemini not connected</span>
+          <button onclick="location.reload()" style="margin-left:12px;background:transparent;border:1px solid #ffb700;color:#ffb700;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font-mono);">↺ Retry</button>`;
+      }
+    }
+    if(btn)btn.disabled=false;
+  },remaining);
 }
 
-// ── Gemini API CALL ──────────────────────────────────────────────────────────
+// ── RATE LIMITER ─────────────────────────────────────────────────────────────
+const RATE_LIMIT={maxRequests:5,windowMs:60000,timestamps:[]};
+function checkRateLimit(){
+  const now=Date.now();
+  RATE_LIMIT.timestamps=RATE_LIMIT.timestamps.filter(t=>now-t<RATE_LIMIT.windowMs);
+  if(RATE_LIMIT.timestamps.length>=RATE_LIMIT.maxRequests){
+    const oldest=RATE_LIMIT.timestamps[0];
+    const waitSec=Math.ceil((RATE_LIMIT.windowMs-(now-oldest))/1000);
+    throw new Error("RATE_LIMITED:Too many requests. Please wait "+waitSec+" seconds before trying again.");
+  }
+  RATE_LIMIT.timestamps.push(now);
+}
+
+// ── Gemini API CALL (FIXED v4.2) ─────────────────────────────────────────────
 async function fetchBuildFromGemini(budgetPKR,purpose){
-  const API_KEY="AQ.Ab8RN6JATzigRoap7QQ6h5_ByRyH2jWlQ-lT0dGW05MQYVHrSQ";
- const MODEL="gemini-2.0-flash-lite";
+  // IMPORTANT: Replace with your real key from https://aistudio.google.com/app/apikey
+  // Gemini API keys always start with "AIza" (39 chars total).
+  const API_KEY="AIzaSyYOUR_REAL_KEY_HERE";
+  const MODEL="gemini-2.0-flash";
   const ENDPOINT=`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
+
+  // Validate key format before wasting an API call
+  if(!API_KEY||!API_KEY.startsWith("AIza")||API_KEY.includes("YOUR_REAL_KEY")){
+    throw new Error("API_KEY_INVALID: Please set a valid Gemini API key (must start with AIza). Get one at https://aistudio.google.com/app/apikey");
+  }
+
+  console.log("[FORGE] Calling Gemini API...",{budgetPKR,purpose,model:MODEL});
 
   const tier=getBudgetTier(budgetPKR);
   const tierGuide={
@@ -566,8 +621,8 @@ Budget allocation: ${alloc}
 
 Search the web for current 2024-2025 Pakistani market prices from Daraz.pk, OLX Pakistan, itech.com.pk.
 
-Rules:
-1. Return ONLY valid JSON, no markdown, no explanation
+RULES:
+1. Return ONLY a valid JSON object. No explanation text, no markdown fences.
 2. Exactly 3 options per category: recommended (New), budget pick (Used/cheaper), best value
 3. All prices in PKR based on real current Pakistani prices
 4. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR*0.93).toLocaleString()} PKR
@@ -575,17 +630,17 @@ Rules:
 6. Scale components dramatically with budget tier
 7. For entry budgets under 80k PKR: skip expensive monitors/peripherals, maximize core hardware
 
-Return this exact JSON:
+Return this exact JSON structure:
 {
   "tier": "${tier}",
   "categories": [
     {
       "cat": "CPU",
-      "icon": "🔲",
+      "icon": "\u{1F532}",
       "options": [
-        {"name": "...", "price": 00000, "condition": "New", "badge": "RECOMMENDED", "note": "..."},
-        {"name": "...", "price": 00000, "condition": "Used", "badge": "BUDGET PICK", "note": "..."},
-        {"name": "...", "price": 00000, "condition": "New", "badge": "BEST VALUE", "note": "..."}
+        {"name": "Intel Core i5-13600K", "price": 58000, "condition": "New", "badge": "RECOMMENDED", "note": "Best gaming IPC"},
+        {"name": "AMD Ryzen 5 5600X", "price": 28000, "condition": "Used", "badge": "BUDGET PICK", "note": "Great value"},
+        {"name": "Intel Core i5-12400F", "price": 35000, "condition": "New", "badge": "BEST VALUE", "note": "F-series no iGPU"}
       ]
     }
   ]
@@ -595,15 +650,19 @@ Icons: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Ca
   const requestBody={
     contents:[{parts:[{text:prompt}]}],
     generationConfig:{
-      responseMimeType:"application/json",
+      // NOTE: responseMimeType INTENTIONALLY OMITTED — it is incompatible with googleSearch grounding.
+      // Including both causes a 400 INVALID_ARGUMENT error from the Gemini API.
       temperature:0.3,
-      topP:0.85
+      topP:0.85,
+      maxOutputTokens:4096
     },
     systemInstruction:{
-      parts:[{text:"You are FORGE, an elite AI PC hardware analyst. Return ONLY raw JSON, no markdown, no backticks, no preamble."}]
+      parts:[{text:"You are FORGE, an elite AI PC hardware analyst. Always return a raw JSON object only. No markdown fences, no preamble, no explanation — just the JSON object."}]
     },
     tools:[{googleSearch:{}}]
   };
+
+  console.log("[FORGE] Request prepared, sending fetch...");
 
   const response=await fetch(ENDPOINT,{
     method:"POST",
@@ -611,30 +670,49 @@ Icons: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Ca
     body:JSON.stringify(requestBody)
   });
 
+  console.log("[FORGE] Response status:",response.status);
+
   if(!response.ok){
-    const txt=await response.text().catch(()=>"");
-    throw new Error(`Gemini API error ${response.status}: ${txt.slice(0,200)}`);
+    const errText=await response.text().catch(()=>"");
+    console.error("[FORGE] API Error body:",errText);
+    throw new Error(`Gemini API error ${response.status}: ${errText.slice(0,300)}`);
   }
 
   const data=await response.json();
+  console.log("[FORGE] Raw response received, extracting text...");
+
   let rawText="";
   const parts=data?.candidates?.[0]?.content?.parts??[];
   for(const p of parts){if(p.text){rawText=p.text;break;}}
 
-  if(!rawText)throw new Error("Gemini returned empty response");
+  if(!rawText){
+    console.error("[FORGE] Empty response. Full data:",JSON.stringify(data).slice(0,500));
+    throw new Error("Gemini returned empty response");
+  }
 
-  const clean=rawText.trim().replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/,"").trim();
+  console.log("[FORGE] Raw text (first 200 chars):",rawText.slice(0,200));
+
+  // Strip markdown fences the model adds when responseMimeType is not set
+  const clean=rawText.trim()
+    .replace(/^```(?:json)?\s*/im,"")
+    .replace(/\s*```\s*$/m,"")
+    .trim();
+
   const jsonMatch=clean.match(/\{[\s\S]*\}/);
-  if(!jsonMatch)throw new Error("No JSON in Gemini response");
+  if(!jsonMatch)throw new Error("No JSON object found in Gemini response");
 
   let parsed;
   try{parsed=JSON.parse(jsonMatch[0]);}
-  catch(e){throw new Error("JSON parse failed: "+e.message);}
-
-  if(!Array.isArray(parsed.categories)||parsed.categories.length===0){
-    throw new Error("Invalid response structure");
+  catch(e){
+    console.error("[FORGE] JSON parse failed. Raw:",clean.slice(0,500));
+    throw new Error("JSON parse failed: "+e.message);
   }
 
+  if(!Array.isArray(parsed.categories)||parsed.categories.length===0){
+    throw new Error("Invalid response structure — missing categories array");
+  }
+
+  console.log("[FORGE] ✓ Success! Categories received:",parsed.categories.length);
   parsed._aiPowered=true;
   return parsed;
 }
@@ -741,7 +819,7 @@ function renderResults(blueprint){
     const catId=category.cat.replace(/[^a-zA-Z0-9]/g,"_");
     section.innerHTML=`
       <div class="cat-header">
-        <span class="cat-icon">${category.icon||"🛠️"}</span>
+        <span class="cat-icon">${(typeof category.icon==="string"&&category.icon.length<=4)?esc(category.icon):"🛠️"}</span>
         <span class="cat-name">${esc(category.cat)}</span>
         <span class="cat-selection-status" id="sel-${catId}">— NOT SELECTED —</span>
       </div>
@@ -751,8 +829,12 @@ function renderResults(blueprint){
     (category.options||[]).forEach((opt,i)=>{
       const card=document.createElement("div");
       card.className="option-card";
-      const bClass=getBadgeClass(opt.badge);
-      const cClass=opt.condition==="Used"?"cond-used":opt.condition==="Refurbished"?"cond-refurb":"cond-new";
+      const SAFE_BADGE=new Set(["badge-rec","badge-budget","badge-value","badge-premium","badge-default",""]);
+      const SAFE_COND=new Set(["cond-new","cond-used","cond-refurb"]);
+      const rawBClass=getBadgeClass(opt.badge);
+      const bClass=SAFE_BADGE.has(rawBClass)?rawBClass:"badge-default";
+      const rawCClass=opt.condition==="Used"?"cond-used":opt.condition==="Refurbished"?"cond-refurb":"cond-new";
+      const cClass=SAFE_COND.has(rawCClass)?rawCClass:"cond-new";
       card.innerHTML=`
         <div class="option-badge ${bClass}">${esc(opt.badge||"")}</div>
         <div class="option-name">${esc(opt.name)}</div>
@@ -873,7 +955,7 @@ function openInvoice(){
   if(hw)hw.textContent=formatPrice(totalPKR);
   if(af)af.textContent=formatPrice(STATE.assemblyFee);
   if(gt)gt.textContent=formatPrice(totalPKR+STATE.assemblyFee);
-  if(ts){const now=new Date();ts.textContent="DATETIME: "+now.toLocaleDateString()+" "+now.toLocaleTimeString();}
+  if(ts){ts.textContent="DATETIME: "+new Date().toISOString().replace("T"," ").slice(0,19)+" UTC";}
   modal.classList.add("active");
   document.body.style.overflow="hidden";
 }
@@ -930,5 +1012,51 @@ function setupCursorGlow(){
 // ── UTILS ─────────────────────────────────────────────────────────────────────
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
 </script>
+<!-- ── FOOTER ──────────────────────────────────────────────────────────────── -->
+<footer style="text-align:center;padding:2rem 1rem;font-size:12px;color:#7090b0;border-top:1px solid #1a2f50;margin-top:4rem;font-family:'JetBrains Mono',monospace;">
+  <div style="margin-bottom:10px;">
+    <a href="privacy.html" style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">Privacy Policy</a>·
+    <a href="terms.html"   style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">Terms &amp; Conditions</a>·
+    <a href="cookies.html" style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">Cookie Policy</a>·
+    <a href="faq.html"     style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">FAQ</a>
+  </div>
+  <div>© 2025 FORGE AI PC Builder. Recommendations for informational purposes only. Verify all prices before purchasing.</div>
+</footer>
+
+<!-- ── COOKIE CONSENT BANNER ─────────────────────────────────────────────── -->
+<div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;
+  background:#080f1a;border-top:1px solid #1a2f50;padding:14px 24px;
+  flex-wrap:wrap;gap:12px;font-size:13px;color:#c8d8f0;align-items:center;justify-content:space-between;">
+  <span>🍪 We use minimal functional cookies.
+    <a href="cookies.html" style="color:#00f0ff;" rel="noopener noreferrer">Cookie Policy</a> ·
+    <a href="privacy.html" style="color:#00f0ff;" rel="noopener noreferrer">Privacy Policy</a>
+  </span>
+  <div style="display:flex;gap:10px;flex-shrink:0;">
+    <button onclick="declineCookies()" style="background:transparent;border:1px solid #1a2f50;color:#7090b0;padding:6px 16px;border-radius:4px;cursor:pointer;font-size:12px;font-family:'JetBrains Mono',monospace;">Decline</button>
+    <button onclick="acceptCookies()" style="background:#00f0ff;border:none;color:#04080f;padding:6px 16px;border-radius:4px;cursor:pointer;font-weight:700;font-size:12px;font-family:'JetBrains Mono',monospace;">Accept</button>
+  </div>
+</div>
+<script>
+(function(){
+  try{
+    const consent=localStorage.getItem("forge_cookie_consent");
+    if(!consent){
+      const b=document.getElementById("cookieBanner");
+      if(b)b.style.display="flex";
+    }
+  }catch(e){}
+})();
+function acceptCookies(){
+  try{localStorage.setItem("forge_cookie_consent","accepted");}catch(e){}
+  const b=document.getElementById("cookieBanner");
+  if(b)b.style.display="none";
+}
+function declineCookies(){
+  try{localStorage.setItem("forge_cookie_consent","declined");}catch(e){}
+  const b=document.getElementById("cookieBanner");
+  if(b)b.style.display="none";
+}
+</script>
+
 </body>
 </html>
