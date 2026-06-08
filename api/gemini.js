@@ -22,7 +22,7 @@ function isRateLimited(ip) {
 // ── Input validation ─────────────────────────────────────────────────────────
 function validateInput(body) {
   const { budget, usage, preferences, currency, action } = body;
-  const allowedActions = ["recommend", "trending", "compare", "explain", "custom"];
+   const allowedActions = ["recommend", "trending", "compare", "explain", "custom"];
 
   if (action && !allowedActions.includes(action)) {
     return "Invalid action type.";
@@ -38,20 +38,25 @@ function validateInput(body) {
 }
 
 // ── Build prompt based on action ─────────────────────────────────────────────
-function buildPrompt(body) 
-{if (action === "custom" && body.prompt) {
-  return String(body.prompt).slice(0, 8000);
-}
+function buildPrompt(body) {
   const {
-    budget      = 0,
-    usage       = "general",
-    preferences = {},
-    currency    = "PKR",
-    action      = "recommend",
-    components  = [],
-    query       = "",
+    budget       = 0,
+    usage        = "general",
+    preferences  = {},
+    currency     = "PKR",
+    action       = "recommend",
+    components   = [],
+    query        = "",
     customerName = "",
   } = body;
+
+  // ✅ NOW add the custom check, after action is declared:
+  if (action === "custom" && body.prompt) {
+    return String(body.prompt).slice(0, 8000);
+  }
+
+  const safeUsage = String(usage).slice(0, 200);
+  // ... rest of function continues normally
 
   const safeUsage    = String(usage).slice(0, 200);
   const safeQuery    = String(query).slice(0, 500);
