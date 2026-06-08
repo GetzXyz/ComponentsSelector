@@ -538,7 +538,7 @@ async function handleFormSubmit(e){
 
   let usedAI=false;
   try{
-    STATE.blueprint=await fetchBuildFromGemini(budgetPKR,purpose);
+    STATE.blueprint=await fetchBuildFromGroq(budgetPKR,purpose);
     usedAI=true;
   }catch(err){
     console.warn("AI error — using fallback:",err.message);
@@ -558,13 +558,13 @@ async function handleFormSubmit(e){
     const txt=document.getElementById("aiSourceText");
     if(ind&&txt){
       ind.style.display="flex";
-      if(usedAI){
-        txt.textContent="✓ Fetching LIVE data via Gemini AI + Google Search";
+      if(usedAI){txt.textContent="✓ Build generated via Groq AI (Llama 3.3 70B)";
+        
         ind.style.borderColor="rgba(0,230,118,.4)";
         txt.style.color="#00e676";
       }else{
-        ind.innerHTML=`<span style="color:#ffb700;">⚠ Using cached data — Gemini not connected</span>
-          <button onclick="location.reload()" style="margin-left:12px;background:transparent;border:1px solid #ffb700;color:#ffb700;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font-mono);">↺ Retry</button>`;
+       ind.innerHTML=`<span style="color:#ffb700;">⚠ Using cached data — Groq not connected</span>
+  <button onclick="location.reload()" style="margin-left:12px;background:transparent;border:1px solid #ffb700;color:#ffb700;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font-mono);">↺ Retry</button>`;
       }
     }
     if(btn)btn.disabled=false;
@@ -584,59 +584,46 @@ function checkRateLimit(){
   RATE_LIMIT.timestamps.push(now);
 }
 
-// ── Gemini API CALL (FIXED v4.2) ─────────────────────────────────────────────
-async function fetchBuildFromGemini(budgetPKR,purpose){
-  // IMPORTANT: Replace with your real key from https://aistudio.google.com/app/apikey
-  // Gemini API keys always start with "AIza" (39 chars total).
-  const API_KEY="AIzaAQ.Ab8RN6IiQ-UzUkH3mFS6bZ_5s6mo57glfE2lpWTjRidrAaiptw";
-  const MODEL="gemini-2.0-flash";
-  const ENDPOINT=`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
+// ── GROQ API CALL ─────────────────────────────────────────────────────────────
+async function fetchBuildFromGroq(budgetPKR, purpose) {
+  console.log("[FORGE] Calling Groq API...", { budgetPKR, purpose });
 
-  // Validate key format before wasting an API call
-  if(!API_KEY||!API_KEY.startsWith("AIza")||API_KEY.includes("YOUR_REAL_KEY")){
-    throw new Error("API_KEY_INVALID: Please set a valid Gemini API key (must start with AIza). Get one at https://aistudio.google.com/app/apikey");
-  }
-
-  console.log("[FORGE] Calling Gemini API...",{budgetPKR,purpose,model:MODEL});
-
-  const tier=getBudgetTier(budgetPKR);
-  const tierGuide={
-    entry:"Entry-level: very basic components, skip expensive peripherals",
-    budget:"Budget: solid mid-entry AMD/Intel CPUs, GTX 1660/RX 6600 class GPU",
+  const tier = getBudgetTier(budgetPKR);
+  const tierGuide = {
+    entry:      "Entry-level: very basic components, skip expensive peripherals",
+    budget:     "Budget: solid mid-entry AMD/Intel CPUs, GTX 1660/RX 6600 class GPU",
     "mid-range":"Mid-range: RTX 3060-3080/RX 6700XT, Ryzen 5 5600X / i5-12600K",
-    "high-end":"High-end: RTX 3080Ti/4070-4080, Ryzen 7 5800X3D / i7-13700K",
-    enthusiast:"Enthusiast: RTX 4080/5070Ti, Ryzen 9 7900X / i9-13900K",
-    flagship:"Flagship: RTX 5090/4090, Ryzen 9 9950X / Threadripper"
+    "high-end": "High-end: RTX 3080Ti/4070-4080, Ryzen 7 5800X3D / i7-13700K",
+    enthusiast: "Enthusiast: RTX 4080/5070Ti, Ryzen 9 7900X / i9-13900K",
+    flagship:   "Flagship: RTX 5090/4090, Ryzen 9 9950X / Threadripper"
   };
 
-  const alloc=purpose==="gaming"
-    ?"GPU 35-45%, CPU 20-25%, Motherboard 8-12%, RAM 5-10%, Storage 5-8%, PSU 5-8%, Case 2-4%, Monitor+Peripherals 10-15%"
-    :"CPU 30-35%, GPU 15-20%, RAM 10-15%, Motherboard 10-12%, Storage 8-12%, PSU 5-8%, Case 2-4%, rest for peripherals";
+  const alloc = purpose === "gaming"
+    ? "GPU 35-45%, CPU 20-25%, Motherboard 8-12%, RAM 5-10%, Storage 5-8%, PSU 5-8%, Case 2-4%, Monitor+Peripherals 10-15%"
+    : "CPU 30-35%, GPU 15-20%, RAM 10-15%, Motherboard 10-12%, Storage 8-12%, PSU 5-8%, Case 2-4%, rest for peripherals";
 
-  const prompt=`You are FORGE, an expert PC hardware analyst for the Pakistani market.
+  const prompt = `You are FORGE, an expert PC hardware analyst for the Pakistani market.
 Generate a complete PC build for budget: ${budgetPKR.toLocaleString()} PKR
 Use case: ${purpose}
 Budget tier: ${tier} — ${tierGuide[tier]}
 Budget allocation: ${alloc}
 
-Search the web for current 2024-2025 Pakistani market prices from Daraz.pk, OLX Pakistan, itech.com.pk.
-
 RULES:
 1. Return ONLY a valid JSON object. No explanation text, no markdown fences.
 2. Exactly 3 options per category: recommended (New), budget pick (Used/cheaper), best value
-3. All prices in PKR based on real current Pakistani prices
-4. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR*0.93).toLocaleString()} PKR
+3. All prices in PKR based on real current Pakistani market prices (Hafeez Centre, Daraz, itech.com.pk)
+4. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR * 0.93).toLocaleString()} PKR
 5. Include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals
 6. Scale components dramatically with budget tier
 7. For entry budgets under 80k PKR: skip expensive monitors/peripherals, maximize core hardware
 
-Return this exact JSON structure:
+Return this EXACT JSON structure only (no markdown, no text before or after):
 {
   "tier": "${tier}",
   "categories": [
     {
       "cat": "CPU",
-      "icon": "\u{1F532}",
+      "icon": "🔲",
       "options": [
         {"name": "Intel Core i5-13600K", "price": 58000, "condition": "New", "badge": "RECOMMENDED", "note": "Best gaming IPC"},
         {"name": "AMD Ryzen 5 5600X", "price": 28000, "condition": "Used", "badge": "BUDGET PICK", "note": "Great value"},
@@ -645,75 +632,55 @@ Return this exact JSON structure:
     }
   ]
 }
-Icons: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Case=📦, Monitor=🖥️, Peripherals=🎧`;
+Icons to use: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Case=📦, Monitor=🖥️, Peripherals=🎧`;
 
-  const requestBody={
-    contents:[{parts:[{text:prompt}]}],
-    generationConfig:{
-      // NOTE: responseMimeType INTENTIONALLY OMITTED — it is incompatible with googleSearch grounding.
-      // Including both causes a 400 INVALID_ARGUMENT error from the Gemini API.
-      temperature:0.3,
-      topP:0.85,
-      maxOutputTokens:4096
-    },
-    systemInstruction:{
-      parts:[{text:"You are FORGE, an elite AI PC hardware analyst. Always return a raw JSON object only. No markdown fences, no preamble, no explanation — just the JSON object."}]
-    },
-    tools:[{googleSearch:{}}]
-  };
-
-  console.log("[FORGE] Request prepared, sending fetch...");
-
-  const response=await fetch(ENDPOINT,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(requestBody)
+  const response = await fetch("/api/gemini", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "custom",
+      prompt: prompt,
+      budgetPKR,
+      purpose
+    })
   });
 
-  console.log("[FORGE] Response status:",response.status);
+  console.log("[FORGE] Response status:", response.status);
 
-  if(!response.ok){
-    const errText=await response.text().catch(()=>"");
-    console.error("[FORGE] API Error body:",errText);
-    throw new Error(`Gemini API error ${response.status}: ${errText.slice(0,300)}`);
+  if (!response.ok) {
+    const errText = await response.text().catch(() => "");
+    console.error("[FORGE] API Error body:", errText);
+    throw new Error(`Groq API error ${response.status}: ${errText.slice(0, 300)}`);
   }
 
-  const data=await response.json();
-  console.log("[FORGE] Raw response received, extracting text...");
+  const data = await response.json();
+  console.log("[FORGE] Raw response received, extracting...");
 
-  let rawText="";
-  const parts=data?.candidates?.[0]?.content?.parts??[];
-  for(const p of parts){if(p.text){rawText=p.text;break;}}
+  // Handle raw flag (JSON parse failed on server side)
+  let rawText = typeof data.result === "string" ? data.result : JSON.stringify(data.result);
 
-  if(!rawText){
-    console.error("[FORGE] Empty response. Full data:",JSON.stringify(data).slice(0,500));
-    throw new Error("Gemini returned empty response");
-  }
-
-  console.log("[FORGE] Raw text (first 200 chars):",rawText.slice(0,200));
-
-  // Strip markdown fences the model adds when responseMimeType is not set
-  const clean=rawText.trim()
-    .replace(/^```(?:json)?\s*/im,"")
-    .replace(/\s*```\s*$/m,"")
+  // Strip markdown fences if any
+  const clean = rawText.trim()
+    .replace(/^```(?:json)?\s*/im, "")
+    .replace(/\s*```\s*$/m, "")
     .trim();
 
-  const jsonMatch=clean.match(/\{[\s\S]*\}/);
-  if(!jsonMatch)throw new Error("No JSON object found in Gemini response");
+  const jsonMatch = clean.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("No JSON found in Groq response");
 
   let parsed;
-  try{parsed=JSON.parse(jsonMatch[0]);}
-  catch(e){
-    console.error("[FORGE] JSON parse failed. Raw:",clean.slice(0,500));
-    throw new Error("JSON parse failed: "+e.message);
+  try { parsed = JSON.parse(jsonMatch[0]); }
+  catch (e) {
+    console.error("[FORGE] JSON parse failed:", clean.slice(0, 500));
+    throw new Error("JSON parse failed: " + e.message);
   }
 
-  if(!Array.isArray(parsed.categories)||parsed.categories.length===0){
-    throw new Error("Invalid response structure — missing categories array");
+  if (!Array.isArray(parsed.categories) || parsed.categories.length === 0) {
+    throw new Error("Invalid response — missing categories array");
   }
 
-  console.log("[FORGE] ✓ Success! Categories received:",parsed.categories.length);
-  parsed._aiPowered=true;
+  console.log("[FORGE] ✓ Success! Categories:", parsed.categories.length);
+  parsed._aiPowered = true;
   return parsed;
 }
 

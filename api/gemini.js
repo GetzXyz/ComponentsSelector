@@ -1,239 +1,305 @@
-/**
- * FORGE — GEMINI INTELLIGENCE DISPATCH MODULE v4.2 (FIXED)
- * Live internet search + multi-currency + budget-aware builds + 3 options per category
- *
- * FIXES APPLIED:
- * - API key placeholder updated (must start with AIza — get from aistudio.google.com/app/apikey)
- * - responseMimeType REMOVED — it is incompatible with googleSearch grounding (causes 400 error)
- * - Upgraded model to gemini-2.0-flash (better JSON handling than flash-lite)
- * - Added key format validation before API call
- * - Improved JSON extraction with multi-line fence stripping
- * - Added maxOutputTokens to generationConfig
- * - UTC timestamp for invoice consistency
- */
+// api/gemini.js — Powered by Groq (drop-in replacement for Gemini)
+// Vercel Serverless Function
 
-"use strict";
+// ── Rate limiting (in-memory, per serverless instance) ──────────────────────
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX    = 10;         // max 10 requests per minute per IP
 
-// ─── CONFIG ──────────────────────────────────────────────────────────────────
-
-const FORGE_GEMINI_MODEL = "gemini-2.0-flash";
-
-// ⚠ IMPORTANT: Replace with your real key from https://aistudio.google.com/app/apikey
-// Gemini API keys always start with "AIza" followed by 35 alphanumeric characters (39 chars total).
-// Example format: AIzaSyABCDEFGHIJKLMNOPQRSTUVWXYZ1234567
-// The old key starting with "AQ." was a Firebase App Check token — wrong credential type.
-const FORGE_GEMINI_API_KEY = "AIzaSyYOUR_REAL_KEY_HERE";
-
-const FORGE_GEMINI_ENDPOINT =
-    `https://generativelanguage.googleapis.com/v1beta/models/${FORGE_GEMINI_MODEL}:generateContent?key=${FORGE_GEMINI_API_KEY}`;
-
-// ─── CURRENCY CONFIG ─────────────────────────────────────────────────────────
-
-const CURRENCIES = {
-    PKR: { symbol: "Rs",  name: "Pakistani Rupee",   rate: 1        },
-    USD: { symbol: "$",   name: "US Dollar",         rate: 0.0036   },
-    EUR: { symbol: "€",   name: "Euro",              rate: 0.0033   },
-    GBP: { symbol: "£",   name: "British Pound",     rate: 0.0028   },
-    AED: { symbol: "د.إ", name: "UAE Dirham",        rate: 0.0131   },
-    SAR: { symbol: "ر.س", name: "Saudi Riyal",       rate: 0.0134   },
-    CAD: { symbol: "C$",  name: "Canadian Dollar",   rate: 0.0049   },
-    AUD: { symbol: "A$",  name: "Australian Dollar", rate: 0.0055   }
-};
-
-let activeCurrency = "PKR";
-
-function setActiveCurrency(code) { if (CURRENCIES[code]) activeCurrency = code; }
-function getActiveCurrency() { return activeCurrency; }
-function convertFromPKR(pkrAmount) { return pkrAmount * (CURRENCIES[activeCurrency]?.rate ?? 1); }
-function convertToPKR(amount) { return Math.round(amount / (CURRENCIES[activeCurrency]?.rate ?? 1)); }
-
-function formatPrice(pkrAmount) {
-    const cur = CURRENCIES[activeCurrency];
-    const val = convertFromPKR(pkrAmount);
-    return `${cur.symbol}${val.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+function isRateLimited(ip) {
+  const now  = Date.now();
+  const data = rateLimitMap.get(ip) || { count: 0, start: now };
+  if (now - data.start > RATE_LIMIT_WINDOW) {
+    rateLimitMap.set(ip, { count: 1, start: now });
+    return false;
+  }
+  if (data.count >= RATE_LIMIT_MAX) return true;
+  data.count++;
+  rateLimitMap.set(ip, data);
+  return false;
 }
 
-function formatRaw(currencyAmount) {
-    const cur = CURRENCIES[activeCurrency];
-    return `${cur.symbol}${currencyAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+// ── Input validation ─────────────────────────────────────────────────────────
+function validateInput(body) {
+  const { budget, usage, preferences, currency, action } = body;
+  const allowedActions = ["recommend", "trending", "compare", "explain", "custom"];
+
+  if (action && !allowedActions.includes(action)) {
+    return "Invalid action type.";
+  }
+  if (budget !== undefined) {
+    const b = Number(budget);
+    if (isNaN(b) || b < 0 || b > 10_000_000) return "Invalid budget value.";
+  }
+  if (usage && typeof usage !== "string") return "Invalid usage field.";
+  if (preferences && typeof preferences !== "object") return "Invalid preferences.";
+  if (currency && typeof currency !== "string") return "Invalid currency.";
+  return null;
 }
 
-// ─── TIER DETECTION ──────────────────────────────────────────────────────────
-
-function getBudgetTier(budgetPKR) {
-    if (budgetPKR <   80000) return "entry";
-    if (budgetPKR <  200000) return "budget";
-    if (budgetPKR <  400000) return "mid-range";
-    if (budgetPKR <  700000) return "high-end";
-    if (budgetPKR < 1200000) return "enthusiast";
-    return "flagship";
+// ── Build prompt based on action ─────────────────────────────────────────────
+function buildPrompt(body) 
+{if (action === "custom" && body.prompt) {
+  return String(body.prompt).slice(0, 8000);
 }
+  const {
+    budget      = 0,
+    usage       = "general",
+    preferences = {},
+    currency    = "PKR",
+    action      = "recommend",
+    components  = [],
+    query       = "",
+    customerName = "",
+  } = body;
 
-// ─── RATE LIMITER ─────────────────────────────────────────────────────────────
+  const safeUsage    = String(usage).slice(0, 200);
+  const safeQuery    = String(query).slice(0, 500);
+  const safeName     = String(customerName).slice(0, 100);
+  const safePrefs    = JSON.stringify(preferences).slice(0, 500);
+  const safeComps    = JSON.stringify(components).slice(0, 1000);
 
-const RATE_LIMIT = { maxRequests: 5, windowMs: 60000, timestamps: [] };
+  // ── Trending hardware prompt ─────────────────────────────────────────────
+  if (action === "trending") {
+    return `You are FORGE AI, a PC hardware expert for the Pakistani market.
+List the top 5 trending PC components in Pakistan right now (2025).
+Focus on: GPUs, CPUs, SSDs, RAM, motherboards.
+For each item provide:
+- Component name
+- Why it's trending
+- Approximate price in PKR
 
-function checkRateLimit() {
-    const now = Date.now();
-    RATE_LIMIT.timestamps = RATE_LIMIT.timestamps.filter(t => now - t < RATE_LIMIT.windowMs);
-    if (RATE_LIMIT.timestamps.length >= RATE_LIMIT.maxRequests) {
-        const oldest = RATE_LIMIT.timestamps[0];
-        const waitSec = Math.ceil((RATE_LIMIT.windowMs - (now - oldest)) / 1000);
-        throw new Error(`RATE_LIMITED: Too many requests. Please wait ${waitSec} seconds.`);
-    }
-    RATE_LIMIT.timestamps.push(now);
-}
-
-// ─── SYSTEM INSTRUCTION ──────────────────────────────────────────────────────
-
-function buildSystemInstruction(budgetPKR, purpose) {
-    const tier = getBudgetTier(budgetPKR);
-
-    const allocationGuide = purpose === "gaming"
-        ? "GPU: 35-45%, CPU: 20-25%, Motherboard: 8-12%, RAM: 5-10%, Storage: 5-10%, PSU: 5-8%, Case: 2-5%, remaining for peripherals."
-        : "CPU: 30-35%, GPU: 15-20%, Motherboard: 10-12%, RAM: 10-15%, Storage: 8-12%, PSU: 5-8%, Case: 2-5%, remaining for peripherals.";
-
-    const tierGuidance = {
-        entry:      "Entry-level (under 80k PKR): Prioritize CPU, GPU, RAM, Storage. Skip expensive peripherals entirely.",
-        budget:     "Budget (80k-200k PKR): Solid mid-entry components. AMD/Intel budget CPUs. GTX 1660 / RX 6600 class GPU.",
-        "mid-range":"Mid-range (200k-400k PKR): RTX 3060 Ti / RX 6700 XT. Ryzen 5 5600X / i5-12600K. Good peripherals.",
-        "high-end": "High-end (400k-700k PKR): RTX 4070 / RTX 3080. Ryzen 7 5800X3D. 144Hz+ monitor.",
-        enthusiast: "Enthusiast (700k-1.2M PKR): RTX 4080 / RTX 5070. Ryzen 9 7900X. Premium 1440p/4K peripherals.",
-        flagship:   "Flagship (1.2M+ PKR): RTX 5090 / RTX 4090. Ryzen 9 9950X. Ultra-premium everything, 4K 144Hz+."
-    };
-
-    return `You are FORGE, an elite AI PC hardware analyst with access to live internet pricing data.
-Task: Generate a complete PC build from REAL, CURRENT Pakistani market prices (2024–2025).
-Budget tier: ${tier.toUpperCase()} — ${tierGuidance[tier]}
-Budget allocation for ${purpose}: ${allocationGuide}
-
-CRITICAL RULES:
-1. Return ONLY a raw JSON object — no markdown, no backticks, no preamble, no explanation.
-2. Provide EXACTLY 3 options per category (RECOMMENDED/New, BUDGET PICK/Used, BEST VALUE).
-3. All prices in PKR based on real Pakistani market rates from Daraz.pk, OLX Pakistan, itech.com.pk.
-4. Total of RECOMMENDED selections must stay within 93% of budget.
-5. NEVER recommend the same product in all 3 slots.
-6. Scale hardware dramatically with budget — do NOT give same parts for 100k and 500k builds.
-7. For entry budgets under 100k: skip expensive peripherals, maximize core hardware.
-8. Include condition: "New", "Used", or "Refurbished".
-9. Always include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals.
-
-OUTPUT SCHEMA (strictly follow):
+Respond in JSON format only (no markdown):
 {
-  "tier": "${tier}",
-  "categories": [
-    {
-      "cat": "CPU",
-      "icon": "🔲",
-      "options": [
-        { "name": "Intel Core i5-13600K", "price": 58000, "condition": "New",  "badge": "RECOMMENDED", "note": "Best gaming IPC" },
-        { "name": "AMD Ryzen 5 5600X",    "price": 28000, "condition": "Used", "badge": "BUDGET PICK",  "note": "Great value" },
-        { "name": "Intel Core i5-12400F", "price": 35000, "condition": "New",  "badge": "BEST VALUE",   "note": "F-series, no iGPU" }
-      ]
-    }
+  "trending": [
+    { "name": "...", "reason": "...", "price_pkr": "..." }
   ]
+}`;
+  }
+
+  // ── Compare components prompt ────────────────────────────────────────────
+  if (action === "compare") {
+    return `You are FORGE AI, a PC hardware expert for the Pakistani market.
+Compare these components: ${safeComps}
+Provide a detailed comparison covering:
+- Performance benchmarks
+- Price/performance ratio in PKR
+- Best use cases
+- Verdict: which to buy and why
+
+Respond in JSON format only (no markdown):
+{
+  "comparison": {
+    "components": [...],
+    "verdict": "...",
+    "best_for": "..."
+  }
+}`;
+  }
+
+  // ── Explain component prompt ─────────────────────────────────────────────
+  if (action === "explain") {
+    return `You are FORGE AI, a PC hardware expert.
+Explain the following in simple terms for a Pakistani buyer: ${safeQuery}
+Keep it concise, practical, and mention Pakistani market context where relevant.
+Respond as plain text.`;
+  }
+
+  // ── Main recommendation prompt ───────────────────────────────────────────
+  return `You are FORGE AI, an expert PC builder assistant for the Pakistani market.
+
+Customer: ${safeName || "Anonymous"}
+Build Budget: ${budget} ${currency}
+Primary Usage: ${safeUsage}
+Preferences/Constraints: ${safePrefs}
+
+Your task: Recommend a complete PC build optimized for the Pakistani market.
+Consider local availability, import prices, and value for money in PKR.
+
+IMPORTANT RULES:
+1. Stay strictly within the given budget
+2. Prioritize components available in Pakistani markets (Hafeez Centre, local retailers)
+3. Prefer value-for-money options
+4. Account for Pakistani import duties and market pricing
+5. If budget is very low, recommend the best possible build, not empty fields
+
+Respond in this EXACT JSON format only (no markdown, no explanation outside JSON):
+{
+  "build_name": "...",
+  "total_price": ...,
+  "currency": "${currency}",
+  "tier": "Entry/Mid-Range/High-End/Flagship",
+  "components": {
+    "cpu":        { "name": "...", "price": ..., "reason": "..." },
+    "motherboard":{ "name": "...", "price": ..., "reason": "..." },
+    "ram":        { "name": "...", "price": ..., "reason": "..." },
+    "gpu":        { "name": "...", "price": ..., "reason": "..." },
+    "storage":    { "name": "...", "price": ..., "reason": "..." },
+    "psu":        { "name": "...", "price": ..., "reason": "..." },
+    "case":       { "name": "...", "price": ..., "reason": "..." },
+    "cooling":    { "name": "...", "price": ..., "reason": "..." }
+  },
+  "technician_fee": ...,
+  "summary": "...",
+  "performance_notes": "...",
+  "upgrade_path": "..."
+}`;
 }
 
-Icons: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Case=📦, Monitor=🖥️, Peripherals=🎧`;
+// ── Groq API call ─────────────────────────────────────────────────────────────
+async function callGroq(prompt, isJson = true) {
+  const GROQ_API_KEY = process.env.GROQ_API_KEY;
+
+  if (!GROQ_API_KEY) {
+    throw new Error("GROQ_API_KEY environment variable is not set.");
+  }
+
+  const body = {
+    model: "llama-3.3-70b-versatile",
+    messages: [
+      {
+        role: "system",
+        content: isJson
+          ? "You are FORGE AI, a PC hardware expert for Pakistan. Always respond with valid JSON only. No markdown, no explanation outside the JSON object."
+          : "You are FORGE AI, a PC hardware expert for Pakistan. Be concise and helpful.",
+      },
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+    temperature: 0.6,
+    max_tokens: 2048,
+  };
+
+  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${GROQ_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Groq API error ${response.status}: ${errText}`);
+  }
+
+  const data = await response.json();
+  return data.choices?.[0]?.message?.content || "";
 }
 
-// ─── PUBLIC API ───────────────────────────────────────────────────────────────
+// ── Main handler ──────────────────────────────────────────────────────────────
+export default async function handler(req, res) {
+  // Security headers
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-XSS-Protection", "1; mode=block");
 
-/**
- * Calls Gemini with Google Search grounding for live market data.
- * @param {number} budgetPKR
- * @param {string} purpose  "gaming" | "workstation"
- * @returns {Promise<Object>}
- */
-async function contactForgeIntelligenceEngine(budgetPKR, purpose) {
-    // Validate API key format before wasting a network call
-    if (!FORGE_GEMINI_API_KEY || !FORGE_GEMINI_API_KEY.startsWith("AIza") || FORGE_GEMINI_API_KEY.includes("YOUR_REAL_KEY")) {
-        throw new Error("API_KEY_INVALID: Key must start with 'AIza'. Get one at https://aistudio.google.com/app/apikey");
-    }
+  // CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-    // Rate limit check
-    checkRateLimit();
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed. Use POST." });
+  }
 
-    const tier = getBudgetTier(budgetPKR);
-    const budgetFormatted = budgetPKR.toLocaleString();
+  // Rate limiting
+  const clientIP =
+    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+    req.socket?.remoteAddress ||
+    "unknown";
 
-    const userPrompt =
-        `Generate a complete PC build for a TOTAL budget of ${budgetFormatted} PKR optimized for ${purpose}.\n` +
-        `Budget tier: ${tier}.\n` +
-        `Search the internet for CURRENT Pakistani market prices (2024-2025) from Daraz.pk, OLX Pakistan, itech.com.pk.\n` +
-        `Total of all RECOMMENDED options combined must NOT exceed ${Math.round(budgetPKR * 0.93).toLocaleString()} PKR.\n` +
-        `Return ONLY the JSON object, nothing else. No markdown, no backticks, no explanation.`;
-
-    const requestBody = {
-        contents: [{ parts: [{ text: userPrompt }] }],
-        generationConfig: {
-            // NOTE: responseMimeType is intentionally OMITTED.
-            // It is incompatible with the googleSearch grounding tool and causes a
-            // 400 INVALID_ARGUMENT error: "responseMimeType is not supported when using tools".
-            temperature: 0.3,
-            topP: 0.85,
-            maxOutputTokens: 4096
-        },
-        systemInstruction: {
-            parts: [{ text: buildSystemInstruction(budgetPKR, purpose) }]
-        },
-        tools: [{ googleSearch: {} }]
-    };
-
-    console.log("[FORGE] Calling Gemini API...", { budgetPKR, purpose, model: FORGE_GEMINI_MODEL });
-
-    const response = await fetch(FORGE_GEMINI_ENDPOINT, {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify(requestBody)
+  if (isRateLimited(clientIP)) {
+    return res.status(429).json({
+      error: "Too many requests. Please wait a minute before trying again.",
     });
+  }
 
-    console.log("[FORGE] Response status:", response.status);
+  // Parse body
+  let body;
+  try {
+    body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+  } catch {
+    return res.status(400).json({ error: "Invalid JSON body." });
+  }
 
-    if (!response.ok) {
-        const errBody = await response.text().catch(() => "");
-        console.error("[FORGE] API Error:", errBody);
-        throw new Error(`Gemini API error ${response.status}: ${errBody.slice(0, 300)}`);
+  // Validate input
+  const validationError = validateInput(body);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  // Build prompt
+  const action   = body.action || "recommend";
+  const isJson   = action !== "explain";
+  const prompt   = buildPrompt(body);
+
+  try {
+    const rawText = await callGroq(prompt, isJson);
+
+    if (!isJson) {
+      return res.status(200).json({ result: rawText });
     }
 
-    const data = await response.json();
-
-    // Extract text from response — googleSearch grounding may add tool_code parts too
-    let rawText = "";
-    const parts = data?.candidates?.[0]?.content?.parts ?? [];
-    for (const p of parts) {
-        if (p.text) { rawText = p.text; break; }
-    }
-
-    if (!rawText) {
-        console.error("[FORGE] Empty response:", JSON.stringify(data).slice(0, 500));
-        throw new Error("Gemini returned empty response.");
-    }
-
-    console.log("[FORGE] Raw text (first 200 chars):", rawText.slice(0, 200));
-
-    // Strip markdown fences — the model adds these when responseMimeType is not set
-    const cleanText = rawText.trim()
-        .replace(/^```(?:json)?\s*/im, "")
-        .replace(/\s*```\s*$/m, "")
-        .trim();
-
-    const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("No JSON object found in Gemini response");
+    // Parse JSON response
+    const cleaned = rawText
+      .replace(/```json\s*/gi, "")
+      .replace(/```\s*/g, "")
+      .trim();
 
     let parsed;
     try {
-        parsed = JSON.parse(jsonMatch[0]);
-    } catch (e) {
-        console.error("[FORGE] JSON parse failed. Raw:", cleanText.slice(0, 500));
-        throw new Error(`JSON parse failed: ${e.message}`);
+      parsed = JSON.parse(cleaned);
+    } catch {
+      // Return raw if JSON parse fails
+      return res.status(200).json({ result: rawText, raw: true });
     }
 
-    if (!Array.isArray(parsed.categories) || parsed.categories.length === 0) {
-        throw new Error("Gemini response missing categories array.");
+    return res.status(200).json({ result: parsed });
+  } catch (err) {
+    console.error("FORGE API Error:", err.message);
+
+    // Return fallback build for recommendation failures
+    if (action === "recommend") {
+      return res.status(200).json({
+        result: getFallbackBuild(body),
+        fallback: true,
+      });
     }
 
-    console.log("[FORGE] ✓ Success! Categories received:", parsed.categories.length);
-    parsed._aiPowered = true;
-    return parsed;
+    return res.status(500).json({
+      error: "AI service temporarily unavailable. Please try again.",
+    });
+  }
+}
+
+// ── Fallback build (Pakistani market hardcoded) ───────────────────────────────
+function getFallbackBuild(body) {
+  const budget   = Number(body.budget) || 80000;
+  const currency = body.currency || "PKR";
+
+  return {
+    build_name: "FORGE Recommended Build (Offline Mode)",
+    total_price: budget,
+    currency,
+    tier: budget < 80000 ? "Entry" : budget < 150000 ? "Mid-Range" : "High-End",
+    components: {
+      cpu:         { name: "AMD Ryzen 5 5600",       price: Math.round(budget * 0.22), reason: "Best value CPU for Pakistani market" },
+      motherboard: { name: "B550M DS3H",             price: Math.round(budget * 0.12), reason: "Reliable and affordable B550 board" },
+      ram:         { name: "16GB DDR4 3200MHz",       price: Math.round(budget * 0.10), reason: "Adequate for most workloads" },
+      gpu:         { name: "RX 6600 XT",             price: Math.round(budget * 0.30), reason: "Best 1080p card available in Pakistan" },
+      storage:     { name: "1TB NVMe SSD",           price: Math.round(budget * 0.08), reason: "Fast boot and load times" },
+      psu:         { name: "650W 80+ Bronze",         price: Math.round(budget * 0.08), reason: "Reliable power with headroom" },
+      case:        { name: "Mid-Tower ATX Case",      price: Math.round(budget * 0.06), reason: "Good airflow and build quality" },
+      cooling:     { name: "Cooler Master Hyper 212", price: Math.round(budget * 0.04), reason: "Excellent CPU cooler value" },
+    },
+    technician_fee: 3000,
+    summary: "A balanced build for Pakistani market conditions. All components are readily available at Hafeez Centre, Lahore and similar markets.",
+    performance_notes: "Handles 1080p gaming and everyday productivity tasks well.",
+    upgrade_path: "GPU upgrade possible later; CPU socket supports future Ryzen 5000 series.",
+  };
 }
