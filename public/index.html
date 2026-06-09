@@ -4,512 +4,405 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FORGE — AI PC Builder</title>
-<meta name="description" content="FORGE AI PC Builder — AI-powered custom PC recommendations.">
+<meta name="description" content="FORGE AI PC Builder — Get AI-powered PC build recommendations optimized for Pakistani market prices. Gaming or workstation builds across all budgets.">
+<meta property="og:title" content="FORGE AI PC Builder">
+<meta property="og:description" content="AI-powered PC build recommendations for Pakistani market — Gaming & Workstation">
+<meta property="og:type" content="website">
 <meta name="theme-color" content="#00f0ff">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='44' height='44' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='44' height='44' rx='8' fill='%2304080f'/%3E%3Crect x='10' y='10' width='24' height='24' rx='3' fill='%2304080f' stroke='%2300f0ff' stroke-width='1.2'/%3E%3Cpath d='M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z' fill='%2300f0ff'/%3E%3C/svg%3E">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
 :root{
-  --bg:#04080f;--bg2:#080f1a;--bg3:#0d1526;--panel:#0a1220;
-  --accent:#00f0ff;--accent2:#7b2fff;--gold:#ffb700;
-  --text:#c8d8f0;--text2:#7090b0;--border:#1a2f50;--border2:#0d2040;
-  --success:#00e676;--danger:#ff3c5a;
+  --bg:#04080f;
+  --bg2:#080f1a;
+  --bg3:#0d1526;
+  --panel:#0a1220;
+  --accent:#00f0ff;
+  --accent2:#7b2fff;
+  --gold:#ffb700;
+  --text:#c8d8f0;
+  --text2:#7090b0;
+  --border:#1a2f50;
+  --border2:#0d2040;
+  --success:#00e676;
+  --warn:#ffb700;
+  --danger:#ff3c5a;
+  --card-hover:#0f1e35;
   --font-main:'Plus Jakarta Sans',sans-serif;
   --font-mono:'JetBrains Mono',monospace;
   --font-display:'Orbitron',monospace;
 }
+
 body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-height:100vh;overflow-x:hidden}
-#ambientCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.3}
+
+#particleCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.4;will-change:transform}
 .grid-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,240,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
-#cursorGlow{position:fixed;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,240,255,.06) 0%,transparent 70%);pointer-events:none;transform:translate(-50%,-50%);z-index:1}
-.app-wrap{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 20px 80px}
+.cursor-glow{position:fixed;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,240,255,.06) 0%,transparent 70%);pointer-events:none;transform:translate(-50%,-50%);z-index:1;transition:opacity .2s}
+
+.app-container{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 20px 60px}
 
 /* HEADER */
 .app-header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);margin-bottom:40px;gap:16px;flex-wrap:wrap}
 .logo-area{display:flex;align-items:center;gap:10px}
+.logo-icon{font-size:28px}
 .logo-text{font-family:var(--font-display);font-size:26px;font-weight:900;color:var(--accent);letter-spacing:4px;text-shadow:0 0 20px rgba(0,240,255,.5)}
-.logo-text .dot{color:var(--accent2)}
+.logo-text .accent-dot{color:var(--accent2)}
 .header-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.currency-select{background:var(--bg3);color:var(--accent);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:var(--font-mono);font-size:13px;cursor:pointer;outline:none}
-.currency-select:hover{border-color:var(--accent)}
-.status-pill{display:flex;align-items:center;gap:6px}
-.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--success);margin-right:6px}
+.status-dot.pulsing{animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,.4)}50%{box-shadow:0 0 0 6px rgba(0,230,118,0)}}
 .status-text{font-family:var(--font-mono);font-size:11px;color:var(--text2);letter-spacing:1px}
+
+/* CURRENCY SELECTOR */
+.currency-select{background:var(--bg3);color:var(--accent);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:var(--font-mono);font-size:13px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300f0ff' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+.currency-select:hover{border-color:var(--accent)}
 
 /* VIEWS */
 .view{display:none}
 .view.active{display:block;animation:fadeIn .4s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* TERMS GATE */
-#termsGate{display:flex;position:fixed;inset:0;z-index:9999;background:rgba(4,8,15,.97);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
-.gate-box{background:var(--bg2);border:1px solid var(--accent);border-radius:16px;padding:40px 36px;max-width:520px;width:100%;text-align:center;box-shadow:0 0 60px rgba(0,240,255,.08)}
-.gate-logo{font-family:var(--font-display);font-size:28px;color:var(--accent);letter-spacing:4px;margin-bottom:6px;text-shadow:0 0 20px rgba(0,240,255,.4)}
-.gate-sub{font-size:13px;color:var(--text2);font-family:var(--font-mono);margin-bottom:28px;letter-spacing:1px}
-.gate-box h3{font-family:var(--font-display);font-size:13px;color:var(--text);letter-spacing:2px;margin-bottom:20px}
-.consent-row{display:flex;align-items:flex-start;gap:12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px;text-align:left;cursor:pointer;transition:border-color .2s}
-.consent-row:hover{border-color:var(--accent)}
-.consent-row input[type="checkbox"]{width:16px;height:16px;accent-color:var(--accent);margin-top:2px;flex-shrink:0;cursor:pointer}
-.consent-text{font-size:13px;color:var(--text);line-height:1.5}
-.consent-text a{color:var(--accent);text-decoration:none}
-.consent-text a:hover{text-decoration:underline}
-#consentError{font-family:var(--font-mono);font-size:11px;color:var(--danger);min-height:18px;margin-bottom:10px}
-.gate-btn{width:100%;padding:15px;background:linear-gradient(135deg,rgba(0,240,255,.18),rgba(123,47,255,.18));border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .3s}
-.gate-btn:hover{background:linear-gradient(135deg,rgba(0,240,255,.28),rgba(123,47,255,.28));box-shadow:0 0 24px rgba(0,240,255,.2)}
-.pc-svg{filter:drop-shadow(0 0 18px rgba(0,240,255,.25));animation:pcGlow 3s ease-in-out infinite;margin:24px auto;display:block}
-@keyframes pcGlow{0%,100%{filter:drop-shadow(0 0 12px rgba(0,240,255,.3))}50%{filter:drop-shadow(0 0 28px rgba(0,240,255,.6))}}
-.fan1{transform-origin:28px 51px;animation:spin 2s linear infinite}
-.fan2{transform-origin:34px 28px;animation:spin 2.5s linear infinite reverse}
-@keyframes spin{to{transform:rotate(360deg)}}
-.led{animation:ledBlink 1.2s ease-in-out infinite}
-.led:nth-child(2){animation-delay:.2s}
-.led:nth-child(3){animation-delay:.4s}
-.led:nth-child(4){animation-delay:.6s}
-@keyframes ledBlink{0%,100%{opacity:.2}50%{opacity:.9}}
+/* CONFIG VIEW */
+.welcome-hero{text-align:center;margin-bottom:48px}
+.welcome-hero h2{font-family:var(--font-display);font-size:clamp(22px,4vw,38px);font-weight:900;color:var(--accent);letter-spacing:3px;text-shadow:0 0 30px rgba(0,240,255,.4);margin-bottom:14px}
+.welcome-hero p{color:var(--text2);font-size:16px;max-width:580px;margin:0 auto;line-height:1.6}
 
-/* CONFIG FORM */
-.hero{text-align:center;margin-bottom:48px}
-.hero h2{font-family:var(--font-display);font-size:clamp(22px,4vw,38px);font-weight:900;color:var(--accent);letter-spacing:3px;text-shadow:0 0 30px rgba(0,240,255,.4);margin-bottom:14px}
-.hero p{color:var(--text2);font-size:16px;max-width:580px;margin:0 auto;line-height:1.6}
 .forge-form{max-width:700px;margin:0 auto}
 .form-section{margin-bottom:36px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px}
-.sec-hdr{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
 .sec-num{font-family:var(--font-display);font-size:11px;color:var(--accent2);letter-spacing:2px;background:rgba(123,47,255,.15);padding:4px 8px;border-radius:4px}
-.sec-hdr h3{font-family:var(--font-display);font-size:13px;color:var(--text);letter-spacing:2px}
-.budget-wrap{display:flex;align-items:center;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg3)}
-.budget-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,240,255,.1)}
-.curr-prefix{font-family:var(--font-mono);font-size:13px;color:var(--accent);padding:0 14px;background:rgba(0,240,255,.05);border-right:1px solid var(--border);white-space:nowrap;min-width:55px;text-align:center}
+.section-header h3{font-family:var(--font-display);font-size:13px;color:var(--text);letter-spacing:2px}
+
+.budget-input-wrapper{display:flex;align-items:center;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg3)}
+.budget-input-wrapper:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,240,255,.1)}
+.currency-indicator{font-family:var(--font-mono);font-size:13px;color:var(--accent);padding:0 14px;background:rgba(0,240,255,.05);border-right:1px solid var(--border);white-space:nowrap;min-width:55px;text-align:center}
 #budgetInput{flex:1;background:transparent;border:none;outline:none;padding:14px 16px;color:var(--text);font-size:18px;font-family:var(--font-mono)}
 #budgetInput::placeholder{color:var(--text2)}
-.hint{font-size:12px;color:var(--text2);margin-top:8px;font-family:var(--font-mono)}
-.err{font-size:12px;color:var(--danger);margin-top:6px;font-family:var(--font-mono);min-height:16px}
+.field-hint{font-size:12px;color:var(--text2);margin-top:8px;font-family:var(--font-mono)}
+.field-error{font-size:12px;color:var(--danger);margin-top:6px;font-family:var(--font-mono);min-height:16px}
+.budget-input-wrapper.error-state{border-color:var(--danger)}
+
 .options-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
-.sel-card{cursor:pointer;display:block}
-.sel-card input{display:none}
-.card-body{border:1px solid var(--border);border-radius:10px;padding:16px 14px;transition:all .2s;text-align:center}
-.sel-card:hover .card-body,.sel-card.active .card-body{border-color:var(--accent);background:rgba(0,240,255,.06)}
-.sel-card.active .card-body{box-shadow:0 0 12px rgba(0,240,255,.15)}
+.selectable-card{cursor:pointer;display:block}
+.selectable-card input{display:none}
+.card-content{border:1px solid var(--border);border-radius:10px;padding:16px 14px;transition:all .2s;text-align:center}
+.selectable-card:hover .card-content,.selectable-card.active .card-content{border-color:var(--accent);background:rgba(0,240,255,.06)}
+.selectable-card.active .card-content{box-shadow:0 0 12px rgba(0,240,255,.15)}
 .card-icon{font-size:26px;margin-bottom:8px}
-.card-body h4{font-family:var(--font-display);font-size:10px;color:var(--accent);letter-spacing:1.5px;margin-bottom:6px}
-.card-body p{font-size:11px;color:var(--text2);line-height:1.4}
-.name-input,.pref-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-size:14px;font-family:var(--font-main);outline:none;transition:border-color .2s}
-.name-input:focus,.pref-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,240,255,.08)}
-.name-input::placeholder,.pref-input::placeholder{color:var(--text2)}
-.pref-input{resize:vertical;min-height:80px;max-height:160px}
-.api-key-wrap{position:relative}
-.api-key-wrap input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 16px;padding-right:100px;color:var(--text);font-size:14px;font-family:var(--font-mono);outline:none;transition:border-color .2s}
-.api-key-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,240,255,.08)}
-.api-key-wrap input::placeholder{color:var(--text2)}
-.toggle-key-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(0,240,255,.08);border:1px solid var(--border);border-radius:4px;color:var(--text2);font-size:11px;font-family:var(--font-mono);padding:4px 8px;cursor:pointer}
-.api-note{display:flex;align-items:flex-start;gap:10px;background:rgba(0,240,255,.05);border:1px solid rgba(0,240,255,.15);border-radius:8px;padding:12px 14px;margin-top:12px;font-size:12px;color:var(--text2);line-height:1.5}
-.api-note a{color:var(--accent)}
+.card-content h4{font-family:var(--font-display);font-size:10px;color:var(--accent);letter-spacing:1.5px;margin-bottom:6px}
+.card-content p{font-size:11px;color:var(--text2);line-height:1.4}
 
-.forge-btn{width:100%;padding:18px;background:linear-gradient(135deg,rgba(0,240,255,.15),rgba(123,47,255,.15));border:1px solid var(--accent);border-radius:10px;color:var(--accent);font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .3s;overflow:hidden}
-.forge-btn:hover:not(:disabled){background:linear-gradient(135deg,rgba(0,240,255,.25),rgba(123,47,255,.25));box-shadow:0 0 30px rgba(0,240,255,.2);transform:translateY(-1px)}
-.forge-btn:disabled{opacity:.5;cursor:not-allowed}
-.forge-btn.loading{animation:btnPulse 1.2s ease-in-out infinite}
-@keyframes btnPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,240,255,.2)}50%{box-shadow:0 0 0 8px rgba(0,240,255,0)}}
+.forge-submit-btn{width:100%;padding:18px;background:linear-gradient(135deg,rgba(0,240,255,.15),rgba(123,47,255,.15));border:1px solid var(--accent);border-radius:10px;color:var(--accent);font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.forge-submit-btn:hover:not(:disabled){background:linear-gradient(135deg,rgba(0,240,255,.25),rgba(123,47,255,.25));box-shadow:0 0 30px rgba(0,240,255,.2);transform:translateY(-1px)}
+.forge-submit-btn:disabled{opacity:.5;cursor:not-allowed}
 
-/* RESULTS */
-.results-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:12px;flex-wrap:wrap}
-.btn-sec{padding:10px 18px;border-radius:7px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .2s;letter-spacing:1px;background:transparent;border:1px solid var(--border);color:var(--text2)}
-.btn-sec:hover{border-color:var(--accent);color:var(--accent)}
-.btn-pri{padding:10px 18px;border-radius:7px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .2s;letter-spacing:1px;background:rgba(123,47,255,.2);border:1px solid var(--accent2);color:var(--accent2)}
-.btn-pri:hover{background:rgba(123,47,255,.35);box-shadow:0 0 15px rgba(123,47,255,.3)}
-.results-layout{display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start}
-@media(max-width:768px){.results-layout{grid-template-columns:1fr}}
+/* LOADING VIEW */
+.loading-view-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:40px}
+.cyber-spinner{width:70px;height:70px;border:2px solid var(--border);border-top:2px solid var(--accent);border-radius:50%;animation:spin 1s linear infinite;box-shadow:0 0 20px rgba(0,240,255,.2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.matrix-terminal{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:24px 28px;width:100%;max-width:520px;font-family:var(--font-mono);font-size:13px}
+.terminal-line{color:var(--text2);padding:4px 0;opacity:0;transition:all .3s}
+.terminal-line.active-line{color:var(--accent);opacity:1}
+.terminal-line.processed-line{color:var(--text2);opacity:.6}
 
-/* SIDEBAR */
-.sidebar{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;position:sticky;top:20px}
-.sidebar-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-.sidebar-hdr h3{font-family:var(--font-display);font-size:12px;color:var(--accent);letter-spacing:2px}
-.sidebar-count{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
-.bar-track{height:4px;background:var(--border);border-radius:2px;margin-bottom:8px;overflow:hidden}
-.bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;max-width:100%}
-.sidebar-total-text{font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:16px}
-.sidebar-list{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;margin-bottom:16px;padding-right:4px}
-.sidebar-list::-webkit-scrollbar{width:3px}
-.sidebar-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
-.s-item{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--bg3);border-radius:6px;padding:8px 10px}
-.s-item-info{display:flex;flex-direction:column;gap:2px;min-width:0}
-.s-cat{font-size:10px;color:var(--accent2);font-family:var(--font-mono);letter-spacing:1px}
-.s-name{font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.s-price{font-family:var(--font-mono);font-size:12px;color:var(--accent);white-space:nowrap}
-.sidebar-total{border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;align-items:center}
-.sidebar-total-lbl{font-family:var(--font-display);font-size:10px;color:var(--text2);letter-spacing:1.5px}
-.sidebar-total-val{font-family:var(--font-mono);font-size:16px;color:var(--accent);font-weight:700}
+/* RESULTS VIEW */
+.results-actions-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:12px;flex-wrap:wrap}
+.action-secondary-btn{background:transparent;border:1px solid var(--border);color:var(--text2);padding:10px 18px;border-radius:7px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .2s;letter-spacing:1px}
+.action-secondary-btn:hover{border-color:var(--accent);color:var(--accent)}
+.action-primary-btn{background:rgba(123,47,255,.2);border:1px solid var(--accent2);color:var(--accent2);padding:10px 18px;border-radius:7px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .2s;letter-spacing:1px}
+.action-primary-btn:hover{background:rgba(123,47,255,.35);box-shadow:0 0 15px rgba(123,47,255,.3)}
 
-/* MAIN COLUMN */
-.main-col{display:flex;flex-direction:column;gap:0}
-.ribbon{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.ribbon h3{font-family:var(--font-display);font-size:11px;color:var(--accent);letter-spacing:2px}
+.results-split-layout{display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start}
+@media(max-width:768px){.results-split-layout{grid-template-columns:1fr}}
+
+/* BUILD SUMMARY PANEL */
+.build-summary-panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;position:sticky;top:20px}
+.summary-panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.summary-panel-header h3{font-family:var(--font-display);font-size:12px;color:var(--accent);letter-spacing:2px}
+.summary-count{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
+.budget-bar-track{height:4px;background:var(--border);border-radius:2px;margin-bottom:8px;overflow:hidden}
+.budget-bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;max-width:100%}
+.budget-bar-fill.near-budget{background:var(--warn)}
+.budget-bar-fill.over-budget{background:var(--danger)}
+.budget-remaining{font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:16px}
+.budget-remaining.over{color:var(--danger)}
+.summary-list{display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;margin-bottom:16px;padding-right:4px}
+.summary-list::-webkit-scrollbar{width:3px}
+.summary-list::-webkit-scrollbar-track{background:transparent}
+.summary-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.summary-empty{font-size:12px;color:var(--text2);text-align:center;padding:20px 0;font-family:var(--font-mono)}
+.summary-item{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--bg3);border-radius:6px;padding:8px 10px}
+.summary-item-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.summary-cat{font-size:10px;color:var(--accent2);font-family:var(--font-mono);letter-spacing:1px}
+.summary-name{font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.summary-price{font-family:var(--font-mono);font-size:12px;color:var(--accent);white-space:nowrap}
+.summary-total-block{border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;align-items:center}
+.summary-total-label{font-family:var(--font-display);font-size:10px;color:var(--text2);letter-spacing:1.5px}
+.summary-total-value{font-family:var(--font-mono);font-size:16px;color:var(--accent);font-weight:700}
+
+/* PARTS MATRIX */
+.parts-matrix-column{}
+.column-title-ribbon{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.column-title-ribbon h3{font-family:var(--font-display);font-size:11px;color:var(--accent);letter-spacing:2px}
 .ribbon-hint{font-size:11px;color:var(--text2);font-family:var(--font-mono)}
-.comp-grid{display:flex;flex-direction:column;gap:16px;margin-bottom:32px}
+.components-grid{display:flex;flex-direction:column;gap:16px}
+.category-section{animation:fadeIn .4s ease both}
+.cat-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.cat-icon{font-size:18px}
+.cat-name{font-family:var(--font-display);font-size:12px;color:var(--text);letter-spacing:2px;text-transform:uppercase}
+.cat-selection-status{font-family:var(--font-mono);font-size:10px;color:var(--text2);margin-left:auto}
+.cat-selection-status.status-selected{color:var(--success)}
+.cat-options-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:600px){.cat-options-row{grid-template-columns:1fr}}
 
-/* COMPONENT CATEGORY SECTION */
-.cat-section{margin-bottom:36px}
-.cat-hdr{display:flex;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid var(--border)}
-.cat-icon{font-size:22px;margin-right:12px}
-.cat-title{font-family:var(--font-display);font-size:13px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;flex:1}
-.cat-count{font-size:12px;color:var(--text2);font-family:var(--font-mono)}
-.cat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-
-/* COMPONENT CARD */
-.comp-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;position:relative}
-.comp-card:hover{border-color:var(--accent);background:var(--bg3);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
-.comp-card.selected{border-color:var(--success);background:rgba(0,230,118,.04)}
-.comp-card.selected::after{content:'✓ SELECTED';position:absolute;top:8px;right:8px;font-size:9px;font-family:var(--font-mono);color:var(--success);background:rgba(0,230,118,.12);padding:2px 6px;border-radius:3px;letter-spacing:1px}
-.comp-card.gpu-tier{border-left:2px solid var(--accent2)}
-.comp-card.cpu-tier{border-left:2px solid var(--accent)}
-.card-brand{font-family:var(--font-mono);font-size:10px;color:var(--text2);margin-bottom:6px;letter-spacing:1px;flex:1}
-.card-badge{font-size:9px;padding:3px 6px;border-radius:3px;font-weight:700;text-transform:uppercase;white-space:nowrap}
-.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
-.card-name{font-size:12px;color:#fff;margin-bottom:4px;line-height:1.4;font-weight:600}
-.card-spec{font-family:var(--font-mono);font-size:10px;color:var(--text2);margin-bottom:10px;line-height:1.5}
-.card-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:10px}
-.card-foot-lbl{font-size:10px;color:var(--text2)}
-.card-price{font-family:var(--font-mono);font-size:13px;color:var(--accent);font-weight:700}
-
-/* GAMING PERFORMANCE */
-.game-strip{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
-.game-name{font-size:12px;color:#fff;margin-bottom:2px;font-weight:600}
-.game-preset{font-family:var(--font-mono);font-size:10px;color:var(--text2);margin-bottom:8px}
-.fps-row{display:flex;gap:16px;border-top:1px dashed rgba(255,255,255,.05);padding-top:8px}
-.fps-box{display:flex;flex-direction:column;gap:2px}
-.fps-lbl{font-size:10px;color:var(--text2)}
-.fps-val{font-family:var(--font-mono);font-size:13px;color:var(--accent);font-weight:700}
-.fps-val.low{color:var(--gold)}
-
-/* BUDGET CHART */
-.alloc-bar{display:flex;height:16px;border-radius:4px;overflow:hidden;background:var(--border);margin-bottom:12px}
-.alloc-seg{height:100%;transition:width .3s ease}
-.legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.legend-item{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10px;color:var(--text2)}
-.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-
-/* SUMMARY BOX */
-.summary-box{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:24px}
-.summary-box h4{font-size:12px;color:var(--accent);letter-spacing:2px;margin-bottom:10px;font-family:var(--font-display)}
-.summary-box p{font-size:13px;color:var(--text);line-height:1.6}
-
-/* SELECT ALL PANEL */
-.select-panel{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px;flex-wrap:wrap}
-.select-panel p{font-size:13px;color:var(--text2);font-family:var(--font-mono)}
-.select-panel strong{color:var(--accent)}
-.btn-select-all{background:rgba(0,230,118,.12);border:1px solid var(--success);border-radius:6px;color:var(--success);font-size:11px;font-family:var(--font-mono);padding:7px 14px;cursor:pointer;letter-spacing:1px;transition:all .2s}
-.btn-select-all:hover{background:rgba(0,230,118,.2)}
+.option-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.option-card:hover{border-color:var(--accent);background:var(--card-hover);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.option-card.selected{border-color:var(--success);background:rgba(0,230,118,.06);box-shadow:0 0 16px rgba(0,230,118,.15)}
+.option-badge{font-size:9px;font-family:var(--font-mono);letter-spacing:1px;padding:3px 7px;border-radius:4px;display:inline-block;margin-bottom:8px;font-weight:700}
+.badge-rec{background:rgba(0,240,255,.15);color:var(--accent)}
+.badge-budget{background:rgba(255,183,0,.15);color:var(--gold)}
+.badge-value{background:rgba(0,230,118,.15);color:var(--success)}
+.badge-premium{background:rgba(123,47,255,.2);color:#b680ff}
+.badge-default{background:rgba(255,255,255,.08);color:var(--text2)}
+.option-name{font-size:12px;color:var(--text);margin-bottom:4px;line-height:1.4;font-weight:600}
+.option-note{font-size:10px;color:var(--text2);margin-bottom:10px;font-family:var(--font-mono)}
+.option-footer{display:flex;justify-content:space-between;align-items:center}
+.option-condition{font-size:10px;font-family:var(--font-mono);padding:2px 6px;border-radius:3px}
+.cond-new{color:var(--success);background:rgba(0,230,118,.1)}
+.cond-used{color:var(--gold);background:rgba(255,183,0,.1)}
+.cond-refurb{color:#b680ff;background:rgba(123,47,255,.1)}
+.option-price{font-family:var(--font-mono);font-size:13px;color:var(--accent);font-weight:700}
+.option-select-indicator{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:rgba(0,230,118,.12);color:var(--success);font-family:var(--font-display);font-size:12px;letter-spacing:2px;opacity:0;transition:opacity .2s;pointer-events:none}
+.option-card.selected .option-select-indicator{opacity:1}
 
 /* MODAL */
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
-.modal.open{display:flex}
-.modal-box{background:var(--bg2);border:1px solid var(--accent);border-radius:14px;padding:32px;max-width:580px;width:100%;max-height:88vh;overflow-y:auto;position:relative;display:flex;flex-direction:column}
-.modal-close{position:absolute;top:14px;right:16px;background:transparent;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;transition:color .2s}
-.modal-close:hover{color:var(--accent)}
-.rcpt-hdr{text-align:center;margin-bottom:20px}
-.rcpt-hdr h2{font-family:var(--font-display);font-size:18px;color:var(--accent);letter-spacing:3px;margin-bottom:8px}
-.rcpt-ts{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
-.sep{font-family:var(--font-mono);font-size:10px;color:var(--border);letter-spacing:1px;margin:12px 0}
-.rcpt-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border2)}
-.rcpt-cat{font-family:var(--font-mono);font-size:10px;color:var(--accent2);min-width:90px}
-.rcpt-item{font-size:12px;color:var(--text);flex:1}
-.rcpt-item small{color:var(--text2);font-family:var(--font-mono);font-size:10px}
-.rcpt-price{font-family:var(--font-mono);font-size:13px;color:var(--accent);white-space:nowrap;font-weight:700}
-.total-block{padding:4px 0}
-.total-line{display:flex;justify-content:space-between;padding:6px 0;font-family:var(--font-mono);font-size:13px;color:var(--text2)}
-.total-grand{color:var(--accent);font-size:15px;font-weight:700}
-.perf-title{font-family:var(--font-display);font-size:10px;color:var(--accent2);letter-spacing:2px;margin:12px 0 6px;padding:4px 0}
-.perf-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2);font-size:11px}
-.perf-game{color:var(--text);font-weight:600;min-width:100px;flex-shrink:0}
-.perf-fps{font-family:var(--font-mono);font-size:10px;color:var(--text2);text-align:right}
-.print-btn{width:100%;padding:12px;background:rgba(0,240,255,.1);border:1px solid var(--accent);border-radius:7px;color:var(--accent);font-family:var(--font-mono);font-size:12px;cursor:pointer;letter-spacing:1px;transition:all .2s;margin-top:12px}
-.print-btn:hover{background:rgba(0,240,255,.2)}
-.rcpt-footer{flex-shrink:0;margin-top:16px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.active{display:flex}
+.modal-frame{background:var(--bg2);border:1px solid var(--accent);border-radius:14px;padding:32px;max-width:540px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
+.close-modal-btn{position:absolute;top:14px;right:16px;background:transparent;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;transition:color .2s}
+.close-modal-btn:hover{color:var(--accent)}
+.receipt-header{text-align:center;margin-bottom:20px}
+.receipt-header h2{font-family:var(--font-display);font-size:18px;color:var(--accent);letter-spacing:3px;margin-bottom:8px}
+.receipt-timestamp{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
+.bar-separator{font-family:var(--font-mono);font-size:10px;color:var(--border);letter-spacing:1px;margin:12px 0}
+.receipt-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border2)}
+.receipt-cat{font-family:var(--font-mono);font-size:10px;color:var(--accent2);min-width:90px}
+.receipt-item{font-size:12px;color:var(--text);flex:1}
+.receipt-price{font-family:var(--font-mono);font-size:13px;color:var(--accent);white-space:nowrap}
+.summary-line{display:flex;justify-content:space-between;padding:6px 0;font-family:var(--font-mono);font-size:13px;color:var(--text2)}
+.grand-total-line{color:var(--accent);font-size:15px;font-weight:700}
+.receipt-footer-tagline{font-family:var(--font-mono);font-size:10px;color:var(--text2);text-align:center;margin:16px 0 12px}
+.print-receipt-btn{width:100%;padding:12px;background:rgba(0,240,255,.1);border:1px solid var(--accent);border-radius:7px;color:var(--accent);font-family:var(--font-mono);font-size:12px;cursor:pointer;letter-spacing:1px;transition:all .2s}
+.print-receipt-btn:hover{background:rgba(0,240,255,.2)}
+.receipt-empty{font-family:var(--font-mono);font-size:12px;color:var(--text2);text-align:center;padding:20px 0}
 
-/* COOKIE BANNER */
-#cookieBanner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#080f1a;border-top:1px solid var(--border);padding:14px 24px;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--text);align-items:center;justify-content:space-between}
-#cookieBanner a{color:var(--accent)}
-.cookie-btn{padding:6px 16px;border-radius:4px;cursor:pointer;font-size:12px;font-family:var(--font-mono)}
-.cookie-accept{background:var(--accent);border:none;color:var(--bg);font-weight:700}
-.cookie-decline{background:transparent;border:1px solid var(--border);color:var(--text2)}
+/* AI SOURCE TAG */
+.ai-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(123,47,255,.15);border:1px solid rgba(123,47,255,.3);border-radius:6px;padding:4px 10px;font-family:var(--font-mono);font-size:10px;color:#b680ff;margin-bottom:14px}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:#b680ff;animation:pulse2 1.5s infinite}
+@keyframes pulse2{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* FOOTER */
-.app-footer{text-align:center;padding:2rem 1rem;font-size:12px;color:var(--text2);border-top:1px solid var(--border);margin-top:4rem;font-family:var(--font-mono)}
-.app-footer a{color:var(--text2);margin:0 8px;text-decoration:none}
-.app-footer a:hover{color:var(--accent)}
+/* SEARCH INDICATOR */
+.search-indicator{background:rgba(0,240,255,.05);border:1px solid rgba(0,240,255,.15);border-radius:8px;padding:10px 14px;font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.search-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite}
 
-/* LOADING OVERLAY */
-#loadingOverlay{display:none;position:fixed;inset:0;background:rgba(4,8,15,.92);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:20px;backdrop-filter:blur(6px)}
-#loadingOverlay.show{display:flex}
-.load-logo{font-family:var(--font-display);font-size:32px;color:var(--accent);letter-spacing:4px;text-shadow:0 0 30px rgba(0,240,255,.5)}
-.load-bar-wrap{width:280px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
-.load-bar-inner{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;animation:loadAnim 1.8s ease-in-out infinite}
-@keyframes loadAnim{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
-.load-status{font-family:var(--font-mono);font-size:12px;color:var(--text2);letter-spacing:1px;text-align:center}
+.error-banner{background:rgba(255,60,90,.1);border:1px solid rgba(255,60,90,.3);border-radius:8px;padding:14px 16px;font-family:var(--font-mono);font-size:12px;color:var(--danger);margin-bottom:16px;line-height:1.5}
 
 @media print{
-  body *{background:transparent !important;color:#000 !important;border-color:#ccc !important}
-  #termsGate,#cookieBanner,.app-header,.forge-form,.results-bar,.sidebar,canvas,#cursorGlow,.grid-overlay,footer,#loadingOverlay{display:none !important}
-  .modal{display:flex !important;position:static !important;background:none !important;padding:0 !important}
-  .modal-box{border:1px solid #ccc !important;border-radius:0 !important;max-height:none !important;overflow:visible !important}
-  .modal-close,.print-btn{display:none !important}
+  body{background:white;color:black}
+  .app-header,.forge-form,.results-actions-bar,.build-summary-panel,.parts-matrix-column{display:none}
+  .modal-overlay{display:flex!important;position:static;background:none}
+  .modal-frame{border:1px solid #ccc;border-radius:0;box-shadow:none}
+  .receipt-header h2,.receipt-cat,.receipt-price,.grand-total-line{color:#000}
+  .close-modal-btn,.print-receipt-btn{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- Background -->
-<div id="cursorGlow"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
 <div class="grid-overlay"></div>
-<canvas id="ambientCanvas"></canvas>
+<canvas id="particleCanvas"></canvas>
 
-<!-- TERMS GATE -->
-<div id="termsGate">
-  <div class="gate-box">
-    <div class="gate-logo">FORGE<span style="color:var(--accent2)">.</span></div>
-    <div class="gate-sub">AI PC BUILDER — POWERED BY GROQ</div>
-    <svg class="pc-svg" width="120" height="100" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="10" y="10" width="55" height="80" rx="4" fill="#080f1a" stroke="#00f0ff" stroke-width="1.2"/>
-      <rect x="14" y="14" width="47" height="72" rx="3" fill="#04080f" stroke="#1a2f50" stroke-width="0.8"/>
-      <rect x="18" y="45" width="39" height="12" rx="2" fill="#0d1526" stroke="#7b2fff" stroke-width="0.8" opacity="0.8"/>
-      <g class="fan1"><circle cx="28" cy="51" r="4.5" fill="none" stroke="#00f0ff" stroke-width="0.7" opacity="0.6"/><line x1="28" y1="46.5" x2="28" y2="55.5" stroke="#00f0ff" stroke-width="0.8" opacity="0.6"/><line x1="23.5" y1="51" x2="32.5" y2="51" stroke="#00f0ff" stroke-width="0.8" opacity="0.6"/></g>
-      <g class="fan2"><circle cx="34" cy="28" r="7" fill="#080f1a" stroke="#00f0ff" stroke-width="0.8" opacity="0.7"/><circle cx="34" cy="28" r="2" fill="#0d1526" stroke="#7b2fff" stroke-width="0.5"/><line x1="34" y1="21" x2="34" y2="35" stroke="#00f0ff" stroke-width="0.7" opacity="0.5"/><line x1="27" y1="28" x2="41" y2="28" stroke="#00f0ff" stroke-width="0.7" opacity="0.5"/></g>
-      <rect x="14" y="62" width="4" height="20" rx="2" fill="#080f1a" stroke="#1a2f50" stroke-width="0.5"/>
-      <rect class="led" x="15" y="63" width="2" height="3" rx="0.5" fill="#00f0ff"/>
-      <rect class="led" x="15" y="68" width="2" height="3" rx="0.5" fill="#7b2fff"/>
-      <rect class="led" x="15" y="73" width="2" height="3" rx="0.5" fill="#00f0ff"/>
-      <rect class="led" x="15" y="78" width="2" height="3" rx="0.5" fill="#7b2fff"/>
-      <rect x="72" y="22" width="44" height="30" rx="3" fill="#080f1a" stroke="#00f0ff" stroke-width="1.1"/>
-      <rect x="75" y="25" width="38" height="24" rx="2" fill="#04080f"/>
-      <text x="80" y="36" font-size="5" fill="#00f0ff" font-family="monospace" opacity="0.9">FORGE AI</text>
-      <rect x="72" y="74" width="44" height="12" rx="2" fill="#080f1a" stroke="#1a2f50" stroke-width="0.8"/>
-    </svg>
-    <h3>BEFORE YOU ENTER FORGE</h3>
-    <label class="consent-row">
-      <input type="checkbox" id="chkPrivacy">
-      <span class="consent-text">I have read and accept the <a href="#" onclick="return false">Privacy Policy</a>. FORGE collects minimal functional data only.</span>
-    </label>
-    <label class="consent-row">
-      <input type="checkbox" id="chkTerms">
-      <span class="consent-text">I agree to the <a href="#" onclick="return false">Terms &amp; Conditions</a>. I understand these are AI-generated recommendations for informational purposes only.</span>
-    </label>
-    <p id="consentError"></p>
-    <button class="gate-btn" id="acceptBtn">⚡ ACCEPT &amp; ENTER FORGE</button>
-  </div>
-</div>
+<div class="app-container">
 
-<!-- LOADING OVERLAY -->
-<div id="loadingOverlay">
-  <div class="load-logo">FORGE<span style="color:var(--accent2)">.</span></div>
-  <div class="load-bar-wrap"><div class="load-bar-inner"></div></div>
-  <div class="load-status" id="loadStatus">Initializing AI engine...</div>
-</div>
-
-<!-- APP WRAPPER -->
-<div class="app-wrap">
   <header class="app-header">
     <div class="logo-area">
-      <svg width="38" height="38" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
-        <rect x="10" y="10" width="24" height="24" rx="3" fill="#04080f" stroke="#00f0ff" stroke-width="1.2"/>
-        <rect x="15" y="15" width="14" height="14" rx="2" fill="#0d1526" stroke="#00f0ff" stroke-width="0.8"/>
-        <path d="M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z" fill="#00f0ff"/>
-      </svg>
-      <h1 class="logo-text">FORGE<span class="dot">.</span></h1>
+      <span class="logo-icon">⚡</span>
+      <h1 class="logo-text">FORGE<span class="accent-dot">.</span></h1>
     </div>
     <div class="header-right">
-      <select id="currencySelect" class="currency-select">
-        <option value="PKR">PKR — Pakistani Rupee</option>
-        <option value="USD">USD — US Dollar</option>
-        <option value="EUR">EUR — Euro</option>
-        <option value="GBP">GBP — British Pound</option>
-        <option value="AED">AED — UAE Dirham</option>
-        <option value="SAR">SAR — Saudi Riyal</option>
-        <option value="CAD">CAD — Canadian Dollar</option>
-        <option value="AUD">AUD — Australian Dollar</option>
-      </select>
-      <div class="status-pill">
-        <span class="status-dot"></span>
+      <select class="currency-select" id="currencySelect"></select>
+      <div class="system-status" style="display:flex;align-items:center">
+        <span class="status-dot pulsing"></span>
         <span class="status-text">SYSTEMS ONLINE</span>
       </div>
     </div>
   </header>
 
-  <main>
-    <!-- CONFIG VIEW -->
-    <section id="configView" class="view active">
-      <div class="hero">
+  <main class="workspace">
+
+    <!-- VIEW 1: CONFIG -->
+    <section id="onboardingView" class="view active">
+      <div class="welcome-hero">
         <h2>ENGINEER YOUR ULTIMATE RIG</h2>
-        <p>Input your parameters. FORGE's AI searches live market data to build a precision, budget-scaled hardware blueprint with multiple options per category.</p>
+        <p>Input your parameters. FORGE's AI searches live market data to build a precision, budget-scaled hardware blueprint.</p>
       </div>
+
       <form id="configForm" class="forge-form" novalidate>
 
-        <!-- API KEY -->
         <div class="form-section">
-          <div class="sec-hdr"><span class="sec-num">00</span><h3>GROQ API KEY</h3></div>
-          <div class="api-key-wrap">
-            <input type="password" id="apiKeyInput" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
-            <button type="button" class="toggle-key-btn" id="toggleKeyBtn">SHOW</button>
+          <div class="section-header">
+            <span class="sec-num">01</span>
+            <h3>YOUR BUDGET</h3>
           </div>
-          <div class="api-note">
-            <span>ℹ️</span>
-            <span>Free API key from <a href="https://console.groq.com" target="_blank" rel="noopener">console.groq.com</a>. Your key stays in your browser only — never sent to any server except Groq's directly.</span>
+          <div class="budget-input-wrapper" id="budgetWrapper">
+            <span class="currency-indicator" id="currencyIndicator">PKR</span>
+            <input type="number" id="budgetInput" required min="0" placeholder="e.g., 180000" step="1000" autocomplete="off">
           </div>
-          <p class="err" id="apiKeyError"></p>
+          <p class="field-hint" id="budgetHint">Minimum: Rs 30,000. Recommended: Rs 80,000+</p>
+          <p class="field-error" id="budgetError"></p>
         </div>
 
-        <!-- BUDGET -->
         <div class="form-section">
-          <div class="sec-hdr"><span class="sec-num">01</span><h3>YOUR BUDGET</h3></div>
-          <div class="budget-wrap">
-            <span class="curr-prefix" id="currPrefix">Rs</span>
-            <input type="number" id="budgetInput" required min="30000" placeholder="e.g., 250000" step="1000" autocomplete="off">
+          <div class="section-header">
+            <span class="sec-num">02</span>
+            <h3>PRIMARY USE</h3>
           </div>
-          <p class="hint">Minimum: Rs 30,000 · Recommended for gaming: Rs 80,000+</p>
-          <p class="err" id="budgetError"></p>
-        </div>
-
-        <!-- USE CASE -->
-        <div class="form-section">
-          <div class="sec-hdr"><span class="sec-num">02</span><h3>PRIMARY USE</h3></div>
-          <div class="options-grid">
-            <label class="sel-card active" id="lbl-gaming">
+          <div class="options-grid card-selector">
+            <label class="selectable-card active">
               <input type="radio" name="purpose" value="gaming" checked>
-              <div class="card-body"><div class="card-icon">🎮</div><h4>GAMING</h4><p>High FPS, GPU-first, graphical fidelity.</p></div>
+              <div class="card-content">
+                <div class="card-icon">🎮</div>
+                <h4>GAMING</h4>
+                <p>High frame rates, GPU-first allocation, graphical fidelity.</p>
+              </div>
             </label>
-            <label class="sel-card" id="lbl-editing">
+            <label class="selectable-card">
               <input type="radio" name="purpose" value="editing">
-              <div class="card-body"><div class="card-icon">🎬</div><h4>CREATIVE</h4><p>Multi-core, heavy RAM, rendering.</p></div>
+              <div class="card-content">
+                <div class="card-icon">🎬</div>
+                <h4>CREATIVE WORK</h4>
+                <p>Multi-core rendering, heavy RAM, timeline scrubbing.</p>
+              </div>
             </label>
-            <label class="sel-card" id="lbl-coding">
+            <label class="selectable-card">
               <input type="radio" name="purpose" value="coding">
-              <div class="card-body"><div class="card-icon">💻</div><h4>DEVELOPMENT</h4><p>Compilation, containers, multitasking.</p></div>
+              <div class="card-content">
+                <div class="card-icon">💻</div>
+                <h4>DEVELOPMENT</h4>
+                <p>Rapid compilation, containers, multitasking, big RAM.</p>
+              </div>
             </label>
-            <label class="sel-card" id="lbl-office">
+            <label class="selectable-card">
               <input type="radio" name="purpose" value="office">
-              <div class="card-body"><div class="card-icon">💼</div><h4>OFFICE</h4><p>Cost-efficient, responsive daily driver.</p></div>
+              <div class="card-content">
+                <div class="card-icon">💼</div>
+                <h4>OFFICE / STUDY</h4>
+                <p>Cost-efficient, energy-saving, responsive daily driver.</p>
+              </div>
             </label>
           </div>
         </div>
 
-        <!-- NAME -->
-        <div class="form-section">
-          <div class="sec-hdr"><span class="sec-num">03</span><h3>YOUR NAME (OPTIONAL)</h3></div>
-          <input type="text" id="nameInput" class="name-input" placeholder="e.g., Ahmed Khan — appears on your invoice" maxlength="80" autocomplete="off">
-          <p class="hint">Used only to personalize your invoice.</p>
-        </div>
-
-        <!-- PREFERENCES -->
-        <div class="form-section">
-          <div class="sec-hdr"><span class="sec-num">04</span><h3>PREFERENCES (OPTIONAL)</h3></div>
-          <textarea id="prefInput" class="pref-input" placeholder="e.g., Prefer AMD CPU, need WiFi, RGB lighting preferred, no used parts..." maxlength="400"></textarea>
-          <p class="hint">Any brand preferences, must-haves, or restrictions.</p>
-        </div>
-
-        <button type="submit" class="forge-btn" id="submitBtn">⚡ GENERATE MY BUILD</button>
+        <button type="submit" class="forge-submit-btn" id="submitBtn">
+          <span class="btn-text">⚡ GENERATE MY BUILD</span>
+        </button>
       </form>
     </section>
 
-    <!-- RESULTS VIEW -->
-    <section id="resultsView" class="view">
-      <div class="results-bar">
-        <button class="btn-sec" id="backBtn">← MODIFY PARAMETERS</button>
-        <button class="btn-pri" id="invoiceBtn">📑 GENERATE BILL</button>
-      </div>
-      <div class="results-layout">
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-          <div class="sidebar-hdr">
-            <h3>YOUR BUILD</h3>
-            <span class="sidebar-count" id="sidebarCount">—</span>
-          </div>
-          <div class="bar-track"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
-          <div class="sidebar-total-text" id="sidebarTotalText">Loading...</div>
-          <div class="sidebar-list" id="sidebarList"><div style="font-size:12px;color:var(--text2);text-align:center;padding:20px 0;font-family:var(--font-mono)">Loading components...</div></div>
-          <div class="sidebar-total">
-            <span class="sidebar-total-lbl">TOTAL</span>
-            <span class="sidebar-total-val" id="sidebarTotal">—</span>
-          </div>
-        </aside>
-
-        <!-- MAIN CONTENT -->
-        <div class="main-col">
-          <!-- Selection instructions -->
-          <div class="select-panel" id="selectPanel">
-            <p>Click a card to <strong>select</strong> it for your build. One per category.</p>
-            <button class="btn-select-all" id="selectAllBtn">✓ AUTO-SELECT BEST</button>
-          </div>
-
-          <!-- Components -->
-          <div class="ribbon"><h3>HARDWARE CONFIGURATION</h3><span class="ribbon-hint">AI-optimized — 3 options per category</span></div>
-          <div id="componentsContainer"></div>
-
-          <!-- Gaming performance -->
-          <div class="ribbon" style="margin-top:8px"><h3>GAMING PERFORMANCE</h3><span class="ribbon-hint">Estimated FPS at 1080p based on selected build</span></div>
-          <div class="comp-grid" id="fpsGrid"></div>
-
-          <!-- Budget allocation -->
-          <div class="ribbon" style="margin-top:8px"><h3>BUDGET ALLOCATION</h3><span class="ribbon-hint">Percentage split across categories</span></div>
-          <div class="alloc-bar" id="allocBar"></div>
-          <div class="legend-grid" id="allocLegend"></div>
-
-          <!-- Build summary -->
-          <div class="summary-box">
-            <h4>BUILD SUMMARY</h4>
-            <p id="buildSummary">Loading summary...</p>
-          </div>
+    <!-- VIEW 2: LOADING -->
+    <section id="loadingView" class="view">
+      <div class="loading-view-inner">
+        <div class="cyber-spinner"></div>
+        <div class="matrix-terminal">
+          <div class="terminal-line" data-delay="0">>> INITIALIZING NEURAL ENGINE...</div>
+          <div class="terminal-line" data-delay="900">>> QUERYING AI INTELLIGENCE LAYER...</div>
+          <div class="terminal-line" data-delay="2000">>> SEARCHING LIVE MARKET DATA...</div>
+          <div class="terminal-line" data-delay="3100">>> CALCULATING BUDGET ALLOCATION RATIOS...</div>
+          <div class="terminal-line" data-delay="4000">>> DETECTING NEW & USED OPTIONS...</div>
+          <div class="terminal-line" data-delay="5000">>> OPTIMIZING COMPONENT BALANCE...</div>
+          <div class="terminal-line" data-delay="5700">>> BLUEPRINT FINALIZED. RENDERING MATRIX...</div>
         </div>
       </div>
     </section>
-  </main>
 
-  <footer class="app-footer">
-    <div style="margin-bottom:10px">
-      <a href="#">Privacy</a> •
-      <a href="#">Terms</a> •
-      <a href="#">Cookies</a> •
-      <a href="#">FAQ</a>
-    </div>
-    <div>© 2025 FORGE AI PC Builder. Recommendations for informational purposes only.</div>
-  </footer>
+    <!-- VIEW 3: RESULTS -->
+    <section id="resultsView" class="view">
+      <div class="results-actions-bar">
+        <button id="backToConfigBtn" class="action-secondary-btn">← MODIFY PARAMETERS</button>
+        <button id="openInvoiceBtn" class="action-primary-btn">📑 GENERATE BILL OF MATERIALS</button>
+      </div>
+
+      <div id="aiSourceIndicator" style="display:none" class="search-indicator">
+        <span class="search-dot"></span>
+        <span id="aiSourceText">Results powered by AI web search</span>
+      </div>
+
+      <div class="results-split-layout">
+        <aside class="build-summary-panel">
+          <div class="summary-panel-header">
+            <h3>YOUR BUILD</h3>
+            <span class="summary-count" id="buildSummaryCount">0 components</span>
+          </div>
+          <div class="budget-bar-track">
+            <div class="budget-bar-fill" id="budgetProgress" style="width:0%"></div>
+          </div>
+          <div class="budget-remaining" id="budgetRemaining">Select components to begin</div>
+          <div class="summary-list" id="buildSummaryList">
+            <div class="summary-empty">Select components to build your rig</div>
+          </div>
+          <div class="summary-total-block">
+            <span class="summary-total-label">SELECTED TOTAL</span>
+            <span class="summary-total-value" id="buildSummaryTotal">—</span>
+          </div>
+        </aside>
+
+        <div class="parts-matrix-column">
+          <div class="column-title-ribbon">
+            <h3>HARDWARE MATRIX — SELECT YOUR COMPONENTS</h3>
+            <span class="ribbon-hint">Click to select · Click again to deselect</span>
+          </div>
+          <div class="components-grid" id="partsContainer"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
 </div>
 
 <!-- INVOICE MODAL -->
-<div class="modal" id="invoiceModal" role="dialog" aria-modal="true">
-  <div class="modal-box">
-    <button class="modal-close" id="modalClose" aria-label="Close">×</button>
-    <div class="rcpt-hdr">
-      <h2>FORGE DIGITAL RECEIPT</h2>
-      <p class="rcpt-ts" id="rcptTimestamp">—</p>
-      <div class="sep">════════════════════════════════════</div>
+<div class="modal-overlay" id="invoiceModal" role="dialog" aria-modal="true">
+  <div class="modal-frame receipt-box">
+    <button class="close-modal-btn" id="closeInvoiceBtn" aria-label="Close">×</button>
+    <div class="receipt-header">
+      <h2 id="invoiceTitle">FORGE DIGITAL RECEIPT</h2>
+      <p class="receipt-timestamp" id="invoiceTimestamp">DATETIME: --/--/---- --:--</p>
+      <div class="bar-separator">========================================</div>
     </div>
-    <div id="rcptItems" style="flex:1;overflow-y:auto">Loading...</div>
-    <div class="rcpt-footer">
-      <div class="sep">════════════════════════════════════</div>
-      <div class="total-block">
-        <div class="total-line"><span>HARDWARE SUBTOTAL:</span><span id="rcptHardware">—</span></div>
-        <div class="total-line"><span>TAX (17% est.):</span><span id="rcptTax">—</span></div>
-        <div class="total-line total-grand"><span>GRAND TOTAL:</span><span id="rcptGrand">—</span></div>
+    <div class="receipt-body" id="invoiceItemsContainer"></div>
+    <div class="receipt-footer">
+      <div class="bar-separator">========================================</div>
+      <div class="total-summary-block">
+        <div class="summary-line"><span>HARDWARE TOTAL:</span><span id="invoiceHardwareTotal">—</span></div>
+        <div class="summary-line"><span>ASSEMBLY FEE:</span><span id="invoiceAssemblyFee">—</span></div>
+        <div class="summary-line grand-total-line"><span>GRAND TOTAL:</span><span id="invoiceGrandTotal">—</span></div>
       </div>
-      <p style="font-size:10px;color:var(--text2);text-align:center;margin:10px 0">FORGE AI PC Builder | Informational purposes only | Verify prices before purchase</p>
-      <button class="print-btn" onclick="window.print()">🖨️ PRINT RECEIPT</button>
+      <div class="bar-separator">========================================</div>
+      <p class="receipt-footer-tagline">THANK YOU FOR CHOOSING FORGE. SYSTEM BLUEPRINTS EXPORTED.</p>
+      <button class="print-receipt-btn" onclick="window.print()">🖨️ PRINT RECEIPT</button>
     </div>
-  </div>
-</div>
-
-<!-- COOKIE BANNER -->
-<div id="cookieBanner">
-  <span>🍪 We use minimal functional storage for preferences. <a href="#">Learn more</a></span>
-  <div style="display:flex;gap:10px">
-    <button class="cookie-btn cookie-decline" id="cookieDecline">Decline</button>
-    <button class="cookie-btn cookie-accept" id="cookieAccept">Accept</button>
   </div>
 </div>
 
 <script>
 "use strict";
 
-// ── CONSTANTS ──────────────────────────────────────────────────────────────
+// ── CURRENCIES ──────────────────────────────────────────────────────────────
 const CURRENCIES = {
   PKR:{symbol:"Rs",name:"Pakistani Rupee",rate:1},
   USD:{symbol:"$",name:"US Dollar",rate:0.0036},
@@ -518,522 +411,619 @@ const CURRENCIES = {
   AED:{symbol:"د.إ",name:"UAE Dirham",rate:0.0131},
   SAR:{symbol:"ر.س",name:"Saudi Riyal",rate:0.0134},
   CAD:{symbol:"C$",name:"Canadian Dollar",rate:0.0049},
-  AUD:{symbol:"A$",name:"Australian Dollar",rate:0.0055},
+  AUD:{symbol:"A$",name:"Australian Dollar",rate:0.0055}
 };
-const CHART_COLORS=["#00f0ff","#ff0055","#bc55ff","#00ff88","#ffb800","#ef4444","#3b82f6","#10b981","#6366f1","#f59e0b","#8b5cf6"];
-const CAT_ICONS={CPU:"⚙️",GPU:"🎮",Motherboard:"🔌",RAM:"💾",Storage:"💿",PSU:"⚡",Cooling:"❄️",Case:"📦",Monitor:"🖥️",Keyboard:"⌨️",Mouse:"🖱️",Headphones:"🎧"};
-const ALL_CATEGORIES=["CPU","GPU","Motherboard","RAM","Storage","PSU","Cooling","Case","Monitor","Keyboard","Mouse","Headphones"];
+let activeCurrency="PKR";
 
-// ── STATE ──────────────────────────────────────────────────────────────────
-let currency="PKR";
-let buildData=null;
-let selectedComponents={}; // category -> component object
+function setActiveCurrency(c){if(CURRENCIES[c])activeCurrency=c;}
+function getActiveCurrency(){return activeCurrency;}
+function convertFromPKR(p){return p*(CURRENCIES[activeCurrency]?.rate??1);}
+function convertToPKR(a){return Math.round(a/(CURRENCIES[activeCurrency]?.rate??1));}
+function formatPrice(pkr){
+  const c=CURRENCIES[activeCurrency];
+  const v=convertFromPKR(pkr);
+  return c.symbol+v.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});
+}
+function formatRaw(v){
+  const c=CURRENCIES[activeCurrency];
+  return c.symbol+v.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});
+}
 
-// ── INIT ───────────────────────────────────────────────────────────────────
+// ── STATE ────────────────────────────────────────────────────────────────────
+const STATE={blueprint:null,selections:{},budgetPKR:0,purpose:"gaming",assemblyFee:3500};
+
+// ── BOOT ─────────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded",()=>{
-  initCanvas();
-  initConsent();
-  initCookies();
-  initCurrency();
-  initForm();
-  initModal();
-  initNavigation();
-  // Restore saved API key
-  const saved=sessionStorage.getItem("forge_api_key");
-  if(saved) document.getElementById("apiKeyInput").value=saved;
+  initParticles();
+  setupCursorGlow();
+  renderCurrencySelector();
+  bindEvents();
+  updateBudgetHint();
 });
 
-// ── CANVAS ─────────────────────────────────────────────────────────────────
-function initCanvas(){
-  const canvas=document.getElementById("ambientCanvas");
+// ── CURRENCY SELECTOR ────────────────────────────────────────────────────────
+function renderCurrencySelector(){
+  const sel=document.getElementById("currencySelect");
+  if(!sel)return;
+  sel.innerHTML="";
+  Object.entries(CURRENCIES).forEach(([code,info])=>{
+    const opt=document.createElement("option");
+    opt.value=code;
+    opt.textContent=info.symbol+" "+code;
+    if(code==="PKR")opt.selected=true;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener("change",()=>{
+    setActiveCurrency(sel.value);
+    document.getElementById("currencyIndicator").textContent=sel.value;
+    updateBudgetHint();
+    if(STATE.blueprint)renderResults(STATE.blueprint);
+    updateBuildSummary();
+  });
+}
+
+function updateBudgetHint(){
+  const hint=document.getElementById("budgetHint");
+  const cur=CURRENCIES[getActiveCurrency()];
+  if(hint)hint.textContent=`Minimum: ${formatRaw(Math.round(30000*cur.rate))}. Recommended: ${formatRaw(Math.round(80000*cur.rate))}+`;
+}
+
+// ── EVENTS ───────────────────────────────────────────────────────────────────
+function bindEvents(){
+  document.querySelectorAll('.selectable-card input[type="radio"]').forEach(r=>{
+    r.addEventListener("change",()=>{
+      document.querySelectorAll(".selectable-card").forEach(c=>c.classList.remove("active"));
+      r.closest(".selectable-card")?.classList.add("active");
+    });
+  });
+  document.getElementById("budgetInput")?.addEventListener("input",()=>{
+    document.getElementById("budgetError").textContent="";
+    document.getElementById("budgetWrapper")?.classList.remove("error-state");
+  });
+  document.getElementById("configForm")?.addEventListener("submit",handleFormSubmit);
+  document.getElementById("backToConfigBtn")?.addEventListener("click",()=>navigateTo("onboardingView"));
+  document.getElementById("openInvoiceBtn")?.addEventListener("click",openInvoice);
+  document.getElementById("closeInvoiceBtn")?.addEventListener("click",closeInvoice);
+  document.getElementById("invoiceModal")?.addEventListener("click",e=>{if(e.target===document.getElementById("invoiceModal"))closeInvoice();});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape")closeInvoice();});
+}
+
+// ── FORM SUBMIT ──────────────────────────────────────────────────────────────
+async function handleFormSubmit(e){
+  e.preventDefault();
+  const raw=parseFloat(document.getElementById("budgetInput").value);
+  const cur=CURRENCIES[getActiveCurrency()];
+
+  // Strict input validation — reject NaN, Infinity, negatives, absurd values
+  if(!Number.isFinite(raw)||raw<=0||raw>100000000){
+    document.getElementById("budgetError").textContent="Please enter a valid budget amount.";
+    document.getElementById("budgetWrapper")?.classList.add("error-state");
+    document.getElementById("budgetInput").focus();
+    return;
+  }
+
+  const budgetPKR=Math.round(raw/cur.rate);
+  const purpose=document.querySelector('input[name="purpose"]:checked')?.value||"gaming";
+  const minInCur=Math.round(30000*cur.rate);
+
+  if(raw<minInCur){
+    document.getElementById("budgetError").textContent=`Minimum budget is ${formatRaw(minInCur)}.`;
+    document.getElementById("budgetWrapper")?.classList.add("error-state");
+    document.getElementById("budgetInput").focus();
+    return;
+  }
+
+  // Rate limit check — max 5 requests per minute
+  try{checkRateLimit();}
+  catch(err){
+    if(err.message.startsWith("RATE_LIMITED:")){
+      document.getElementById("budgetError").textContent=err.message.replace("RATE_LIMITED:","");
+      document.getElementById("budgetWrapper")?.classList.add("error-state");
+      return;
+    }
+  }
+
+  STATE.budgetPKR=budgetPKR;
+  STATE.purpose=purpose;
+  STATE.selections={};
+
+  const btn=document.getElementById("submitBtn");
+  if(btn)btn.disabled=true;
+
+  navigateTo("loadingView");
+  runTerminal();
+
+  const startTime=Date.now();
+  const MIN_LOADING_MS=2500;
+
+  let usedAI=false;
+  try{
+    STATE.blueprint=await fetchBuildFromGroq(budgetPKR,purpose);
+    usedAI=true;
+  }catch(err){
+    console.warn("AI error — using fallback:",err.message);
+    console.error("FULL ERROR:",err);
+    STATE.blueprint=buildFallback(budgetPKR,purpose);
+    usedAI=false;
+  }
+
+  const elapsed=Date.now()-startTime;
+  const remaining=Math.max(0,MIN_LOADING_MS-elapsed);
+
+  setTimeout(()=>{
+    renderResults(STATE.blueprint);
+    updateBuildSummary();
+    navigateTo("resultsView");
+    const ind=document.getElementById("aiSourceIndicator");
+    const txt=document.getElementById("aiSourceText");
+    if(ind&&txt){
+      ind.style.display="flex";
+      if(usedAI){txt.textContent="✓ Build generated via Groq AI (Llama 3.3 70B)";
+        
+        ind.style.borderColor="rgba(0,230,118,.4)";
+        txt.style.color="#00e676";
+      }else{
+       ind.innerHTML=`<span style="color:#ffb700;">⚠ Using cached data — Groq not connected</span>
+  <button onclick="location.reload()" style="margin-left:12px;background:transparent;border:1px solid #ffb700;color:#ffb700;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font-mono);">↺ Retry</button>`;
+      }
+    }
+    if(btn)btn.disabled=false;
+  },remaining);
+}
+
+// ── RATE LIMITER ─────────────────────────────────────────────────────────────
+const RATE_LIMIT={maxRequests:5,windowMs:60000,timestamps:[]};
+function checkRateLimit(){
+  const now=Date.now();
+  RATE_LIMIT.timestamps=RATE_LIMIT.timestamps.filter(t=>now-t<RATE_LIMIT.windowMs);
+  if(RATE_LIMIT.timestamps.length>=RATE_LIMIT.maxRequests){
+    const oldest=RATE_LIMIT.timestamps[0];
+    const waitSec=Math.ceil((RATE_LIMIT.windowMs-(now-oldest))/1000);
+    throw new Error("RATE_LIMITED:Too many requests. Please wait "+waitSec+" seconds before trying again.");
+  }
+  RATE_LIMIT.timestamps.push(now);
+}
+
+// ── GROQ API CALL ─────────────────────────────────────────────────────────────
+async function fetchBuildFromGroq(budgetPKR, purpose) {
+  console.log("[FORGE] Calling Groq API...", { budgetPKR, purpose });
+
+  const tier = getBudgetTier(budgetPKR);
+  const tierGuide = {
+    entry:      "Entry-level: very basic components, skip expensive peripherals",
+    budget:     "Budget: solid mid-entry AMD/Intel CPUs, GTX 1660/RX 6600 class GPU",
+    "mid-range":"Mid-range: RTX 3060-3080/RX 6700XT, Ryzen 5 5600X / i5-12600K",
+    "high-end": "High-end: RTX 3080Ti/4070-4080, Ryzen 7 5800X3D / i7-13700K",
+    enthusiast: "Enthusiast: RTX 4080/5070Ti, Ryzen 9 7900X / i9-13900K",
+    flagship:   "Flagship: RTX 5090/4090, Ryzen 9 9950X / Threadripper"
+  };
+
+  const alloc = purpose === "gaming"
+    ? "GPU 35-45%, CPU 20-25%, Motherboard 8-12%, RAM 5-10%, Storage 5-8%, PSU 5-8%, Case 2-4%, Monitor+Peripherals 10-15%"
+    : "CPU 30-35%, GPU 15-20%, RAM 10-15%, Motherboard 10-12%, Storage 8-12%, PSU 5-8%, Case 2-4%, rest for peripherals";
+
+  const prompt = `You are FORGE, an expert PC hardware analyst for the Pakistani market.
+Generate a complete PC build for budget: ${budgetPKR.toLocaleString()} PKR
+Use case: ${purpose}
+Budget tier: ${tier} — ${tierGuide[tier]}
+Budget allocation: ${alloc}
+
+RULES:
+1. Return ONLY a valid JSON object. No explanation text, no markdown fences.
+2. Exactly 3 options per category: recommended (New), budget pick (Used/cheaper), best value
+3. All prices in PKR based on real current Pakistani market prices (Hafeez Centre, Daraz, itech.com.pk)
+4. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR * 0.93).toLocaleString()} PKR
+5. Include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals
+6. Scale components dramatically with budget tier
+7. For entry budgets under 80k PKR: skip expensive monitors/peripherals, maximize core hardware
+
+Return this EXACT JSON structure only (no markdown, no text before or after):
+{
+  "tier": "${tier}",
+  "categories": [
+    {
+      "cat": "CPU",
+      "icon": "🔲",
+      "options": [
+        {"name": "Intel Core i5-13600K", "price": 58000, "condition": "New", "badge": "RECOMMENDED", "note": "Best gaming IPC"},
+        {"name": "AMD Ryzen 5 5600X", "price": 28000, "condition": "Used", "badge": "BUDGET PICK", "note": "Great value"},
+        {"name": "Intel Core i5-12400F", "price": 35000, "condition": "New", "badge": "BEST VALUE", "note": "F-series no iGPU"}
+      ]
+    }
+  ]
+}
+Icons to use: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Case=📦, Monitor=🖥️, Peripherals=🎧`;
+
+  const response = await fetch("/api/gemini", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "custom",
+      prompt: prompt,
+      budgetPKR,
+      purpose
+    })
+  });
+
+  console.log("[FORGE] Response status:", response.status);
+
+  if (!response.ok) {
+    const errText = await response.text().catch(() => "");
+    console.error("[FORGE] API Error body:", errText);
+    throw new Error(`Groq API error ${response.status}: ${errText.slice(0, 300)}`);
+  }
+
+  const data = await response.json();
+  console.log("[FORGE] Raw response received, extracting...");
+
+  // Handle raw flag (JSON parse failed on server side)
+  let rawText = typeof data.result === "string" ? data.result : JSON.stringify(data.result);
+
+  // Strip markdown fences if any
+  const clean = rawText.trim()
+    .replace(/^```(?:json)?\s*/im, "")
+    .replace(/\s*```\s*$/m, "")
+    .trim();
+
+  const jsonMatch = clean.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("No JSON found in Groq response");
+
+  let parsed;
+  try { parsed = JSON.parse(jsonMatch[0]); }
+  catch (e) {
+    console.error("[FORGE] JSON parse failed:", clean.slice(0, 500));
+    throw new Error("JSON parse failed: " + e.message);
+  }
+
+  if (!Array.isArray(parsed.categories) || parsed.categories.length === 0) {
+    throw new Error("Invalid response — missing categories array");
+  }
+
+  console.log("[FORGE] ✓ Success! Categories:", parsed.categories.length);
+  parsed._aiPowered = true;
+  return parsed;
+}
+
+// ── TIER DETECTION ───────────────────────────────────────────────────────────
+function getBudgetTier(pkr){
+  if(pkr<80000)return"entry";
+  if(pkr<200000)return"budget";
+  if(pkr<400000)return"mid-range";
+  if(pkr<700000)return"high-end";
+  if(pkr<1200000)return"enthusiast";
+  return"flagship";
+}
+
+// ── FALLBACK DATA ─────────────────────────────────────────────────────────────
+function buildFallback(budgetPKR,purpose){
+  const tier=getBudgetTier(budgetPKR);
+  const TIERS={
+    entry:{
+      CPU:[{name:"Intel Core i3-12100F",price:22000,condition:"New",badge:"RECOMMENDED",note:"Strong entry CPU"},{name:"AMD Ryzen 3 3300X",price:12000,condition:"Used",badge:"BUDGET PICK",note:"Good used value"},{name:"Intel Pentium G6405",price:14000,condition:"New",badge:"BEST VALUE",note:"Minimum viable"}],
+      GPU:[{name:"NVIDIA GTX 1650 4GB",price:30000,condition:"New",badge:"RECOMMENDED",note:"1080p capable"},{name:"AMD RX 580 8GB",price:18000,condition:"Used",badge:"BUDGET PICK",note:"Great used value"},{name:"NVIDIA GTX 1630 4GB",price:22000,condition:"New",badge:"BEST VALUE",note:"Budget 1080p"}],
+      Motherboard:[{name:"MSI H610M PRO-E",price:14000,condition:"New",badge:"RECOMMENDED",note:"Solid LGA1700"},{name:"Gigabyte B450M DS3H",price:10000,condition:"New",badge:"BUDGET PICK",note:"AMD AM4"},{name:"ASUS PRIME H510M-E",price:12000,condition:"New",badge:"BEST VALUE",note:"Simple, reliable"}],
+      RAM:[{name:"16GB DDR4 3200MHz (2x8)",price:9500,condition:"New",badge:"RECOMMENDED",note:"Dual channel"},{name:"8GB DDR4 2666MHz",price:4500,condition:"New",badge:"BUDGET PICK",note:"Minimal but works"},{name:"16GB DDR4 TeamGroup",price:8500,condition:"New",badge:"BEST VALUE",note:"Good brand"}],
+      Storage:[{name:"512GB NVMe M.2 SSD",price:7500,condition:"New",badge:"RECOMMENDED",note:"Fast boot drive"},{name:"256GB SATA SSD 2.5in",price:4500,condition:"New",badge:"BUDGET PICK",note:"Minimal storage"},{name:"1TB HDD + 120GB SSD",price:6500,condition:"New",badge:"BEST VALUE",note:"Combo approach"}],
+      PSU:[{name:"550W 80+ Bronze Seasonic",price:8000,condition:"New",badge:"RECOMMENDED",note:"Reliable PSU"},{name:"500W Generic 80+ PSU",price:5500,condition:"New",badge:"BUDGET PICK",note:"Basic power"},{name:"450W Corsair CX450",price:7000,condition:"New",badge:"BEST VALUE",note:"Trusted brand"}],
+      Case:[{name:"Deepcool MATREXX 30",price:4000,condition:"New",badge:"RECOMMENDED",note:"Good airflow"},{name:"Basic ATX Mid Tower",price:2500,condition:"New",badge:"BUDGET PICK",note:"Bare minimum"},{name:"Antec NX200",price:3500,condition:"New",badge:"BEST VALUE",note:"Decent airflow"}],
+      Monitor:[{name:"22in FHD 75Hz IPS",price:9000,condition:"New",badge:"RECOMMENDED",note:"1080p entry"},{name:"19in HD 60Hz TN",price:5500,condition:"Used",badge:"BUDGET PICK",note:"Functional"},{name:"24in FHD 60Hz VA",price:10000,condition:"New",badge:"BEST VALUE",note:"Larger screen"}],
+      Peripherals:[{name:"Basic KB+Mouse Combo",price:2000,condition:"New",badge:"RECOMMENDED",note:"Functional set"},{name:"Wired Membrane KB+Mouse",price:1500,condition:"New",badge:"BUDGET PICK",note:"Ultra cheap"},{name:"Logitech MK220 Wireless",price:3500,condition:"New",badge:"BEST VALUE",note:"Wireless comfort"}]
+    },
+    budget:{
+      CPU:[{name:"AMD Ryzen 5 5600X",price:32000,condition:"New",badge:"RECOMMENDED",note:"Top AM4 value"},{name:"Intel Core i5-10400F",price:20000,condition:"New",badge:"BUDGET PICK",note:"Solid 6-core"},{name:"AMD Ryzen 5 5500",price:25000,condition:"New",badge:"BEST VALUE",note:"Budget Zen 3"}],
+      GPU:[{name:"NVIDIA RTX 3060 12GB",price:62000,condition:"New",badge:"RECOMMENDED",note:"1080p/1440p king"},{name:"AMD RX 6600",price:38000,condition:"Used",badge:"BUDGET PICK",note:"Strong used 1080p"},{name:"NVIDIA GTX 1660 Super",price:42000,condition:"New",badge:"BEST VALUE",note:"1080p workhorse"}],
+      Motherboard:[{name:"MSI B550M PRO-VDH",price:18000,condition:"New",badge:"RECOMMENDED",note:"Solid B550"},{name:"Gigabyte B450M Gaming",price:12000,condition:"New",badge:"BUDGET PICK",note:"Entry AM4"},{name:"ASUS PRIME B550M-A",price:16000,condition:"New",badge:"BEST VALUE",note:"Feature-rich"}],
+      RAM:[{name:"16GB DDR4 3600MHz Corsair",price:12000,condition:"New",badge:"RECOMMENDED",note:"Speed boost"},{name:"16GB DDR4 3200MHz Generic",price:9000,condition:"New",badge:"BUDGET PICK",note:"Works fine"},{name:"32GB DDR4 3200MHz",price:18000,condition:"New",badge:"BEST VALUE",note:"Future proof"}],
+      Storage:[{name:"1TB NVMe PCIe 3.0 SSD",price:12000,condition:"New",badge:"RECOMMENDED",note:"Fast & spacious"},{name:"512GB NVMe M.2 SSD",price:7500,condition:"New",badge:"BUDGET PICK",note:"Enough to start"},{name:"1TB Samsung 870 EVO SATA",price:14000,condition:"New",badge:"BEST VALUE",note:"Reliable SATA"}],
+      PSU:[{name:"650W 80+ Gold EVGA",price:12000,condition:"New",badge:"RECOMMENDED",note:"Gold efficiency"},{name:"550W 80+ Bronze CM",price:8000,condition:"New",badge:"BUDGET PICK",note:"Good basic PSU"},{name:"600W Seasonic 80+ Bronze",price:10000,condition:"New",badge:"BEST VALUE",note:"Trusted brand"}],
+      Case:[{name:"NZXT H510 Mid Tower",price:9000,condition:"New",badge:"RECOMMENDED",note:"Clean build"},{name:"Deepcool MATREXX 55",price:6000,condition:"New",badge:"BUDGET PICK",note:"Great airflow"},{name:"Fractal Focus G",price:7500,condition:"New",badge:"BEST VALUE",note:"Quiet design"}],
+      Monitor:[{name:"24in FHD 144Hz IPS",price:18000,condition:"New",badge:"RECOMMENDED",note:"144Hz gaming"},{name:"24in FHD 75Hz VA",price:12000,condition:"New",badge:"BUDGET PICK",note:"Good colors"},{name:"27in FHD 144Hz",price:22000,condition:"New",badge:"BEST VALUE",note:"Bigger screen"}],
+      Peripherals:[{name:"Logitech G213 KB + G203 Mouse",price:7000,condition:"New",badge:"RECOMMENDED",note:"Gaming essentials"},{name:"Redragon K552 + M711",price:5000,condition:"New",badge:"BUDGET PICK",note:"Gamer value set"},{name:"Corsair K55 + M55",price:8500,condition:"New",badge:"BEST VALUE",note:"Branded duo"}]
+    },
+    "mid-range":{
+      CPU:[{name:"AMD Ryzen 7 5800X3D",price:68000,condition:"New",badge:"RECOMMENDED",note:"Best gaming CPU"},{name:"Intel Core i5-13600K",price:58000,condition:"New",badge:"BUDGET PICK",note:"Excellent IPC"},{name:"AMD Ryzen 5 7600X",price:55000,condition:"New",badge:"BEST VALUE",note:"AM5 future proof"}],
+      GPU:[{name:"NVIDIA RTX 3080 10GB",price:95000,condition:"Used",badge:"RECOMMENDED",note:"Flagship for less"},{name:"NVIDIA RTX 4070 12GB",price:105000,condition:"New",badge:"BEST NEW",note:"Efficient Ada"},{name:"AMD RX 6800 XT",price:80000,condition:"Used",badge:"BEST VALUE",note:"Rasterization beast"}],
+      Motherboard:[{name:"MSI MAG B550 TOMAHAWK",price:28000,condition:"New",badge:"RECOMMENDED",note:"Top B550"},{name:"ASUS ROG STRIX B550-F",price:32000,condition:"New",badge:"PREMIUM",note:"Feature-rich"},{name:"Gigabyte B550 AORUS Elite",price:25000,condition:"New",badge:"BEST VALUE",note:"Good VRMs"}],
+      RAM:[{name:"32GB DDR4 3600MHz Corsair",price:22000,condition:"New",badge:"RECOMMENDED",note:"Gaming sweet spot"},{name:"16GB DDR4 3600MHz G.Skill",price:12000,condition:"New",badge:"BUDGET PICK",note:"Adequate"},{name:"32GB DDR4 3200MHz TeamGroup",price:19000,condition:"New",badge:"BEST VALUE",note:"Budget 32GB"}],
+      Storage:[{name:"1TB Samsung 980 Pro NVMe PCIe4",price:18000,condition:"New",badge:"RECOMMENDED",note:"Top-tier speed"},{name:"1TB WD Black SN770 NVMe",price:14000,condition:"New",badge:"BEST VALUE",note:"Fast & affordable"},{name:"2TB Crucial P3 Plus NVMe",price:22000,condition:"New",badge:"SPACIOUS",note:"Double the space"}],
+      PSU:[{name:"750W 80+ Gold Seasonic Focus",price:16000,condition:"New",badge:"RECOMMENDED",note:"For RTX 3080"},{name:"850W 80+ Gold EVGA SuperNOVA",price:19000,condition:"New",badge:"HEADROOM",note:"Future upgrades"},{name:"700W 80+ Bronze CM",price:12000,condition:"New",badge:"BUDGET PICK",note:"Adequate"}],
+      Case:[{name:"Lian Li LANCOOL 205 MESH",price:12000,condition:"New",badge:"RECOMMENDED",note:"Best airflow"},{name:"Fractal Design Meshify C",price:14000,condition:"New",badge:"SILENT",note:"Quiet & cool"},{name:"Corsair 4000D Airflow",price:13000,condition:"New",badge:"BEST VALUE",note:"Premium airflow"}],
+      Monitor:[{name:"27in QHD 165Hz IPS",price:38000,condition:"New",badge:"RECOMMENDED",note:"1440p gaming"},{name:"24in FHD 240Hz IPS",price:28000,condition:"New",badge:"HIGH REFRESH",note:"Competitive play"},{name:"27in QHD 144Hz VA",price:30000,condition:"New",badge:"BEST VALUE",note:"Great contrast"}],
+      Peripherals:[{name:"SteelSeries Apex 3 + Rival 3 + HS35",price:18000,condition:"New",badge:"RECOMMENDED",note:"Full gaming set"},{name:"Logitech G Pro KB + G502 Mouse",price:20000,condition:"New",badge:"LOGITECH SET",note:"Pro gaming combo"},{name:"HyperX Alloy Core + Pulsefire",price:15000,condition:"New",badge:"BEST VALUE",note:"Solid set"}]
+    },
+    "high-end":{
+      CPU:[{name:"AMD Ryzen 9 7900X",price:105000,condition:"New",badge:"RECOMMENDED",note:"AM5 powerhouse"},{name:"Intel Core i9-13900K",price:115000,condition:"New",badge:"INTEL KING",note:"Top single-thread"},{name:"AMD Ryzen 7 7700X",price:80000,condition:"New",badge:"BEST VALUE",note:"8-core AM5"}],
+      GPU:[{name:"NVIDIA RTX 4080 16GB",price:220000,condition:"New",badge:"RECOMMENDED",note:"4K flagship"},{name:"NVIDIA RTX 4080",price:180000,condition:"Used",badge:"USED DEAL",note:"Save vs new"},{name:"NVIDIA RTX 4070 Ti Super",price:165000,condition:"New",badge:"BEST VALUE",note:"Near 4080 perf"}],
+      Motherboard:[{name:"ASUS ROG STRIX X670E-F",price:55000,condition:"New",badge:"RECOMMENDED",note:"AM5 flagship"},{name:"MSI MEG X670E ACE",price:65000,condition:"New",badge:"PREMIUM",note:"OC king"},{name:"Gigabyte X670 AORUS Elite",price:45000,condition:"New",badge:"BEST VALUE",note:"Good AM5"}],
+      RAM:[{name:"32GB DDR5-6000 G.Skill Trident Z5",price:38000,condition:"New",badge:"RECOMMENDED",note:"DDR5 sweet spot"},{name:"64GB DDR5-5600 Kingston",price:60000,condition:"New",badge:"WORKSTATION",note:"Massive capacity"},{name:"32GB DDR5-5200 Corsair Dominator",price:32000,condition:"New",badge:"BEST VALUE",note:"Reliable DDR5"}],
+      Storage:[{name:"2TB Samsung 990 Pro NVMe PCIe4",price:32000,condition:"New",badge:"RECOMMENDED",note:"Flagship SSD"},{name:"1TB WD Black SN850X + 2TB HDD",price:28000,condition:"New",badge:"COMBO",note:"Speed + storage"},{name:"4TB Seagate Firecuda 530",price:48000,condition:"New",badge:"MASSIVE",note:"4TB NVMe"}],
+      PSU:[{name:"1000W 80+ Platinum Seasonic Prime",price:28000,condition:"New",badge:"RECOMMENDED",note:"RTX 4080 ready"},{name:"850W 80+ Gold ASUS ROG Thor",price:24000,condition:"New",badge:"PREMIUM",note:"OLED meter"},{name:"1000W 80+ Gold EVGA SuperNOVA",price:22000,condition:"New",badge:"BEST VALUE",note:"Gold 1kW"}],
+      Case:[{name:"Lian Li PC-O11 Dynamic EVO",price:22000,condition:"New",badge:"RECOMMENDED",note:"Showcase build"},{name:"Fractal Design Torrent",price:25000,condition:"New",badge:"AIRFLOW KING",note:"Best thermals"},{name:"NZXT H9 Flow",price:20000,condition:"New",badge:"BEST VALUE",note:"Premium layout"}],
+      Monitor:[{name:"27in QHD 240Hz OLED LG UltraGear",price:85000,condition:"New",badge:"RECOMMENDED",note:"OLED gaming"},{name:"32in 4K 144Hz IPS",price:75000,condition:"New",badge:"4K BEAST",note:"True 4K gaming"},{name:"27in QHD 165Hz Dell S2722DGM",price:45000,condition:"New",badge:"BEST VALUE",note:"Solid 1440p"}],
+      Peripherals:[{name:"Corsair K95 + M65 Ultra + HS80",price:45000,condition:"New",badge:"RECOMMENDED",note:"Premium set"},{name:"Razer BlackWidow V4 + DeathAdder V3",price:50000,condition:"New",badge:"RAZER SET",note:"Iconic combo"},{name:"SteelSeries Apex Pro + Prime Mini",price:48000,condition:"New",badge:"STEELSERIES",note:"Pro gaming"}]
+    },
+    enthusiast:{
+      CPU:[{name:"AMD Ryzen 9 9950X",price:170000,condition:"New",badge:"RECOMMENDED",note:"Zen 5 flagship"},{name:"Intel Core Ultra 9 285K",price:160000,condition:"New",badge:"INTEL FLAG",note:"Arrow Lake king"},{name:"AMD Ryzen 9 7950X3D",price:185000,condition:"New",badge:"GAMING+WORK",note:"3D V-Cache beast"}],
+      GPU:[{name:"NVIDIA RTX 5080 16GB",price:300000,condition:"New",badge:"RECOMMENDED",note:"Latest gen"},{name:"NVIDIA RTX 4090 24GB",price:350000,condition:"New",badge:"PREVIOUS GEN",note:"Absolute 4K king"},{name:"NVIDIA RTX 4090",price:290000,condition:"Used",badge:"USED DEAL",note:"Save vs new 5080"}],
+      Motherboard:[{name:"ASUS ROG MAXIMUS Z790 APEX",price:90000,condition:"New",badge:"RECOMMENDED",note:"Extreme OC"},{name:"MSI MEG Z790 GODLIKE",price:105000,condition:"New",badge:"PREMIUM",note:"Flagship board"},{name:"Gigabyte Z790 AORUS Master",price:75000,condition:"New",badge:"BEST VALUE",note:"Top Z790"}],
+      RAM:[{name:"64GB DDR5-6400 G.Skill Trident Z5",price:85000,condition:"New",badge:"RECOMMENDED",note:"High speed 64GB"},{name:"96GB DDR5-5600 Kingston Fury",price:120000,condition:"New",badge:"MAXED OUT",note:"96GB insanity"},{name:"32GB DDR5-7200 Corsair Dominator Titanium",price:55000,condition:"New",badge:"SPEED KING",note:"Top OC kit"}],
+      Storage:[{name:"2TB WD Black SN850X + 4TB HDD",price:50000,condition:"New",badge:"RECOMMENDED",note:"Speed+bulk"},{name:"4TB Samsung 990 Pro PCIe4",price:70000,condition:"New",badge:"ALL NVMe",note:"Pure NVMe"},{name:"2TB Corsair MP700 PCIe5",price:55000,condition:"New",badge:"PCIe 5",note:"Next-gen speed"}],
+      PSU:[{name:"1200W 80+ Titanium Seasonic Prime",price:42000,condition:"New",badge:"RECOMMENDED",note:"Titanium eff."},{name:"1000W 80+ Platinum ASUS ROG Thor",price:38000,condition:"New",badge:"PREMIUM",note:"With display"},{name:"1600W 80+ Titanium Corsair AX1600i",price:75000,condition:"New",badge:"EXTREME",note:"Dual-GPU ready"}],
+      Case:[{name:"Lian Li PC-O11 Dynamic XL",price:35000,condition:"New",badge:"RECOMMENDED",note:"Showcase XL"},{name:"Corsair 7000X RGB Full Tower",price:40000,condition:"New",badge:"FULL TOWER",note:"Extreme size"},{name:"Thermaltake Core P8",price:45000,condition:"New",badge:"OPEN FRAME",note:"Display piece"}],
+      Monitor:[{name:"27in 4K 240Hz OLED ASUS ROG Swift",price:160000,condition:"New",badge:"RECOMMENDED",note:"4K OLED"},{name:"32in 4K 144Hz Mini-LED Gigabyte M32U",price:100000,condition:"New",badge:"MINI-LED",note:"Excellent HDR"},{name:"49in Ultrawide QHD 240Hz Samsung",price:180000,condition:"New",badge:"ULTRAWIDE",note:"Immersive"}],
+      Peripherals:[{name:"Wooting 60HE + Finalmouse Air58 + Astro A50 X",price:80000,condition:"New",badge:"RECOMMENDED",note:"Pro peripherals"},{name:"Keychron Q6 Pro + G Pro X SL2 + Sony WH-1000XM5",price:75000,condition:"New",badge:"PREMIUM SET",note:"Quality build"},{name:"ASUS ROG Strix Scope + Chakram X + Delta S",price:70000,condition:"New",badge:"ROG SET",note:"Full ROG"}]
+    },
+    flagship:{
+      CPU:[{name:"AMD Threadripper PRO 7960X 24-Core",price:550000,condition:"New",badge:"WORKSTATION",note:"Workstation king"},{name:"Intel Core i9-14900KS Special",price:160000,condition:"New",badge:"GAMING KING",note:"Fastest gaming"},{name:"AMD Ryzen 9 9950X",price:170000,condition:"New",badge:"RECOMMENDED",note:"Balanced flagship"}],
+      GPU:[{name:"NVIDIA RTX 5090 32GB",price:600000,condition:"New",badge:"ULTIMATE",note:"Absolute fastest"},{name:"NVIDIA RTX 4090 24GB",price:350000,condition:"New",badge:"LAST GEN KING",note:"Still unbeatable"},{name:"NVIDIA RTX 5080 16GB",price:300000,condition:"New",badge:"RECOMMENDED",note:"Excellent value"}],
+      Motherboard:[{name:"ASUS ROG MAXIMUS Z890 APEX",price:110000,condition:"New",badge:"EXTREME OC",note:"Z890 flagship"},{name:"MSI MEG Z890 GODLIKE",price:130000,condition:"New",badge:"ABSOLUTE BEST",note:"Top board"},{name:"Gigabyte Z890 AORUS Tachyon",price:95000,condition:"New",badge:"RECOMMENDED",note:"OC champion"}],
+      RAM:[{name:"128GB DDR5-8000 G.Skill Trident Z5",price:250000,condition:"New",badge:"MAXIMUM",note:"128GB elite kit"},{name:"64GB DDR5-8200 Corsair Dominator Titanium",price:120000,condition:"New",badge:"RECOMMENDED",note:"Insane OC RAM"},{name:"96GB DDR5-7200 Kingston Fury Renegade",price:150000,condition:"New",badge:"BALANCED",note:"96GB fast kit"}],
+      Storage:[{name:"4TB Samsung 990 Pro + 8TB NAS HDD",price:95000,condition:"New",badge:"RECOMMENDED",note:"Extreme storage"},{name:"2TB Crucial T705 PCIe5 + 4TB WD Gold",price:80000,condition:"New",badge:"PCIe 5 COMBO",note:"Next-gen fast"},{name:"8TB Samsung 870 QVO + 2TB 990 Pro",price:100000,condition:"New",badge:"STORAGE BEAST",note:"10TB total"}],
+      PSU:[{name:"1600W 80+ Titanium Corsair AX1600i",price:75000,condition:"New",badge:"RECOMMENDED",note:"No-compromise"},{name:"1200W 80+ Titanium Seasonic Prime TX",price:45000,condition:"New",badge:"BEST VALUE",note:"Titanium eff."},{name:"2000W 80+ Titanium Enermax Digifanless",price:120000,condition:"New",badge:"EXTREME",note:"2kW monster"}],
+      Case:[{name:"Corsair Obsidian 1000D Super Tower",price:90000,condition:"New",badge:"RECOMMENDED",note:"Dual-system ready"},{name:"Phanteks Enthoo Elite Full Tower",price:80000,condition:"New",badge:"BEST VALUE",note:"Premium full tower"},{name:"Caselabs Mercury S8",price:150000,condition:"New",badge:"ULTRA PREMIUM",note:"Modder's dream"}],
+      Monitor:[{name:"27in 4K 480Hz ASUS ROG Swift PG27AQDM",price:200000,condition:"New",badge:"RECOMMENDED",note:"Fastest 4K OLED"},{name:"32in 4K 240Hz OLED LG C3 Gaming",price:220000,condition:"New",badge:"ULTRA PREMIUM",note:"TV-quality gaming"},{name:"57in 8K Samsung Odyssey Neo G9",price:400000,condition:"New",badge:"EXTREME",note:"Insane ultrawide"}],
+      Peripherals:[{name:"Wooting 60HE + Finalmouse Ultralight X + Sony MDR-Z1R",price:180000,condition:"New",badge:"RECOMMENDED",note:"Audiophile + pro"},{name:"Custom 65% KB + G Pro X SL2 DEX + Focal Celestee",price:200000,condition:"New",badge:"CUSTOM",note:"Bespoke setup"},{name:"ASUS ROG Azoth Extreme + Harpe Ace + Delta Pro",price:120000,condition:"New",badge:"FULL ROG",note:"Ecosystem"}]
+    }
+  };
+
+  const tierData=TIERS[tier]||TIERS["budget"];
+  const ICONS={CPU:"🔲",GPU:"🎮",Motherboard:"🧩",RAM:"⚡",Storage:"💾",PSU:"🔌",Case:"📦",Monitor:"🖥️",Peripherals:"🎧"};
+  const categories=Object.entries(tierData).map(([cat,options])=>({cat,icon:ICONS[cat]||"🛠️",options}));
+  return{tier,categories,_aiPowered:false};
+}
+
+// ── RENDER RESULTS ────────────────────────────────────────────────────────────
+function renderResults(blueprint){
+  const container=document.getElementById("partsContainer");
+  if(!container||!blueprint?.categories)return;
+  container.innerHTML="";
+  STATE.selections={};
+
+  blueprint.categories.forEach((category,catIdx)=>{
+    const section=document.createElement("div");
+    section.className="category-section";
+    section.style.animationDelay=catIdx*60+"ms";
+    const catId=category.cat.replace(/[^a-zA-Z0-9]/g,"_");
+    section.innerHTML=`
+      <div class="cat-header">
+        <span class="cat-icon">${(typeof category.icon==="string"&&category.icon.length<=4)?esc(category.icon):"🛠️"}</span>
+        <span class="cat-name">${esc(category.cat)}</span>
+        <span class="cat-selection-status" id="sel-${catId}">— NOT SELECTED —</span>
+      </div>
+      <div class="cat-options-row" id="opts-${catId}"></div>
+    `;
+    const optRow=section.querySelector(`#opts-${catId}`);
+    (category.options||[]).forEach((opt,i)=>{
+      const card=document.createElement("div");
+      card.className="option-card";
+      const SAFE_BADGE=new Set(["badge-rec","badge-budget","badge-value","badge-premium","badge-default",""]);
+      const SAFE_COND=new Set(["cond-new","cond-used","cond-refurb"]);
+      const rawBClass=getBadgeClass(opt.badge);
+      const bClass=SAFE_BADGE.has(rawBClass)?rawBClass:"badge-default";
+      const rawCClass=opt.condition==="Used"?"cond-used":opt.condition==="Refurbished"?"cond-refurb":"cond-new";
+      const cClass=SAFE_COND.has(rawCClass)?rawCClass:"cond-new";
+      card.innerHTML=`
+        <div class="option-badge ${bClass}">${esc(opt.badge||"")}</div>
+        <div class="option-name">${esc(opt.name)}</div>
+        <div class="option-note">${esc(opt.note||"")}</div>
+        <div class="option-footer">
+          <span class="option-condition ${cClass}">${esc(opt.condition||"New")}</span>
+          <span class="option-price">${formatPrice(opt.price)}</span>
+        </div>
+        <div class="option-select-indicator">✓ SELECTED</div>
+      `;
+      card.addEventListener("click",()=>toggleSelection(category.cat,opt,card,optRow,catId));
+      optRow.appendChild(card);
+    });
+    container.appendChild(section);
+  });
+  updateBuildSummary();
+}
+
+function getBadgeClass(b){
+  if(!b)return"";
+  const u=b.toUpperCase();
+  if(u.includes("RECOMMENDED"))return"badge-rec";
+  if(u.includes("BUDGET")||u.includes("ULTRA BUDGET"))return"badge-budget";
+  if(u.includes("BEST VALUE"))return"badge-value";
+  if(u.includes("PREMIUM")||u.includes("KING")||u.includes("ULTIMATE"))return"badge-premium";
+  return"badge-default";
+}
+
+function toggleSelection(cat,opt,card,optRow,catId){
+  const already=STATE.selections[cat]&&STATE.selections[cat].name===opt.name;
+  optRow.querySelectorAll(".option-card").forEach(c=>c.classList.remove("selected"));
+  if(already){
+    delete STATE.selections[cat];
+    const s=document.getElementById("sel-"+catId);
+    if(s){s.textContent="— NOT SELECTED —";s.classList.remove("status-selected");}
+  }else{
+    card.classList.add("selected");
+    STATE.selections[cat]={...opt,cat};
+    const s=document.getElementById("sel-"+catId);
+    if(s){
+      const nm=opt.name.length>30?opt.name.slice(0,28)+"…":opt.name;
+      s.textContent="✓ "+nm;
+      s.classList.add("status-selected");
+    }
+  }
+  updateBuildSummary();
+}
+
+// ── BUILD SUMMARY ─────────────────────────────────────────────────────────────
+function updateBuildSummary(){
+  const listEl=document.getElementById("buildSummaryList");
+  const totalEl=document.getElementById("buildSummaryTotal");
+  const countEl=document.getElementById("buildSummaryCount");
+  if(!listEl)return;
+  listEl.innerHTML="";
+  let totalPKR=0;
+  const selected=Object.values(STATE.selections);
+  if(selected.length===0){
+    listEl.innerHTML='<div class="summary-empty">Select components to build your rig</div>';
+  }else{
+    selected.forEach(item=>{
+      totalPKR+=item.price;
+      const row=document.createElement("div");
+      row.className="summary-item";
+      row.innerHTML=`
+        <div class="summary-item-info">
+          <span class="summary-cat">${esc(item.cat)}</span>
+          <span class="summary-name">${esc(item.name.length>28?item.name.slice(0,26)+"…":item.name)}</span>
+        </div>
+        <span class="summary-price">${formatPrice(item.price)}</span>
+      `;
+      listEl.appendChild(row);
+    });
+  }
+  if(totalEl)totalEl.textContent=formatPrice(totalPKR);
+  if(countEl)countEl.textContent=selected.length+" component"+(selected.length!==1?"s":"");
+  const prog=document.getElementById("budgetProgress");
+  if(prog&&STATE.budgetPKR>0){
+    const pct=Math.min(100,(totalPKR/STATE.budgetPKR)*100);
+    prog.style.width=pct+"%";
+    prog.className="budget-bar-fill"+(pct>100?" over-budget":pct>85?" near-budget":"");
+  }
+  const rem=document.getElementById("budgetRemaining");
+  if(rem&&STATE.budgetPKR>0){
+    const left=STATE.budgetPKR-totalPKR;
+    rem.textContent=left>=0?formatPrice(left)+" remaining":formatPrice(Math.abs(left))+" over budget";
+    rem.className="budget-remaining"+(left<0?" over":"");
+  }
+}
+
+// ── INVOICE ───────────────────────────────────────────────────────────────────
+function openInvoice(){
+  const modal=document.getElementById("invoiceModal");
+  const items=document.getElementById("invoiceItemsContainer");
+  if(!modal||!items)return;
+  items.innerHTML="";
+  let totalPKR=0;
+  const selected=Object.values(STATE.selections);
+  if(selected.length===0){
+    items.innerHTML='<div class="receipt-empty">No components selected yet.</div>';
+  }else{
+    selected.forEach(item=>{
+      totalPKR+=item.price;
+      const row=document.createElement("div");
+      row.className="receipt-row";
+      row.innerHTML=`
+        <span class="receipt-cat">${esc(item.cat)}</span>
+        <span class="receipt-item">${esc(item.name)}</span>
+        <span class="receipt-price">${formatPrice(item.price)}</span>
+      `;
+      items.appendChild(row);
+    });
+  }
+  const hw=document.getElementById("invoiceHardwareTotal");
+  const af=document.getElementById("invoiceAssemblyFee");
+  const gt=document.getElementById("invoiceGrandTotal");
+  const ts=document.getElementById("invoiceTimestamp");
+  if(hw)hw.textContent=formatPrice(totalPKR);
+  if(af)af.textContent=formatPrice(STATE.assemblyFee);
+  if(gt)gt.textContent=formatPrice(totalPKR+STATE.assemblyFee);
+  if(ts){ts.textContent="DATETIME: "+new Date().toISOString().replace("T"," ").slice(0,19)+" UTC";}
+  modal.classList.add("active");
+  document.body.style.overflow="hidden";
+}
+function closeInvoice(){
+  const m=document.getElementById("invoiceModal");
+  if(m?.classList.contains("active")){m.classList.remove("active");document.body.style.overflow="";}
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function navigateTo(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  const el=document.getElementById(id);
+  if(el){el.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});}
+}
+
+// ── TERMINAL ANIMATION ────────────────────────────────────────────────────────
+function runTerminal(){
+  const lines=document.querySelectorAll(".terminal-line");
+  lines.forEach(l=>l.className="terminal-line");
+  lines.forEach((line,i)=>{
+    const delay=parseInt(line.getAttribute("data-delay"),10)||0;
+    setTimeout(()=>{
+      if(i>0)lines[i-1].className="terminal-line processed-line";
+      line.className="terminal-line active-line";
+    },delay);
+  });
+}
+
+// ── PARTICLES ─────────────────────────────────────────────────────────────────
+function initParticles(){
+  const canvas=document.getElementById("particleCanvas");
   if(!canvas)return;
   const ctx=canvas.getContext("2d");
-  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
-  resize();window.addEventListener("resize",resize);
-  const pts=Array.from({length:60},()=>({
-    x:Math.random()*canvas.width,y:Math.random()*canvas.height,
-    vx:Math.random()*.4-.2,vy:Math.random()*.4-.2,
-    op:Math.random()*.5+.1,sz:Math.random()*1.5+.5
-  }));
-  function frame(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    pts.forEach(p=>{
-      p.x+=p.vx;p.y+=p.vy;
-      if(p.x<0||p.x>canvas.width||p.y<0||p.y>canvas.height){p.x=Math.random()*canvas.width;p.y=Math.random()*canvas.height}
-      ctx.fillStyle=`rgba(0,240,255,${p.op})`;ctx.beginPath();ctx.arc(p.x,p.y,p.sz,0,Math.PI*2);ctx.fill();
-    });
-    requestAnimationFrame(frame);
+  let pts=[];
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+  window.addEventListener("resize",resize);resize();
+  class P{
+    constructor(){this.reset();}
+    reset(){this.x=Math.random()*canvas.width;this.y=Math.random()*canvas.height;this.size=Math.random()*1.5+.5;this.sx=Math.random()*.4-.2;this.sy=Math.random()*.4-.2;this.a=Math.random()*.5+.1;}
+    update(){this.x+=this.sx;this.y+=this.sy;if(this.x<0||this.x>canvas.width||this.y<0||this.y>canvas.height)this.reset();}
+    draw(){ctx.fillStyle=`rgba(0,240,255,${this.a})`;ctx.beginPath();ctx.arc(this.x,this.y,this.size,0,Math.PI*2);ctx.fill();}
   }
-  frame();
-  const glow=document.getElementById("cursorGlow");
-  if(glow) window.addEventListener("mousemove",e=>{glow.style.left=e.clientX+"px";glow.style.top=e.clientY+"px"});
+  for(let i=0;i<45;i++)pts.push(new P());
+  (function loop(){ctx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{p.update();p.draw();});requestAnimationFrame(loop);})();
 }
 
-// ── CONSENT ────────────────────────────────────────────────────────────────
-function initConsent(){
-  const gate=document.getElementById("termsGate");
-  if(localStorage.getItem("forge_consent")==="true"){gate.style.display="none";return}
-  document.getElementById("acceptBtn").addEventListener("click",()=>{
-    const p=document.getElementById("chkPrivacy").checked;
-    const t=document.getElementById("chkTerms").checked;
-    if(p&&t){localStorage.setItem("forge_consent","true");gate.style.display="none"}
-    else{document.getElementById("consentError").textContent="You must accept both Privacy Policy and Terms & Conditions."}
-  });
+// ── CURSOR GLOW ───────────────────────────────────────────────────────────────
+function setupCursorGlow(){
+  const g=document.getElementById("cursorGlow");
+  if(!g)return;
+  window.addEventListener("mousemove",e=>{g.style.left=e.clientX+"px";g.style.top=e.clientY+"px";});
 }
 
-// ── COOKIES ────────────────────────────────────────────────────────────────
-function initCookies(){
-  const banner=document.getElementById("cookieBanner");
-  if(!localStorage.getItem("forge_cookies")){banner.style.display="flex"}
-  document.getElementById("cookieAccept").onclick=()=>{localStorage.setItem("forge_cookies","accepted");banner.style.display="none"};
-  document.getElementById("cookieDecline").onclick=()=>{localStorage.setItem("forge_cookies","declined");banner.style.display="none"};
-}
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
+</script>
+<!-- ── FOOTER ──────────────────────────────────────────────────────────────── -->
+<footer style="text-align:center;padding:2rem 1rem;font-size:12px;color:#7090b0;border-top:1px solid #1a2f50;margin-top:4rem;font-family:'JetBrains Mono',monospace;">
+  <div style="margin-bottom:10px;">
+    <a href="privacy.html" style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">Privacy Policy</a>·
+    <a href="terms.html"   style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">Terms &amp; Conditions</a>·
+    <a href="cookies.html" style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">Cookie Policy</a>·
+    <a href="faq.html"     style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">FAQ</a>
+  </div>
+  <div>© 2025 FORGE AI PC Builder. Recommendations for informational purposes only. Verify all prices before purchasing.</div>
+</footer>
 
-// ── CURRENCY ───────────────────────────────────────────────────────────────
-function initCurrency(){
-  const sel=document.getElementById("currencySelect");
-  sel.addEventListener("change",e=>{
-    currency=e.target.value;
-    const meta=CURRENCIES[currency];
-    document.getElementById("currPrefix").textContent=meta.symbol;
-    const bi=document.getElementById("budgetInput");
-    if(currency==="PKR"){bi.placeholder="e.g., 250000";bi.value=bi.value?bi.value:"";bi.min="30000"}
-    else{bi.placeholder="e.g., 1200";bi.min="300"}
-  });
-}
-
-// ── FORM ───────────────────────────────────────────────────────────────────
-function initForm(){
-  // Radio card active state
-  document.querySelectorAll('input[name="purpose"]').forEach(r=>{
-    r.addEventListener("change",()=>{
-      document.querySelectorAll(".sel-card").forEach(c=>c.classList.remove("active"));
-      r.closest(".sel-card").classList.add("active");
-    });
-  });
-
-  // API key toggle
-  const keyInput=document.getElementById("apiKeyInput");
-  document.getElementById("toggleKeyBtn").onclick=()=>{
-    const show=keyInput.type==="password";
-    keyInput.type=show?"text":"password";
-    document.getElementById("toggleKeyBtn").textContent=show?"HIDE":"SHOW";
-  };
-
-  document.getElementById("configForm").addEventListener("submit",async e=>{
-    e.preventDefault();
-    const apiKey=document.getElementById("apiKeyInput").value.trim();
-    const budget=Number(document.getElementById("budgetInput").value)||0;
-    const usage=document.querySelector('input[name="purpose"]:checked')?.value||"gaming";
-    const name=document.getElementById("nameInput").value.trim()||"Valued Customer";
-    const prefs=document.getElementById("prefInput").value.trim()||"None";
-
-    // Validate
-    document.getElementById("apiKeyError").textContent="";
-    document.getElementById("budgetError").textContent="";
-    let valid=true;
-    if(!apiKey||!apiKey.startsWith("gsk_")){document.getElementById("apiKeyError").textContent="Valid Groq API key required (starts with gsk_).";valid=false}
-    if(!budget||budget<1){document.getElementById("budgetError").textContent="Please enter a valid budget.";valid=false}
-    if(!valid)return;
-
-    sessionStorage.setItem("forge_api_key",apiKey);
-    await generateBuild(apiKey,budget,usage,name,prefs,currency);
-  });
-}
-
-// ── GROQ API ────────────────────────────────────────────────────────────────
-async function generateBuild(apiKey,budget,usage,customerName,preferences,curr){
-  showLoading("Crafting your build prompt...");
-  const sym=CURRENCIES[curr].symbol;
-
-  const prompt=`You are FORGE PC Builder AI. Generate a complete PC build recommendation for the following parameters:
-Budget: ${budget} ${curr} (symbol: ${sym})
-Use Case: ${usage}
-Customer Preferences: ${preferences}
-
-CRITICAL REQUIREMENTS:
-1. Return EXACTLY 3 options for EACH of these 12 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Cooling, Case, Monitor, Keyboard, Mouse, Headphones
-2. Total components: 36 (3 per category × 12 categories)
-3. Mix new and used/refurbished options appropriately for the budget
-4. All prices in ${curr}
-5. For CPU include: core count, thread count, base/boost clock, TDP, socket
-6. For GPU include: VRAM, memory type, architecture, TDP, ports
-7. For RAM include: capacity, speed, CAS latency, type (DDR4/DDR5)
-8. For Storage include: capacity, interface (NVMe/SATA), read/write speeds, type (SSD/HDD)
-9. For PSU include: wattage, efficiency rating, modularity
-10. For Motherboard include: socket, chipset, form factor, supported RAM type
-11. For Cooling include: type (air/AIO), TDP rating, fan size
-12. For Case include: form factor, airflow rating, drive bays
-13. For Monitor include: size, resolution, refresh rate, panel type, response time
-14. For Keyboard include: switch type, connectivity, form factor
-15. For Mouse include: DPI range, sensor, connectivity, weight
-16. For Headphones include: driver size, frequency response, connectivity, noise cancellation
-
-Also provide accurate gaming FPS estimates based on the GPU options for these games at 1080p:
-- Valorant, CS2, GTA V, Fortnite, Cyberpunk 2077, Apex Legends, Forza Horizon 5, Call of Duty Warzone, Elden Ring, The Witcher 3
-
-Respond ONLY with valid JSON (no markdown, no code blocks), exactly this structure:
-{
-  "summary": "2-3 sentence build overview",
-  "customerName": "${customerName}",
-  "budgetAllocation": {"CPU":15,"GPU":35,"Motherboard":8,"RAM":10,"Storage":7,"PSU":6,"Cooling":4,"Case":3,"Monitor":5,"Keyboard":3,"Mouse":2,"Headphones":2},
-  "components": [
-    {
-      "category": "CPU",
-      "name": "AMD Ryzen 5 5600X",
-      "brand": "AMD",
-      "price": 42000,
-      "condition": "new",
-      "spec": "6 Cores / 12 Threads | 3.7GHz Base / 4.6GHz Boost | 65W TDP | AM4 Socket",
-      "tier": "budget"
-    }
-    // ... 35 more components (3 per each of 12 categories)
-  ],
-  "gamingPerformance": [
-    {
-      "title": "Valorant",
-      "preset": "High",
-      "resolution": "1080p",
-      "avg_fps": "240+",
-      "low1_fps": "180+",
-      "gpu_used": "RTX 4060"
-    }
-    // ... 9 more games
-  ]
-}`;
-
-  setLoadStatus("Sending request to Groq AI...");
-
+<!-- ── COOKIE CONSENT BANNER ─────────────────────────────────────────────── -->
+<div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;
+  background:#080f1a;border-top:1px solid #1a2f50;padding:14px 24px;
+  flex-wrap:wrap;gap:12px;font-size:13px;color:#c8d8f0;align-items:center;justify-content:space-between;">
+  <span>🍪 We use minimal functional cookies.
+    <a href="cookies.html" style="color:#00f0ff;" rel="noopener noreferrer">Cookie Policy</a> ·
+    <a href="privacy.html" style="color:#00f0ff;" rel="noopener noreferrer">Privacy Policy</a>
+  </span>
+  <div style="display:flex;gap:10px;flex-shrink:0;">
+    <button onclick="declineCookies()" style="background:transparent;border:1px solid #1a2f50;color:#7090b0;padding:6px 16px;border-radius:4px;cursor:pointer;font-size:12px;font-family:'JetBrains Mono',monospace;">Decline</button>
+    <button onclick="acceptCookies()" style="background:#00f0ff;border:none;color:#04080f;padding:6px 16px;border-radius:4px;cursor:pointer;font-weight:700;font-size:12px;font-family:'JetBrains Mono',monospace;">Accept</button>
+  </div>
+</div>
+<script>
+(function(){
   try{
-    const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{
-      method:"POST",
-      headers:{"Authorization":`Bearer ${apiKey}`,"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:"llama-3.3-70b-versatile",
-        messages:[{role:"user",content:prompt}],
-        temperature:0.3,
-        max_tokens:8000
-      })
-    });
-
-    if(!res.ok){
-      const err=await res.json().catch(()=>({}));
-      throw new Error(err.error?.message||`HTTP ${res.status}`);
+    const consent=localStorage.getItem("forge_cookie_consent");
+    if(!consent){
+      const b=document.getElementById("cookieBanner");
+      if(b)b.style.display="flex";
     }
-
-    setLoadStatus("Parsing build configuration...");
-    const data=await res.json();
-    let content=data.choices?.[0]?.message?.content||"";
-    // Strip markdown code blocks if present
-    content=content.replace(/^```json?\s*/i,"").replace(/\s*```$/i,"").trim();
-    // Sometimes model wraps in extra text - extract JSON
-    const jsonStart=content.indexOf("{");
-    const jsonEnd=content.lastIndexOf("}");
-    if(jsonStart>=0&&jsonEnd>jsonStart) content=content.slice(jsonStart,jsonEnd+1);
-
-    buildData=JSON.parse(content);
-    buildData.customerName=customerName;
-    buildData.budget=budget;
-    buildData.currency=curr;
-
-    // Auto-select first option per category (best value)
-    selectedComponents={};
-    if(buildData.components){
-      buildData.components.forEach(c=>{
-        if(!selectedComponents[c.category]) selectedComponents[c.category]=c;
-      });
-    }
-
-    hideLoading();
-    switchView("resultsView");
-    setTimeout(()=>{renderResults();window.scrollTo({top:0,behavior:"smooth"})},50);
-
-  }catch(err){
-    hideLoading();
-    console.error("Groq API error:",err);
-    if(err.message.includes("401")||err.message.includes("invalid_api_key")||err.message.includes("Unauthorized")){
-      document.getElementById("apiKeyError").textContent="Invalid API key. Please check your Groq API key at console.groq.com.";
-    }else if(err.message.includes("429")){
-      alert("Rate limit exceeded. Please wait a moment and try again.");
-    }else{
-      alert("⚠️ Build generation failed:\n\n"+err.message+"\n\nPlease check your API key and internet connection.");
-    }
-  }
+  }catch(e){}
+})();
+function acceptCookies(){
+  try{localStorage.setItem("forge_cookie_consent","accepted");}catch(e){}
+  const b=document.getElementById("cookieBanner");
+  if(b)b.style.display="none";
 }
-
-// ── LOADING ────────────────────────────────────────────────────────────────
-function showLoading(msg){
-  const ol=document.getElementById("loadingOverlay");
-  ol.classList.add("show");
-  setLoadStatus(msg||"Processing...");
-}
-function hideLoading(){document.getElementById("loadingOverlay").classList.remove("show")}
-function setLoadStatus(msg){
-  const el=document.getElementById("loadStatus");
-  if(el)el.textContent=msg;
-}
-
-// ── SWITCH VIEW ─────────────────────────────────────────────────────────────
-function switchView(id){
-  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-  const v=document.getElementById(id);
-  if(v)v.classList.add("active");
-}
-
-// ── RENDER RESULTS ──────────────────────────────────────────────────────────
-function renderResults(){
-  if(!buildData)return;
-  const sym=CURRENCIES[currency].symbol;
-  renderComponents(sym);
-  renderFPS();
-  renderAllocation();
-  updateSidebar(sym);
-  document.getElementById("buildSummary").textContent=buildData.summary||"AI-generated build configuration optimized for your budget and use case.";
-}
-
-function getCategoryTier(cat){
-  if(cat==="GPU")return "gpu-tier";
-  if(cat==="CPU")return "cpu-tier";
-  return "";
-}
-
-function renderComponents(sym){
-  const container=document.getElementById("componentsContainer");
-  if(!container||!buildData.components)return;
-  container.innerHTML="";
-
-  const grouped={};
-  buildData.components.forEach(c=>{
-    if(!grouped[c.category])grouped[c.category]=[];
-    grouped[c.category].push(c);
-  });
-
-  // Render in a defined order
-  ALL_CATEGORIES.forEach(cat=>{
-    const items=grouped[cat];
-    if(!items||items.length===0)return;
-
-    const section=document.createElement("div");
-    section.className="cat-section";
-
-    section.innerHTML=`
-      <div class="cat-hdr">
-        <span class="cat-icon">${CAT_ICONS[cat]||"📦"}</span>
-        <span class="cat-title">${cat}</span>
-        <span class="cat-count">${items.length} option${items.length!==1?"s":""}</span>
-      </div>
-      <div class="cat-cards" id="cards-${cat}"></div>
-    `;
-    container.appendChild(section);
-
-    const cardsDiv=section.querySelector(`#cards-${cat}`);
-    items.forEach((item,idx)=>{
-      const card=createCard(item,sym,cat,idx);
-      cardsDiv.appendChild(card);
-    });
-  });
-}
-
-function createCard(item,sym,cat,idx){
-  const card=document.createElement("div");
-  const isSelected=selectedComponents[cat]===item||(selectedComponents[cat]&&selectedComponents[cat].name===item.name);
-  const conditionNew=item.condition!=="used";
-  card.className=`comp-card ${getCategoryTier(cat)}${isSelected?" selected":""}`;
-  card.dataset.category=cat;
-  card.dataset.idx=idx;
-
-  card.innerHTML=`
-    <div class="card-top">
-      <span class="card-brand">${item.brand||"Generic"}</span>
-      <span class="card-badge" style="background:${conditionNew?"rgba(0,240,255,.12)":"rgba(255,183,0,.12)"};color:${conditionNew?"var(--accent)":"var(--gold)"}">${conditionNew?"NEW":"USED"}</span>
-    </div>
-    <div class="card-name">${item.name}</div>
-    <div class="card-spec">${item.spec||"—"}</div>
-    <div class="card-foot">
-      <span class="card-foot-lbl">PRICE</span>
-      <span class="card-price">${sym} ${Number(item.price||0).toLocaleString()}</span>
-    </div>
-  `;
-
-  card.addEventListener("click",()=>{
-    selectedComponents[cat]=item;
-    // Refresh all cards in this category
-    document.querySelectorAll(`.comp-card[data-category="${cat}"]`).forEach(c=>c.classList.remove("selected"));
-    card.classList.add("selected");
-    updateSidebar(sym);
-    renderFPS(); // Recalculate FPS based on selected GPU
-  });
-
-  return card;
-}
-
-// ── FPS RENDERING ───────────────────────────────────────────────────────────
-function renderFPS(){
-  const container=document.getElementById("fpsGrid");
-  if(!container||!buildData.gamingPerformance)return;
-  container.innerHTML="";
-
-  const selectedGPU=selectedComponents["GPU"];
-
-  buildData.gamingPerformance.forEach(game=>{
-    const card=document.createElement("div");
-    card.className="game-strip";
-    card.innerHTML=`
-      <div class="game-name">${game.title}</div>
-      <div class="game-preset">${game.preset||"High"} Preset · ${game.resolution||"1080p"}${selectedGPU?` · ${selectedGPU.name}`:""}</div>
-      <div class="fps-row">
-        <div class="fps-box">
-          <span class="fps-lbl">AVG FPS</span>
-          <span class="fps-val">${game.avg_fps}</span>
-        </div>
-        <div class="fps-box">
-          <span class="fps-lbl">1% LOW</span>
-          <span class="fps-val low">${game.low1_fps}</span>
-        </div>
-        ${game.gpu_used?`<div class="fps-box"><span class="fps-lbl">GPU</span><span style="font-size:10px;color:var(--text2);font-family:var(--font-mono)">${game.gpu_used}</span></div>`:""}
-      </div>
-    `;
-    container.appendChild(card);
-  });
-}
-
-// ── BUDGET ALLOCATION ────────────────────────────────────────────────────────
-function renderAllocation(){
-  const bar=document.getElementById("allocBar");
-  const legend=document.getElementById("allocLegend");
-  if(!bar||!legend||!buildData.budgetAllocation)return;
-  bar.innerHTML="";legend.innerHTML="";
-
-  Object.entries(buildData.budgetAllocation).forEach(([key,pct],i)=>{
-    if(!pct||pct<=0)return;
-    const color=CHART_COLORS[i%CHART_COLORS.length];
-    const seg=document.createElement("div");
-    seg.className="alloc-seg";
-    seg.style.cssText=`width:${pct}%;background:${color}`;
-    seg.title=`${key}: ${pct}%`;
-    bar.appendChild(seg);
-
-    const li=document.createElement("div");
-    li.className="legend-item";
-    li.innerHTML=`<span class="legend-dot" style="background:${color}"></span><span>${key} (${pct}%)</span>`;
-    legend.appendChild(li);
-  });
-}
-
-// ── SIDEBAR ──────────────────────────────────────────────────────────────────
-function updateSidebar(sym){
-  const list=document.getElementById("sidebarList");
-  const countEl=document.getElementById("sidebarCount");
-  const totalEl=document.getElementById("sidebarTotal");
-  const totalTextEl=document.getElementById("sidebarTotalText");
-  if(!list)return;
-
-  list.innerHTML="";
-  let total=0;
-  let count=0;
-
-  ALL_CATEGORIES.forEach(cat=>{
-    const item=selectedComponents[cat];
-    if(!item)return;
-    total+=Number(item.price||0);
-    count++;
-    const row=document.createElement("div");
-    row.className="s-item";
-    row.innerHTML=`
-      <div class="s-item-info">
-        <span class="s-cat">${cat}</span>
-        <span class="s-name">${item.name}</span>
-      </div>
-      <span class="s-price">${sym} ${Number(item.price||0).toLocaleString()}</span>
-    `;
-    list.appendChild(row);
-  });
-
-  if(countEl) countEl.textContent=count+" selected";
-  if(totalEl) totalEl.textContent=`${sym} ${total.toLocaleString()}`;
-  if(totalTextEl) totalTextEl.textContent=`Selected components total`;
-  document.getElementById("barFill").style.width=
-    buildData.budget?Math.min(100,Math.round(total/buildData.budget*100))+"%":"100%";
-}
-
-// ── AUTO-SELECT ──────────────────────────────────────────────────────────────
-function initNavigation(){
-  document.getElementById("backBtn").onclick=()=>switchView("configView");
-  document.getElementById("selectAllBtn").onclick=()=>{
-    // Auto-select middle tier (index 1) for balanced value
-    selectedComponents={};
-    if(buildData&&buildData.components){
-      const grouped={};
-      buildData.components.forEach(c=>{if(!grouped[c.category])grouped[c.category]=[];grouped[c.category].push(c)});
-      Object.entries(grouped).forEach(([cat,items])=>{selectedComponents[cat]=items[1]||items[0]});
-    }
-    const sym=CURRENCIES[currency].symbol;
-    renderComponents(sym);
-    updateSidebar(sym);
-    renderFPS();
-  };
-}
-
-// ── INVOICE ──────────────────────────────────────────────────────────────────
-function initModal(){
-  const modal=document.getElementById("invoiceModal");
-  document.getElementById("invoiceBtn").onclick=()=>{generateInvoice();modal.classList.add("open")};
-  document.getElementById("modalClose").onclick=()=>modal.classList.remove("open");
-  modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("open")});
-}
-
-function generateInvoice(){
-  if(!buildData)return;
-  const sym=CURRENCIES[currency].symbol;
-  const today=new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
-  const invoiceId=`FRG-${Math.floor(100000+Math.random()*900000)}`;
-  document.getElementById("rcptTimestamp").textContent=`📅 ${today} | 📑 ${invoiceId} | 👤 ${buildData.customerName||"Guest"}`;
-
-  let html="";
-  let total=0;
-
-  ALL_CATEGORIES.forEach(cat=>{
-    const item=selectedComponents[cat];
-    if(!item)return;
-    const p=Number(item.price||0);
-    total+=p;
-    html+=`<div class="rcpt-row">
-      <span class="rcpt-cat">${cat}</span>
-      <span class="rcpt-item"><strong>${item.name}</strong><br><small>${item.spec||""}</small></span>
-      <span class="rcpt-price">${sym} ${p.toLocaleString()}</span>
-    </div>`;
-  });
-
-  // Gaming performance
-  let fpsHtml="";
-  if(buildData.gamingPerformance?.length){
-    fpsHtml=`<div style="margin-top:16px">
-      <div class="perf-title">🎮 GAMING PERFORMANCE ESTIMATES (1080p)</div>
-      ${buildData.gamingPerformance.map(g=>`
-        <div class="perf-row">
-          <span class="perf-game">${g.title}</span>
-          <span class="perf-fps">${g.preset} | ${g.avg_fps} FPS avg | 1% Low: ${g.low1_fps}</span>
-        </div>`).join("")}
-    </div>`;
-  }
-
-  const tax=Math.floor(total*.17);
-  const grand=total+tax;
-  document.getElementById("rcptItems").innerHTML=`
-    <div style="background:rgba(0,240,255,.05);border-left:3px solid var(--accent);padding:12px;border-radius:4px;margin-bottom:16px">
-      <strong style="color:var(--accent);font-size:11px;letter-spacing:1px">BUILD SUMMARY</strong>
-      <p style="font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5">${buildData.summary||"AI-generated build configuration."}</p>
-    </div>
-    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:16px">
-      <h3 style="font-size:11px;color:var(--accent);font-family:var(--font-display);letter-spacing:2px;margin-bottom:10px">SELECTED COMPONENTS</h3>
-      ${html}
-    </div>
-    ${fpsHtml}
-  `;
-  document.getElementById("rcptHardware").textContent=`${sym} ${total.toLocaleString()}`;
-  document.getElementById("rcptTax").textContent=`${sym} ${tax.toLocaleString()}`;
-  document.getElementById("rcptGrand").textContent=`${sym} ${grand.toLocaleString()}`;
+function declineCookies(){
+  try{localStorage.setItem("forge_cookie_consent","declined");}catch(e){}
+  const b=document.getElementById("cookieBanner");
+  if(b)b.style.display="none";
 }
 </script>
+
 </body>
 </html>
