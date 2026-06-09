@@ -45,15 +45,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // MANDATORY SECURITY CONTEXT RULES REGULATION HANDLER
 function bindUserLegalConsentGateEvents() {
-  const gateOverlay = document.getElementById("legalConsentGateOverlay");
-  const consentCheckbox = document.getElementById("mandatoryLegalConsentCheckbox");
-  const initDashboardBtn = document.getElementById("initializeForgeDashboardBtn");
+  const gateOverlay = document.getElementById("legalConsentGateOverlay") || document.getElementById("consentGate");
+  const consentCheckbox = document.getElementById("mandatoryLegalConsentCheckbox") || document.getElementById("legalCheckbox");
+  const initDashboardBtn = document.getElementById("initializeForgeDashboardBtn") || document.getElementById("enterPlatformBtn");
 
   if (!gateOverlay || !consentCheckbox || !initDashboardBtn) return;
 
   // Retrieve explicit persistent data states securely stored inside locally encapsulated contexts
   if (localStorage.getItem("forge_platform_legal_approved") === "true") {
     gateOverlay.classList.add("hidden-state");
+    gateOverlay.style.display = "none";
   }
 
   consentCheckbox.addEventListener("change", (e) => {
@@ -64,20 +65,23 @@ function bindUserLegalConsentGateEvents() {
     if (consentCheckbox.checked) {
       localStorage.setItem("forge_platform_legal_approved", "true");
       gateOverlay.classList.add("hidden-state");
+      gateOverlay.style.display = "none";
     }
   });
 }
 
 // COOKIE BANNER ORCHESTRATION PIPELINE
 function verifyActiveSavedCookieState() {
-  const banner = document.getElementById("cookieBanner");
-  const acceptBtn = document.getElementById("acceptCookiesBtn");
-  const declineBtn = document.getElementById("declineCookiesBtn");
+  const banner = document.getElementById("cookieBanner") || document.querySelector(".cookie-banner");
+  const acceptBtn = document.getElementById("acceptCookiesBtn") || document.getElementById("cookieAccept");
+  const declineBtn = document.getElementById("declineCookiesBtn") || document.getElementById("cookieDecline");
 
   if (!banner || !acceptBtn || !declineBtn) return;
 
   if (!localStorage.getItem("forge_cookie_analytics_consent")) {
     banner.style.display = "flex";
+  } else {
+    banner.style.display = "none";
   }
 
   acceptBtn.addEventListener("click", () => {
@@ -93,9 +97,9 @@ function verifyActiveSavedCookieState() {
 
 // SYNCHRONIZED CURRENCY UNIT DESIGNATION CHANGES
 function setupDynamicCurrencyPrefixTracking() {
-  const selector = document.getElementById("forgeCurrencySelector");
-  const suffixTag = document.getElementById("currencySymbolPrefix");
-  const budgetInput = document.getElementById("forgeBudgetAmountInput");
+  const selector = document.getElementById("forgeCurrencySelector") || document.getElementById("currencySelector") || document.querySelector(".currency-select");
+  const suffixTag = document.getElementById("currencySymbolPrefix") || document.querySelector(".currency-indicator");
+  const budgetInput = document.getElementById("forgeBudgetAmountInput") || document.getElementById("budgetInput");
 
   if (!selector || !suffixTag || !budgetInput) return;
 
@@ -117,9 +121,9 @@ function setupDynamicCurrencyPrefixTracking() {
 
 // DATA TRANSACTION ASYNC PACKETS POST DISPATCHING
 function bindForgeParameterFormActions() {
-  const form = document.getElementById("forgeParameterInputForm");
-  const submitBtn = document.getElementById("forgeEngineExecutionTriggerBtn");
-  const displayContainer = document.getElementById("forgeResultsDynamicPresentationContainer");
+  const form = document.getElementById("forgeParameterInputForm") || document.getElementById("parameterForm") || document.querySelector("form");
+  const submitBtn = document.getElementById("forgeEngineExecutionTriggerBtn") || document.getElementById("submitBtn") || form?.querySelector('button[type="submit"]');
+  const displayContainer = document.getElementById("forgeResultsDynamicPresentationContainer") || document.getElementById("resultsContainer");
 
   if (!form || !submitBtn || !displayContainer) return;
 
@@ -127,10 +131,15 @@ function bindForgeParameterFormActions() {
     e.preventDefault();
     submitBtn.classList.add("processing-state");
 
-    const budget = document.getElementById("forgeBudgetAmountInput").value;
-    const usage = document.getElementById("forgeUsageProfileSelector").value;
-    const balancingMethod = document.getElementById("forgeOptimizationTierSelector").value;
-    const constraints = document.getElementById("forgePreferencesTextInput").value;
+    const budgetElement = document.getElementById("forgeBudgetAmountInput") || document.getElementById("budgetInput");
+    const usageElement = document.getElementById("forgeUsageProfileSelector") || document.getElementById("usageSelector");
+    const tierElement = document.getElementById("forgeOptimizationTierSelector") || document.getElementById("tierSelector");
+    const preferencesElement = document.getElementById("forgePreferencesTextInput") || document.getElementById("preferencesInput");
+
+    const budget = budgetElement ? budgetElement.value : "250000";
+    const usage = usageElement ? usageElement.value : "Gaming";
+    const balancingMethod = tierElement ? tierElement.value : "Balanced";
+    const constraints = preferencesElement ? preferencesElement.value : "None";
 
     try {
       const serverlessPayloadResponse = await fetch("/api/gemini", {
@@ -154,6 +163,7 @@ function bindForgeParameterFormActions() {
       // Inject components safely into layout models
       renderHardwareConfigurationMatrix();
       displayContainer.classList.remove("forge-results-display-hidden-state");
+      displayContainer.style.display = "block";
       
       // Auto scroll viewport directly down to top line elements smoothly
       displayContainer.scrollIntoView({ behavior: "smooth" });
@@ -170,10 +180,10 @@ function bindForgeParameterFormActions() {
 function renderHardwareConfigurationMatrix() {
   if (!activeHardwareConfigurationPayload) return;
 
-  const componentsGrid = document.getElementById("componentsDynamicGridContainer");
-  const peripheralsGrid = document.getElementById("peripheralsDynamicGridContainer");
-  const gamingGrid = document.getElementById("gamingPerformanceTelemetryGrid");
-  const summaryText = document.getElementById("forgeOverviewSummaryTextContent");
+  const componentsGrid = document.getElementById("componentsDynamicGridContainer") || document.getElementById("componentsGrid");
+  const peripheralsGrid = document.getElementById("peripheralsDynamicGridContainer") || document.getElementById("peripheralsGrid");
+  const gamingGrid = document.getElementById("gamingPerformanceTelemetryGrid") || document.getElementById("gamingGrid");
+  const summaryText = document.getElementById("forgeOverviewSummaryTextContent") || document.getElementById("summaryText");
 
   const symbol = REGIONAL_CURRENCY_EXCHANGE_INDEX[selectedGlobalAccountingCurrency].symbol;
 
@@ -264,8 +274,8 @@ function renderHardwareConfigurationMatrix() {
 }
 
 function renderBudgetAllocationVisualCharts() {
-  const graphBar = document.getElementById("budgetAllocationVisualizationGraphBar");
-  const legendLabels = document.getElementById("budgetAllocationChartLegendLabels");
+  const graphBar = document.getElementById("budgetAllocationVisualizationGraphBar") || document.getElementById("allocationBar");
+  const legendLabels = document.getElementById("budgetAllocationChartLegendLabels") || document.getElementById("chartLegend");
   
   if (!graphBar || !legendLabels || !activeHardwareConfigurationPayload.budgetAllocation) return;
 
@@ -303,20 +313,22 @@ function renderBudgetAllocationVisualCharts() {
 
 // INVOICE COMPLETION REGISTER AND FAULTLESS RENDER LOGIC
 function bindInvoiceModalOrchestrationSystems() {
-  const modal = document.getElementById("invoiceOrchestrationModalOverlay");
-  const openBtn = document.getElementById("openInvoiceOrchestrationModalBtn");
-  const closeBtn = document.getElementById("dismissInvoiceModalOverlayBtn");
-  const printBtn = document.getElementById("triggerPrintInvoiceCommandBtn");
+  const modal = document.getElementById("invoiceOrchestrationModalOverlay") || document.getElementById("invoiceModal");
+  const openBtn = document.getElementById("openInvoiceOrchestrationModalBtn") || document.getElementById("openInvoiceBtn");
+  const closeBtn = document.getElementById("dismissInvoiceModalOverlayBtn") || document.getElementById("closeInvoiceBtn");
+  const printBtn = document.getElementById("triggerPrintInvoiceCommandBtn") || document.getElementById("printInvoiceBtn");
 
   if (!modal || !openBtn || !closeBtn || !printBtn) return;
 
   openBtn.addEventListener("click", () => {
     compileCleanInvoiceDocumentDataStructure();
     modal.classList.add("active-state");
+    modal.style.display = "flex";
   });
 
   closeBtn.addEventListener("click", () => {
     modal.classList.remove("active-state");
+    modal.style.display = "none";
   });
 
   printBtn.addEventListener("click", () => {
@@ -325,7 +337,7 @@ function bindInvoiceModalOrchestrationSystems() {
 }
 
 function compileCleanInvoiceDocumentDataStructure() {
-  const targetContainer = document.getElementById("printableInvoiceDocumentEngineBody");
+  const targetContainer = document.getElementById("printableInvoiceDocumentEngineBody") || document.getElementById("invoiceBody");
   if (!targetContainer || !activeHardwareConfigurationPayload) return;
 
   const symbol = REGIONAL_CURRENCY_EXCHANGE_INDEX[selectedGlobalAccountingCurrency].symbol;
@@ -431,7 +443,7 @@ function compileCleanInvoiceDocumentDataStructure() {
 
 // AMBIENT HARDWARE GRID BACKGROUND PARTICLE SIMULATOR
 function initializeAmbientHardwareVisualizer() {
-  const canvas = document.getElementById("ambientHardwareVisualizerMatrix");
+  const canvas = document.getElementById("ambientHardwareVisualizerMatrix") || document.getElementById("bgCanvas");
   if (!canvas) return;
 
   const ctx = canvas.getContext("2d");
