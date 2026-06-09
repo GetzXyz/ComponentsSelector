@@ -3,1455 +3,1037 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FORGE — AI PC Builder v7.0</title>
-<meta name="description" content="FORGE AI PC Builder — AI-powered custom PC recommendations optimized for the Pakistani market.">
+<title>FORGE — AI PC Builder</title>
+<meta name="description" content="FORGE AI PC Builder — AI-powered custom PC recommendations.">
 <meta name="theme-color" content="#00f0ff">
-<meta http-equiv="X-Content-Type-Options" content="nosniff">
-<meta http-equiv="X-Frame-Options" content="DENY">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='44' height='44' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='44' height='44' rx='8' fill='%2304080f'/%3E%3Crect x='10' y='10' width='24' height='24' rx='3' fill='%2304080f' stroke='%2300f0ff' stroke-width='1.2'/%3E%3Crect x='15' y='15' width='14' height='14' rx='2' fill='%230d1526' stroke='%2300f0ff' stroke-width='0.8'/%3E%3Cline x1='22' y1='15' x2='22' y2='29' stroke='%2300f0ff' stroke-width='0.5' opacity='0.5'/%3E%3Cline x1='15' y1='22' x2='29' y2='22' stroke='%2300f0ff' stroke-width='0.5' opacity='0.5'/%3E%3Ccircle cx='15' cy='15' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='29' cy='15' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='15' cy='29' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='29' cy='29' r='1.2' fill='%237b2fff'/%3E%3Cline x1='17' y1='10' x2='17' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='22' y1='10' x2='22' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='27' y1='10' x2='27' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='17' y1='34' x2='17' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='22' y1='34' x2='22' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='27' y1='34' x2='27' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='17' x2='6' y2='17' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='22' x2='6' y2='22' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='27' x2='6' y2='27' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='17' x2='38' y2='17' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='22' x2='38' y2='22' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='27' x2='38' y2='27' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cpath d='M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z' fill='%2300f0ff'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='44' height='44' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='44' height='44' rx='8' fill='%2304080f'/%3E%3Crect x='10' y='10' width='24' height='24' rx='3' fill='%2304080f' stroke='%2300f0ff' stroke-width='1.2'/%3E%3Cpath d='M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z' fill='%2300f0ff'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* ════════════════════════════════════════════════════════════════════════════
-   FORGE v7.0 — COMPLETE STYLESHEET
-   ════════════════════════════════════════════════════════════════════════════ */
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg: #04080f;
-  --bg2: #080f1a;
-  --bg3: #0d1526;
-  --panel: #0a1220;
-  --accent: #00f0ff;
-  --accent2: #7b2fff;
-  --gold: #ffb700;
-  --text: #c8d8f0;
-  --text2: #7090b0;
-  --border: #1a2f50;
-  --border2: #0d2040;
-  --success: #00e676;
-  --danger: #ff3c5a;
-  --font-main: 'Plus Jakarta Sans', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --font-display: 'Orbitron', monospace;
-}
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-main);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* Background effects */
-#ambientHardwareVisualizerMatrix {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.3;
-}
-
-.grid-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    linear-gradient(rgba(0,240,255,.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(0,240,255,.03) 1px,transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-  z-index: 0;
-}
-
-#cursorGlow {
-  position: fixed;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0,240,255,.06) 0%, transparent 70%);
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-}
-
-/* Layout */
-.app-container {
-  position: relative;
-  z-index: 2;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px 60px;
-}
-
-/* Header */
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 0;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 40px;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.logo-area {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.logo-text {
-  font-family: var(--font-display);
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--accent);
-  letter-spacing: 4px;
-  text-shadow: 0 0 20px rgba(0,240,255,.5);
-}
-
-.logo-text .accent-dot { color: var(--accent2); }
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.status-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--success);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0,230,118,.4); }
-  50% { box-shadow: 0 0 0 6px rgba(0,230,118,0); }
-}
-
-.status-text {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text2);
-  letter-spacing: 1px;
-}
-
-.currency-select {
-  background: var(--bg3);
-  color: var(--accent);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  cursor: pointer;
-  outline: none;
-}
-
-.currency-select:hover { border-color: var(--accent); }
-
-/* Views */
-.view { display: none; }
-.view.active { display: block; animation: fadeIn .4s ease; }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Welcome section */
-.welcome-hero {
-  text-align: center;
-  margin-bottom: 48px;
-}
-
-.welcome-hero h2 {
-  font-family: var(--font-display);
-  font-size: clamp(22px, 4vw, 38px);
-  font-weight: 900;
-  color: var(--accent);
-  letter-spacing: 3px;
-  text-shadow: 0 0 30px rgba(0,240,255,.4);
-  margin-bottom: 14px;
-}
-
-.welcome-hero p {
-  color: var(--text2);
-  font-size: 16px;
-  max-width: 580px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-
-/* Form */
-.forge-form {
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.form-section {
-  margin-bottom: 36px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 28px;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.sec-num {
-  font-family: var(--font-display);
-  font-size: 11px;
-  color: var(--accent2);
-  letter-spacing: 2px;
-  background: rgba(123,47,255,.15);
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-.section-header h3 {
-  font-family: var(--font-display);
-  font-size: 13px;
-  color: var(--text);
-  letter-spacing: 2px;
-}
-
-.budget-input-wrapper {
-  display: flex;
-  align-items: center;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--bg3);
-}
-
-.budget-input-wrapper:focus-within {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(0,240,255,.1);
-}
-
-.currency-indicator {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--accent);
-  padding: 0 14px;
-  background: rgba(0,240,255,.05);
-  border-right: 1px solid var(--border);
-  white-space: nowrap;
-  min-width: 55px;
-  text-align: center;
-}
-
-#forgeBudgetAmountInput {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  padding: 14px 16px;
-  color: var(--text);
-  font-size: 18px;
-  font-family: var(--font-mono);
-}
-
-#forgeBudgetAmountInput::placeholder { color: var(--text2); }
-
-.name-input {
-  width: 100%;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 12px 16px;
-  color: var(--text);
-  font-size: 14px;
-  font-family: var(--font-main);
-  outline: none;
-  transition: border-color .2s;
-}
-
-.name-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(0,240,255,.08);
-}
-
-.name-input::placeholder { color: var(--text2); }
-
-.field-hint {
-  font-size: 12px;
-  color: var(--text2);
-  margin-top: 8px;
-  font-family: var(--font-mono);
-}
-
-.field-error {
-  font-size: 12px;
-  color: var(--danger);
-  margin-top: 6px;
-  font-family: var(--font-mono);
-  min-height: 16px;
-}
-
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px;
-}
-
-.selectable-card {
-  cursor: pointer;
-  display: block;
-}
-
-.selectable-card input { display: none; }
-
-.card-content {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 16px 14px;
-  transition: all .2s;
-  text-align: center;
-}
-
-.selectable-card:hover .card-content,
-.selectable-card.active .card-content {
-  border-color: var(--accent);
-  background: rgba(0,240,255,.06);
-}
-
-.selectable-card.active .card-content {
-  box-shadow: 0 0 12px rgba(0,240,255,.15);
-}
-
-.card-icon {
-  font-size: 26px;
-  margin-bottom: 8px;
-}
-
-.card-content h4 {
-  font-family: var(--font-display);
-  font-size: 10px;
-  color: var(--accent);
-  letter-spacing: 1.5px;
-  margin-bottom: 6px;
-}
-
-.card-content p {
-  font-size: 11px;
-  color: var(--text2);
-  line-height: 1.4;
-}
-
-.forge-submit-btn {
-  width: 100%;
-  padding: 18px;
-  background: linear-gradient(135deg, rgba(0,240,255,.15), rgba(123,47,255,.15));
-  border: 1px solid var(--accent);
-  border-radius: 10px;
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  cursor: pointer;
-  transition: all .3s;
-  overflow: hidden;
-}
-
-.forge-submit-btn:hover:not(:disabled) {
-  background: linear-gradient(135deg, rgba(0,240,255,.25), rgba(123,47,255,.25));
-  box-shadow: 0 0 30px rgba(0,240,255,.2);
-  transform: translateY(-1px);
-}
-
-.forge-submit-btn:disabled {
-  opacity: .5;
-  cursor: not-allowed;
-}
-
-/* Results */
-.results-actions-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 28px;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.action-secondary-btn,
-.action-primary-btn {
-  padding: 10px 18px;
-  border-radius: 7px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  cursor: pointer;
-  transition: all .2s;
-  letter-spacing: 1px;
-}
-
-.action-secondary-btn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text2);
-}
-
-.action-secondary-btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.action-primary-btn {
-  background: rgba(123,47,255,.2);
-  border: 1px solid var(--accent2);
-  color: var(--accent2);
-}
-
-.action-primary-btn:hover {
-  background: rgba(123,47,255,.35);
-  box-shadow: 0 0 15px rgba(123,47,255,.3);
-}
-
-.results-split-layout {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 24px;
-  align-items: start;
-}
-
-@media(max-width: 768px) {
-  .results-split-layout { grid-template-columns: 1fr; }
-}
-
-/* Build summary panel */
-.build-summary-panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 20px;
-  position: sticky;
-  top: 20px;
-}
-
-.summary-panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.summary-panel-header h3 {
-  font-family: var(--font-display);
-  font-size: 12px;
-  color: var(--accent);
-  letter-spacing: 2px;
-}
-
-.summary-count {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text2);
-}
-
-.budget-bar-track {
-  height: 4px;
-  background: var(--border);
-  border-radius: 2px;
-  margin-bottom: 8px;
-  overflow: hidden;
-}
-
-.budget-bar-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 2px;
-  transition: width .4s ease;
-  max-width: 100%;
-}
-
-.budget-remaining {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text2);
-  margin-bottom: 16px;
-}
-
-.summary-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 400px;
-  overflow-y: auto;
-  margin-bottom: 16px;
-  padding-right: 4px;
-}
-
-.summary-list::-webkit-scrollbar { width: 3px; }
-.summary-list::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 2px;
-}
-
-.summary-empty {
-  font-size: 12px;
-  color: var(--text2);
-  text-align: center;
-  padding: 20px 0;
-  font-family: var(--font-mono);
-}
-
-.summary-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg3);
-  border-radius: 6px;
-  padding: 8px 10px;
-}
-
-.summary-item-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.summary-cat {
-  font-size: 10px;
-  color: var(--accent2);
-  font-family: var(--font-mono);
-  letter-spacing: 1px;
-}
-
-.summary-name {
-  font-size: 11px;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.summary-price {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--accent);
-  white-space: nowrap;
-}
-
-.summary-total-block {
-  border-top: 1px solid var(--border);
-  padding-top: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.summary-total-label {
-  font-family: var(--font-display);
-  font-size: 10px;
-  color: var(--text2);
-  letter-spacing: 1.5px;
-}
-
-.summary-total-value {
-  font-family: var(--font-mono);
-  font-size: 16px;
-  color: var(--accent);
-  font-weight: 700;
-}
-
-/* Components grid */
-.column-title-ribbon {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 20px;
-  margin-bottom: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.column-title-ribbon h3 {
-  font-family: var(--font-display);
-  font-size: 11px;
-  color: var(--accent);
-  letter-spacing: 2px;
-}
-
-.ribbon-hint {
-  font-size: 11px;
-  color: var(--text2);
-  font-family: var(--font-mono);
-}
-
-.components-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.hardware-component-card-node {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px;
-  cursor: pointer;
-  transition: all .2s;
-}
-
-.hardware-component-card-node:hover {
-  border-color: var(--accent);
-  background: var(--bg3);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0,0,0,.3);
-}
-
-.hardware-component-card-node.peripheral-highlight-tier {
-  border-left: 3px solid var(--gold);
-}
-
-.card-node-category-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text2);
-  margin-bottom: 6px;
-  letter-spacing: 1px;
-}
-
-.card-node-title-string {
-  font-size: 12px;
-  color: #fff;
-  margin-bottom: 4px;
-  line-height: 1.4;
-  font-weight: 600;
-}
-
-.card-node-specifications-text {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text2);
-  margin-bottom: 10px;
-  line-height: 1.4;
-}
-
-.card-node-financial-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid var(--border);
-  padding-top: 10px;
-}
-
-.financial-row-label {
-  font-size: 10px;
-  color: var(--text2);
-}
-
-.financial-row-value-string {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--accent);
-  font-weight: 700;
-}
-
-/* Gaming performance */
-.game-performance-data-strip {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 14px;
-  display: flex;
-  flex-direction: column;
-}
-
-.game-title-text {
-  font-size: 12px;
-  color: #fff;
-  margin-bottom: 2px;
-  font-weight: 600;
-}
-
-.game-preset-text {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text2);
-  margin-bottom: 8px;
-}
-
-.game-fps-metrics-output-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  border-top: 1px dashed rgba(255,255,255,.05);
-  padding-top: 8px;
-}
-
-.fps-metric-box {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.fps-metric-label {
-  font-size: 10px;
-  color: var(--text2);
-}
-
-.fps-metric-value-string {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.fps-metric-value-string.lows-color { color: var(--gold); }
-
-/* Budget allocation */
-.allocation-segment-bar {
-  height: 100%;
-  transition: width .3s ease;
-}
-
-.legend-item-node {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text2);
-}
-
-.legend-color-swatch-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
-/* Modal */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, .8);
-  z-index: 100;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  backdrop-filter: blur(4px);
-}
-
-.modal-overlay.active {
-  display: flex;
-}
-
-.modal-frame {
-  background: var(--bg2);
-  border: 1px solid var(--accent);
-  border-radius: 14px;
-  padding: 32px;
-  max-width: 560px;
-  width: 100%;
-  max-height: 88vh;
-  overflow-y: auto;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.close-modal-btn {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  background: transparent;
-  border: none;
-  color: var(--text2);
-  font-size: 22px;
-  cursor: pointer;
-  line-height: 1;
-  transition: color .2s;
-}
-
-.close-modal-btn:hover { color: var(--accent); }
-
-.receipt-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.receipt-header h2 {
-  font-family: var(--font-display);
-  font-size: 18px;
-  color: var(--accent);
-  letter-spacing: 3px;
-  margin-bottom: 8px;
-}
-
-.receipt-timestamp {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text2);
-}
-
-.bar-separator {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--border);
-  letter-spacing: 1px;
-  margin: 12px 0;
-}
-
-.receipt-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border2);
-}
-
-.receipt-cat {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--accent2);
-  min-width: 90px;
-}
-
-.receipt-item {
-  font-size: 12px;
-  color: var(--text);
-  flex: 1;
-}
-
-.receipt-item small {
-  color: var(--text2);
-  font-family: var(--font-mono);
-  font-size: 10px;
-}
-
-.receipt-price {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--accent);
-  white-space: nowrap;
-  font-weight: 700;
-}
-
-.total-summary-block {
-  padding: 4px 0;
-}
-
-.summary-line {
-  display: flex;
-  justify-content: space-between;
-  padding: 6px 0;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text2);
-}
-
-.grand-total-line {
-  color: var(--accent);
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.receipt-perf-block {
-  margin-top: 16px;
-}
-
-.receipt-section-title {
-  font-family: var(--font-display);
-  font-size: 10px;
-  color: var(--accent2);
-  letter-spacing: 2px;
-  margin: 10px 0 8px;
-  padding: 4px 0;
-}
-
-.receipt-perf-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 5px 0;
-  border-bottom: 1px solid var(--border2);
-  font-size: 11px;
-}
-
-.receipt-game {
-  color: var(--text);
-  font-weight: 600;
-  min-width: 100px;
-  flex-shrink: 0;
-}
-
-.receipt-game-fps {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text2);
-  text-align: right;
-}
-
-.print-receipt-btn {
-  width: 100%;
-  padding: 12px;
-  background: rgba(0,240,255,.1);
-  border: 1px solid var(--accent);
-  border-radius: 7px;
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  cursor: pointer;
-  letter-spacing: 1px;
-  transition: all .2s;
-  margin-top: 12px;
-}
-
-.print-receipt-btn:hover {
-  background: rgba(0,240,255,.2);
-}
-
-/* Terms Gate */
-#termsGate {
-  display: flex;
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: rgba(4, 8, 15, .96);
-  backdrop-filter: blur(8px);
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.terms-gate-box {
-  background: var(--bg2);
-  border: 1px solid var(--accent);
-  border-radius: 16px;
-  padding: 40px 36px;
-  max-width: 520px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 0 60px rgba(0,240,255,.08);
-}
-
-.terms-gate-logo {
-  font-family: var(--font-display);
-  font-size: 28px;
-  color: var(--accent);
-  letter-spacing: 4px;
-  margin-bottom: 8px;
-  text-shadow: 0 0 20px rgba(0,240,255,.4);
-}
-
-.terms-gate-logo .accent-dot { color: var(--accent2); }
-
-.terms-gate-subtitle {
-  font-size: 13px;
-  color: var(--text2);
-  font-family: var(--font-mono);
-  margin-bottom: 28px;
-  letter-spacing: 1px;
-}
-
-.terms-gate-box h3 {
-  font-family: var(--font-display);
-  font-size: 13px;
-  color: var(--text);
-  letter-spacing: 2px;
-  margin-bottom: 20px;
-}
-
-.consent-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color .2s;
-}
-
-.consent-row:hover { border-color: var(--accent); }
-
-.consent-row input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--accent);
-  margin-top: 2px;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-.consent-text {
-  font-size: 13px;
-  color: var(--text);
-  line-height: 1.5;
-}
-
-.consent-text a {
-  color: var(--accent);
-  text-decoration: none;
-}
-
-.consent-text a:hover { text-decoration: underline; }
-
-#consentError {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--danger);
-  min-height: 18px;
-  margin-bottom: 10px;
-}
-
-.terms-accept-btn {
-  width: 100%;
-  padding: 15px;
-  background: linear-gradient(135deg, rgba(0,240,255,.18), rgba(123,47,255,.18));
-  border: 1px solid var(--accent);
-  border-radius: 8px;
-  color: var(--accent);
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  cursor: pointer;
-  transition: all .3s;
-}
-
-.terms-accept-btn:hover {
-  background: linear-gradient(135deg, rgba(0,240,255,.28), rgba(123,47,255,.28));
-  box-shadow: 0 0 24px rgba(0,240,255,.2);
-}
-
-/* Cookie banner */
-#cookieBanner {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 9998;
-  background: #080f1a;
-  border-top: 1px solid var(--border);
-  padding: 14px 24px;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 13px;
-  color: var(--text);
-  align-items: center;
-  justify-content: space-between;
-}
-
-#cookieBanner a {
-  color: var(--accent);
-}
-
-#acceptCookiesBtn,
-#declineCookiesBtn {
-  padding: 6px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  font-family: var(--font-mono);
-}
-
-#acceptCookiesBtn {
-  background: var(--accent);
-  border: none;
-  color: var(--bg);
-  font-weight: 700;
-}
-
-#declineCookiesBtn {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text2);
-}
-
-/* PC Visual */
-.pc-visual-container {
-  display: flex;
-  justify-content: center;
-  margin: 32px 0;
-  pointer-events: none;
-}
-
-.pc-rig-svg {
-  filter: drop-shadow(0 0 18px rgba(0,240,255,.25));
-  animation: pcGlow 3s ease-in-out infinite;
-}
-
-@keyframes pcGlow {
-  0%, 100% { filter: drop-shadow(0 0 12px rgba(0,240,255,.3)); }
-  50% { filter: drop-shadow(0 0 28px rgba(0,240,255,.6)); }
-}
-
-@keyframes pcFan {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.pc-fan-group {
-  transform-origin: 50% 50%;
-  animation: pcFan 2s linear infinite;
-}
-
-.pc-fan-group2 {
-  transform-origin: 50% 50%;
-  animation: pcFan 2.5s linear infinite reverse;
-}
-
-@keyframes ledChase {
-  0%, 100% { opacity: .2; }
-  50% { opacity: .9; }
-}
-
-.pc-led {
-  animation: ledChase 1.2s ease-in-out infinite;
-}
-
-.pc-led:nth-child(2) { animation-delay: .2s; }
-.pc-led:nth-child(3) { animation-delay: .4s; }
-.pc-led:nth-child(4) { animation-delay: .6s; }
-
-/* Print styles */
-@media print {
-  body * { background: transparent !important; color: #000 !important; border-color: #ccc !important; }
-  #termsGate, #cookieBanner, .app-header, .forge-form, .results-actions-bar, .build-summary-panel, canvas, #cursorGlow, .grid-overlay, footer { display: none !important; }
-  .modal-overlay { display: flex !important; position: static !important; background: none !important; padding: 0 !important; }
-  .modal-frame { border: 1px solid #ccc !important; border-radius: 0 !important; max-height: none !important; overflow: visible !important; }
-  .close-modal-btn, .print-receipt-btn { display: none !important; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#04080f;--bg2:#080f1a;--bg3:#0d1526;--panel:#0a1220;
+  --accent:#00f0ff;--accent2:#7b2fff;--gold:#ffb700;
+  --text:#c8d8f0;--text2:#7090b0;--border:#1a2f50;--border2:#0d2040;
+  --success:#00e676;--danger:#ff3c5a;
+  --font-main:'Plus Jakarta Sans',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --font-display:'Orbitron',monospace;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-height:100vh;overflow-x:hidden}
+#ambientCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.3}
+.grid-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,240,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+#cursorGlow{position:fixed;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,240,255,.06) 0%,transparent 70%);pointer-events:none;transform:translate(-50%,-50%);z-index:1}
+.app-wrap{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 20px 80px}
+
+/* HEADER */
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);margin-bottom:40px;gap:16px;flex-wrap:wrap}
+.logo-area{display:flex;align-items:center;gap:10px}
+.logo-text{font-family:var(--font-display);font-size:26px;font-weight:900;color:var(--accent);letter-spacing:4px;text-shadow:0 0 20px rgba(0,240,255,.5)}
+.logo-text .dot{color:var(--accent2)}
+.header-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.currency-select{background:var(--bg3);color:var(--accent);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:var(--font-mono);font-size:13px;cursor:pointer;outline:none}
+.currency-select:hover{border-color:var(--accent)}
+.status-pill{display:flex;align-items:center;gap:6px}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,.4)}50%{box-shadow:0 0 0 6px rgba(0,230,118,0)}}
+.status-text{font-family:var(--font-mono);font-size:11px;color:var(--text2);letter-spacing:1px}
+
+/* VIEWS */
+.view{display:none}
+.view.active{display:block;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* TERMS GATE */
+#termsGate{display:flex;position:fixed;inset:0;z-index:9999;background:rgba(4,8,15,.97);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+.gate-box{background:var(--bg2);border:1px solid var(--accent);border-radius:16px;padding:40px 36px;max-width:520px;width:100%;text-align:center;box-shadow:0 0 60px rgba(0,240,255,.08)}
+.gate-logo{font-family:var(--font-display);font-size:28px;color:var(--accent);letter-spacing:4px;margin-bottom:6px;text-shadow:0 0 20px rgba(0,240,255,.4)}
+.gate-sub{font-size:13px;color:var(--text2);font-family:var(--font-mono);margin-bottom:28px;letter-spacing:1px}
+.gate-box h3{font-family:var(--font-display);font-size:13px;color:var(--text);letter-spacing:2px;margin-bottom:20px}
+.consent-row{display:flex;align-items:flex-start;gap:12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px;text-align:left;cursor:pointer;transition:border-color .2s}
+.consent-row:hover{border-color:var(--accent)}
+.consent-row input[type="checkbox"]{width:16px;height:16px;accent-color:var(--accent);margin-top:2px;flex-shrink:0;cursor:pointer}
+.consent-text{font-size:13px;color:var(--text);line-height:1.5}
+.consent-text a{color:var(--accent);text-decoration:none}
+.consent-text a:hover{text-decoration:underline}
+#consentError{font-family:var(--font-mono);font-size:11px;color:var(--danger);min-height:18px;margin-bottom:10px}
+.gate-btn{width:100%;padding:15px;background:linear-gradient(135deg,rgba(0,240,255,.18),rgba(123,47,255,.18));border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .3s}
+.gate-btn:hover{background:linear-gradient(135deg,rgba(0,240,255,.28),rgba(123,47,255,.28));box-shadow:0 0 24px rgba(0,240,255,.2)}
+.pc-svg{filter:drop-shadow(0 0 18px rgba(0,240,255,.25));animation:pcGlow 3s ease-in-out infinite;margin:24px auto;display:block}
+@keyframes pcGlow{0%,100%{filter:drop-shadow(0 0 12px rgba(0,240,255,.3))}50%{filter:drop-shadow(0 0 28px rgba(0,240,255,.6))}}
+.fan1{transform-origin:28px 51px;animation:spin 2s linear infinite}
+.fan2{transform-origin:34px 28px;animation:spin 2.5s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.led{animation:ledBlink 1.2s ease-in-out infinite}
+.led:nth-child(2){animation-delay:.2s}
+.led:nth-child(3){animation-delay:.4s}
+.led:nth-child(4){animation-delay:.6s}
+@keyframes ledBlink{0%,100%{opacity:.2}50%{opacity:.9}}
+
+/* CONFIG FORM */
+.hero{text-align:center;margin-bottom:48px}
+.hero h2{font-family:var(--font-display);font-size:clamp(22px,4vw,38px);font-weight:900;color:var(--accent);letter-spacing:3px;text-shadow:0 0 30px rgba(0,240,255,.4);margin-bottom:14px}
+.hero p{color:var(--text2);font-size:16px;max-width:580px;margin:0 auto;line-height:1.6}
+.forge-form{max-width:700px;margin:0 auto}
+.form-section{margin-bottom:36px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px}
+.sec-hdr{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.sec-num{font-family:var(--font-display);font-size:11px;color:var(--accent2);letter-spacing:2px;background:rgba(123,47,255,.15);padding:4px 8px;border-radius:4px}
+.sec-hdr h3{font-family:var(--font-display);font-size:13px;color:var(--text);letter-spacing:2px}
+.budget-wrap{display:flex;align-items:center;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg3)}
+.budget-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,240,255,.1)}
+.curr-prefix{font-family:var(--font-mono);font-size:13px;color:var(--accent);padding:0 14px;background:rgba(0,240,255,.05);border-right:1px solid var(--border);white-space:nowrap;min-width:55px;text-align:center}
+#budgetInput{flex:1;background:transparent;border:none;outline:none;padding:14px 16px;color:var(--text);font-size:18px;font-family:var(--font-mono)}
+#budgetInput::placeholder{color:var(--text2)}
+.hint{font-size:12px;color:var(--text2);margin-top:8px;font-family:var(--font-mono)}
+.err{font-size:12px;color:var(--danger);margin-top:6px;font-family:var(--font-mono);min-height:16px}
+.options-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.sel-card{cursor:pointer;display:block}
+.sel-card input{display:none}
+.card-body{border:1px solid var(--border);border-radius:10px;padding:16px 14px;transition:all .2s;text-align:center}
+.sel-card:hover .card-body,.sel-card.active .card-body{border-color:var(--accent);background:rgba(0,240,255,.06)}
+.sel-card.active .card-body{box-shadow:0 0 12px rgba(0,240,255,.15)}
+.card-icon{font-size:26px;margin-bottom:8px}
+.card-body h4{font-family:var(--font-display);font-size:10px;color:var(--accent);letter-spacing:1.5px;margin-bottom:6px}
+.card-body p{font-size:11px;color:var(--text2);line-height:1.4}
+.name-input,.pref-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-size:14px;font-family:var(--font-main);outline:none;transition:border-color .2s}
+.name-input:focus,.pref-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,240,255,.08)}
+.name-input::placeholder,.pref-input::placeholder{color:var(--text2)}
+.pref-input{resize:vertical;min-height:80px;max-height:160px}
+.api-key-wrap{position:relative}
+.api-key-wrap input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 16px;padding-right:100px;color:var(--text);font-size:14px;font-family:var(--font-mono);outline:none;transition:border-color .2s}
+.api-key-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,240,255,.08)}
+.api-key-wrap input::placeholder{color:var(--text2)}
+.toggle-key-btn{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(0,240,255,.08);border:1px solid var(--border);border-radius:4px;color:var(--text2);font-size:11px;font-family:var(--font-mono);padding:4px 8px;cursor:pointer}
+.api-note{display:flex;align-items:flex-start;gap:10px;background:rgba(0,240,255,.05);border:1px solid rgba(0,240,255,.15);border-radius:8px;padding:12px 14px;margin-top:12px;font-size:12px;color:var(--text2);line-height:1.5}
+.api-note a{color:var(--accent)}
+
+.forge-btn{width:100%;padding:18px;background:linear-gradient(135deg,rgba(0,240,255,.15),rgba(123,47,255,.15));border:1px solid var(--accent);border-radius:10px;color:var(--accent);font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .3s;overflow:hidden}
+.forge-btn:hover:not(:disabled){background:linear-gradient(135deg,rgba(0,240,255,.25),rgba(123,47,255,.25));box-shadow:0 0 30px rgba(0,240,255,.2);transform:translateY(-1px)}
+.forge-btn:disabled{opacity:.5;cursor:not-allowed}
+.forge-btn.loading{animation:btnPulse 1.2s ease-in-out infinite}
+@keyframes btnPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,240,255,.2)}50%{box-shadow:0 0 0 8px rgba(0,240,255,0)}}
+
+/* RESULTS */
+.results-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:12px;flex-wrap:wrap}
+.btn-sec{padding:10px 18px;border-radius:7px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .2s;letter-spacing:1px;background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-sec:hover{border-color:var(--accent);color:var(--accent)}
+.btn-pri{padding:10px 18px;border-radius:7px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .2s;letter-spacing:1px;background:rgba(123,47,255,.2);border:1px solid var(--accent2);color:var(--accent2)}
+.btn-pri:hover{background:rgba(123,47,255,.35);box-shadow:0 0 15px rgba(123,47,255,.3)}
+.results-layout{display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start}
+@media(max-width:768px){.results-layout{grid-template-columns:1fr}}
+
+/* SIDEBAR */
+.sidebar{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;position:sticky;top:20px}
+.sidebar-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sidebar-hdr h3{font-family:var(--font-display);font-size:12px;color:var(--accent);letter-spacing:2px}
+.sidebar-count{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
+.bar-track{height:4px;background:var(--border);border-radius:2px;margin-bottom:8px;overflow:hidden}
+.bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;max-width:100%}
+.sidebar-total-text{font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:16px}
+.sidebar-list{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;margin-bottom:16px;padding-right:4px}
+.sidebar-list::-webkit-scrollbar{width:3px}
+.sidebar-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.s-item{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--bg3);border-radius:6px;padding:8px 10px}
+.s-item-info{display:flex;flex-direction:column;gap:2px;min-width:0}
+.s-cat{font-size:10px;color:var(--accent2);font-family:var(--font-mono);letter-spacing:1px}
+.s-name{font-size:11px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-price{font-family:var(--font-mono);font-size:12px;color:var(--accent);white-space:nowrap}
+.sidebar-total{border-top:1px solid var(--border);padding-top:12px;display:flex;justify-content:space-between;align-items:center}
+.sidebar-total-lbl{font-family:var(--font-display);font-size:10px;color:var(--text2);letter-spacing:1.5px}
+.sidebar-total-val{font-family:var(--font-mono);font-size:16px;color:var(--accent);font-weight:700}
+
+/* MAIN COLUMN */
+.main-col{display:flex;flex-direction:column;gap:0}
+.ribbon{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.ribbon h3{font-family:var(--font-display);font-size:11px;color:var(--accent);letter-spacing:2px}
+.ribbon-hint{font-size:11px;color:var(--text2);font-family:var(--font-mono)}
+.comp-grid{display:flex;flex-direction:column;gap:16px;margin-bottom:32px}
+
+/* COMPONENT CATEGORY SECTION */
+.cat-section{margin-bottom:36px}
+.cat-hdr{display:flex;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:2px solid var(--border)}
+.cat-icon{font-size:22px;margin-right:12px}
+.cat-title{font-family:var(--font-display);font-size:13px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;flex:1}
+.cat-count{font-size:12px;color:var(--text2);font-family:var(--font-mono)}
+.cat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+
+/* COMPONENT CARD */
+.comp-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;position:relative}
+.comp-card:hover{border-color:var(--accent);background:var(--bg3);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+.comp-card.selected{border-color:var(--success);background:rgba(0,230,118,.04)}
+.comp-card.selected::after{content:'✓ SELECTED';position:absolute;top:8px;right:8px;font-size:9px;font-family:var(--font-mono);color:var(--success);background:rgba(0,230,118,.12);padding:2px 6px;border-radius:3px;letter-spacing:1px}
+.comp-card.gpu-tier{border-left:2px solid var(--accent2)}
+.comp-card.cpu-tier{border-left:2px solid var(--accent)}
+.card-brand{font-family:var(--font-mono);font-size:10px;color:var(--text2);margin-bottom:6px;letter-spacing:1px;flex:1}
+.card-badge{font-size:9px;padding:3px 6px;border-radius:3px;font-weight:700;text-transform:uppercase;white-space:nowrap}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}
+.card-name{font-size:12px;color:#fff;margin-bottom:4px;line-height:1.4;font-weight:600}
+.card-spec{font-family:var(--font-mono);font-size:10px;color:var(--text2);margin-bottom:10px;line-height:1.5}
+.card-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:10px}
+.card-foot-lbl{font-size:10px;color:var(--text2)}
+.card-price{font-family:var(--font-mono);font-size:13px;color:var(--accent);font-weight:700}
+
+/* GAMING PERFORMANCE */
+.game-strip{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.game-name{font-size:12px;color:#fff;margin-bottom:2px;font-weight:600}
+.game-preset{font-family:var(--font-mono);font-size:10px;color:var(--text2);margin-bottom:8px}
+.fps-row{display:flex;gap:16px;border-top:1px dashed rgba(255,255,255,.05);padding-top:8px}
+.fps-box{display:flex;flex-direction:column;gap:2px}
+.fps-lbl{font-size:10px;color:var(--text2)}
+.fps-val{font-family:var(--font-mono);font-size:13px;color:var(--accent);font-weight:700}
+.fps-val.low{color:var(--gold)}
+
+/* BUDGET CHART */
+.alloc-bar{display:flex;height:16px;border-radius:4px;overflow:hidden;background:var(--border);margin-bottom:12px}
+.alloc-seg{height:100%;transition:width .3s ease}
+.legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.legend-item{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10px;color:var(--text2)}
+.legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* SUMMARY BOX */
+.summary-box{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:24px}
+.summary-box h4{font-size:12px;color:var(--accent);letter-spacing:2px;margin-bottom:10px;font-family:var(--font-display)}
+.summary-box p{font-size:13px;color:var(--text);line-height:1.6}
+
+/* SELECT ALL PANEL */
+.select-panel{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.select-panel p{font-size:13px;color:var(--text2);font-family:var(--font-mono)}
+.select-panel strong{color:var(--accent)}
+.btn-select-all{background:rgba(0,230,118,.12);border:1px solid var(--success);border-radius:6px;color:var(--success);font-size:11px;font-family:var(--font-mono);padding:7px 14px;cursor:pointer;letter-spacing:1px;transition:all .2s}
+.btn-select-all:hover{background:rgba(0,230,118,.2)}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal.open{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--accent);border-radius:14px;padding:32px;max-width:580px;width:100%;max-height:88vh;overflow-y:auto;position:relative;display:flex;flex-direction:column}
+.modal-close{position:absolute;top:14px;right:16px;background:transparent;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;transition:color .2s}
+.modal-close:hover{color:var(--accent)}
+.rcpt-hdr{text-align:center;margin-bottom:20px}
+.rcpt-hdr h2{font-family:var(--font-display);font-size:18px;color:var(--accent);letter-spacing:3px;margin-bottom:8px}
+.rcpt-ts{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
+.sep{font-family:var(--font-mono);font-size:10px;color:var(--border);letter-spacing:1px;margin:12px 0}
+.rcpt-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border2)}
+.rcpt-cat{font-family:var(--font-mono);font-size:10px;color:var(--accent2);min-width:90px}
+.rcpt-item{font-size:12px;color:var(--text);flex:1}
+.rcpt-item small{color:var(--text2);font-family:var(--font-mono);font-size:10px}
+.rcpt-price{font-family:var(--font-mono);font-size:13px;color:var(--accent);white-space:nowrap;font-weight:700}
+.total-block{padding:4px 0}
+.total-line{display:flex;justify-content:space-between;padding:6px 0;font-family:var(--font-mono);font-size:13px;color:var(--text2)}
+.total-grand{color:var(--accent);font-size:15px;font-weight:700}
+.perf-title{font-family:var(--font-display);font-size:10px;color:var(--accent2);letter-spacing:2px;margin:12px 0 6px;padding:4px 0}
+.perf-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2);font-size:11px}
+.perf-game{color:var(--text);font-weight:600;min-width:100px;flex-shrink:0}
+.perf-fps{font-family:var(--font-mono);font-size:10px;color:var(--text2);text-align:right}
+.print-btn{width:100%;padding:12px;background:rgba(0,240,255,.1);border:1px solid var(--accent);border-radius:7px;color:var(--accent);font-family:var(--font-mono);font-size:12px;cursor:pointer;letter-spacing:1px;transition:all .2s;margin-top:12px}
+.print-btn:hover{background:rgba(0,240,255,.2)}
+.rcpt-footer{flex-shrink:0;margin-top:16px}
+
+/* COOKIE BANNER */
+#cookieBanner{display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;background:#080f1a;border-top:1px solid var(--border);padding:14px 24px;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--text);align-items:center;justify-content:space-between}
+#cookieBanner a{color:var(--accent)}
+.cookie-btn{padding:6px 16px;border-radius:4px;cursor:pointer;font-size:12px;font-family:var(--font-mono)}
+.cookie-accept{background:var(--accent);border:none;color:var(--bg);font-weight:700}
+.cookie-decline{background:transparent;border:1px solid var(--border);color:var(--text2)}
+
+/* FOOTER */
+.app-footer{text-align:center;padding:2rem 1rem;font-size:12px;color:var(--text2);border-top:1px solid var(--border);margin-top:4rem;font-family:var(--font-mono)}
+.app-footer a{color:var(--text2);margin:0 8px;text-decoration:none}
+.app-footer a:hover{color:var(--accent)}
+
+/* LOADING OVERLAY */
+#loadingOverlay{display:none;position:fixed;inset:0;background:rgba(4,8,15,.92);z-index:500;align-items:center;justify-content:center;flex-direction:column;gap:20px;backdrop-filter:blur(6px)}
+#loadingOverlay.show{display:flex}
+.load-logo{font-family:var(--font-display);font-size:32px;color:var(--accent);letter-spacing:4px;text-shadow:0 0 30px rgba(0,240,255,.5)}
+.load-bar-wrap{width:280px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+.load-bar-inner{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;animation:loadAnim 1.8s ease-in-out infinite}
+@keyframes loadAnim{0%{width:0%;margin-left:0}50%{width:60%;margin-left:20%}100%{width:0%;margin-left:100%}}
+.load-status{font-family:var(--font-mono);font-size:12px;color:var(--text2);letter-spacing:1px;text-align:center}
+
+@media print{
+  body *{background:transparent !important;color:#000 !important;border-color:#ccc !important}
+  #termsGate,#cookieBanner,.app-header,.forge-form,.results-bar,.sidebar,canvas,#cursorGlow,.grid-overlay,footer,#loadingOverlay{display:none !important}
+  .modal{display:flex !important;position:static !important;background:none !important;padding:0 !important}
+  .modal-box{border:1px solid #ccc !important;border-radius:0 !important;max-height:none !important;overflow:visible !important}
+  .modal-close,.print-btn{display:none !important}
 }
 </style>
 </head>
 <body>
 
-<!-- Background elements -->
+<!-- Background -->
 <div id="cursorGlow"></div>
 <div class="grid-overlay"></div>
-<canvas id="ambientHardwareVisualizerMatrix"></canvas>
+<canvas id="ambientCanvas"></canvas>
 
-<!-- Terms & Consent Gate -->
-<div id="termsGate" style="display: flex;">
-  <div class="terms-gate-box">
-    <div class="terms-gate-logo">FORGE<span style="color:#7b2fff;">.</span></div>
-    <div class="terms-gate-subtitle">AI PC BUILDER — PAKISTAN MARKET</div>
-
-    <div class="pc-visual-container">
-      <svg class="pc-rig-svg" width="120" height="100" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect x="10" y="10" width="55" height="80" rx="4" fill="#080f1a" stroke="#00f0ff" stroke-width="1.2"/>
-        <rect x="14" y="14" width="47" height="72" rx="3" fill="#04080f" stroke="#1a2f50" stroke-width="0.8"/>
-        <rect x="18" y="45" width="39" height="12" rx="2" fill="#0d1526" stroke="#7b2fff" stroke-width="0.8" opacity="0.8"/>
-        <rect x="19" y="46" width="22" height="10" rx="1.5" fill="#0a1220"/>
-        <g class="pc-fan-group" style="transform-origin:28px 51px">
-          <circle cx="28" cy="51" r="4.5" fill="none" stroke="#00f0ff" stroke-width="0.7" opacity="0.6"/>
-          <line x1="28" y1="46.5" x2="28" y2="55.5" stroke="#00f0ff" stroke-width="0.8" opacity="0.6"/>
-          <line x1="23.5" y1="51" x2="32.5" y2="51" stroke="#00f0ff" stroke-width="0.8" opacity="0.6"/>
-        </g>
-        <g class="pc-fan-group2" style="transform-origin:34px 28px">
-          <circle cx="34" cy="28" r="7" fill="#080f1a" stroke="#00f0ff" stroke-width="0.8" opacity="0.7"/>
-          <circle cx="34" cy="28" r="2" fill="#0d1526" stroke="#7b2fff" stroke-width="0.5"/>
-          <line x1="34" y1="21" x2="34" y2="35" stroke="#00f0ff" stroke-width="0.7" opacity="0.5"/>
-          <line x1="27" y1="28" x2="41" y2="28" stroke="#00f0ff" stroke-width="0.7" opacity="0.5"/>
-        </g>
-        <rect x="14" y="62" width="4" height="20" rx="2" fill="#080f1a" stroke="#1a2f50" stroke-width="0.5"/>
-        <rect class="pc-led" x="15" y="63" width="2" height="3" rx="0.5" fill="#00f0ff"/>
-        <rect class="pc-led" x="15" y="68" width="2" height="3" rx="0.5" fill="#7b2fff"/>
-        <rect class="pc-led" x="15" y="73" width="2" height="3" rx="0.5" fill="#00f0ff"/>
-        <rect class="pc-led" x="15" y="78" width="2" height="3" rx="0.5" fill="#7b2fff"/>
-        <circle cx="52" cy="20" r="1.5" fill="#00f0ff" class="pc-led"/>
-        <circle cx="52" cy="26" r="2.5" fill="#0d1526" stroke="#00f0ff" stroke-width="0.8"/>
-        <rect x="72" y="22" width="44" height="30" rx="3" fill="#080f1a" stroke="#00f0ff" stroke-width="1.1"/>
-        <rect x="75" y="25" width="38" height="24" rx="2" fill="#04080f"/>
-        <line x1="78" y1="30" x2="110" y2="30" stroke="#00f0ff" stroke-width="0.6" opacity="0.3"/>
-        <line x1="78" y1="34" x2="100" y2="34" stroke="#7b2fff" stroke-width="0.6" opacity="0.4"/>
-        <text x="80" y="29" font-size="4" fill="#00f0ff" font-family="monospace" opacity="0.9">FORGE AI</text>
-        <rect x="90" y="52" width="4" height="8" rx="1" fill="#080f1a" stroke="#1a2f50" stroke-width="0.6"/>
-        <rect x="84" y="59" width="16" height="2.5" rx="1" fill="#080f1a" stroke="#1a2f50" stroke-width="0.6"/>
-        <rect x="72" y="74" width="44" height="12" rx="2" fill="#080f1a" stroke="#1a2f50" stroke-width="0.8"/>
-        <rect x="74" y="76" width="40" height="8" rx="1.5" fill="#04080f"/>
-      </svg>
-    </div>
-
+<!-- TERMS GATE -->
+<div id="termsGate">
+  <div class="gate-box">
+    <div class="gate-logo">FORGE<span style="color:var(--accent2)">.</span></div>
+    <div class="gate-sub">AI PC BUILDER — POWERED BY GROQ</div>
+    <svg class="pc-svg" width="120" height="100" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="10" y="10" width="55" height="80" rx="4" fill="#080f1a" stroke="#00f0ff" stroke-width="1.2"/>
+      <rect x="14" y="14" width="47" height="72" rx="3" fill="#04080f" stroke="#1a2f50" stroke-width="0.8"/>
+      <rect x="18" y="45" width="39" height="12" rx="2" fill="#0d1526" stroke="#7b2fff" stroke-width="0.8" opacity="0.8"/>
+      <g class="fan1"><circle cx="28" cy="51" r="4.5" fill="none" stroke="#00f0ff" stroke-width="0.7" opacity="0.6"/><line x1="28" y1="46.5" x2="28" y2="55.5" stroke="#00f0ff" stroke-width="0.8" opacity="0.6"/><line x1="23.5" y1="51" x2="32.5" y2="51" stroke="#00f0ff" stroke-width="0.8" opacity="0.6"/></g>
+      <g class="fan2"><circle cx="34" cy="28" r="7" fill="#080f1a" stroke="#00f0ff" stroke-width="0.8" opacity="0.7"/><circle cx="34" cy="28" r="2" fill="#0d1526" stroke="#7b2fff" stroke-width="0.5"/><line x1="34" y1="21" x2="34" y2="35" stroke="#00f0ff" stroke-width="0.7" opacity="0.5"/><line x1="27" y1="28" x2="41" y2="28" stroke="#00f0ff" stroke-width="0.7" opacity="0.5"/></g>
+      <rect x="14" y="62" width="4" height="20" rx="2" fill="#080f1a" stroke="#1a2f50" stroke-width="0.5"/>
+      <rect class="led" x="15" y="63" width="2" height="3" rx="0.5" fill="#00f0ff"/>
+      <rect class="led" x="15" y="68" width="2" height="3" rx="0.5" fill="#7b2fff"/>
+      <rect class="led" x="15" y="73" width="2" height="3" rx="0.5" fill="#00f0ff"/>
+      <rect class="led" x="15" y="78" width="2" height="3" rx="0.5" fill="#7b2fff"/>
+      <rect x="72" y="22" width="44" height="30" rx="3" fill="#080f1a" stroke="#00f0ff" stroke-width="1.1"/>
+      <rect x="75" y="25" width="38" height="24" rx="2" fill="#04080f"/>
+      <text x="80" y="36" font-size="5" fill="#00f0ff" font-family="monospace" opacity="0.9">FORGE AI</text>
+      <rect x="72" y="74" width="44" height="12" rx="2" fill="#080f1a" stroke="#1a2f50" stroke-width="0.8"/>
+    </svg>
     <h3>BEFORE YOU ENTER FORGE</h3>
-
     <label class="consent-row">
-      <input type="checkbox" id="consentPrivacy">
-      <span class="consent-text">I have read and accept the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>. I understand FORGE collects minimal functional data.</span>
+      <input type="checkbox" id="chkPrivacy">
+      <span class="consent-text">I have read and accept the <a href="#" onclick="return false">Privacy Policy</a>. FORGE collects minimal functional data only.</span>
     </label>
-
     <label class="consent-row">
-      <input type="checkbox" id="consentTerms">
-      <span class="consent-text">I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms & Conditions</a>. I understand these are AI-generated recommendations for informational purposes only.</span>
+      <input type="checkbox" id="chkTerms">
+      <span class="consent-text">I agree to the <a href="#" onclick="return false">Terms &amp; Conditions</a>. I understand these are AI-generated recommendations for informational purposes only.</span>
     </label>
-
     <p id="consentError"></p>
-    <button class="terms-accept-btn" id="acceptTermsBtn">⚡ ACCEPT & ENTER FORGE</button>
+    <button class="gate-btn" id="acceptBtn">⚡ ACCEPT &amp; ENTER FORGE</button>
   </div>
 </div>
 
-<!-- Main container -->
-<div class="app-container">
-  <!-- Header -->
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay">
+  <div class="load-logo">FORGE<span style="color:var(--accent2)">.</span></div>
+  <div class="load-bar-wrap"><div class="load-bar-inner"></div></div>
+  <div class="load-status" id="loadStatus">Initializing AI engine...</div>
+</div>
+
+<!-- APP WRAPPER -->
+<div class="app-wrap">
   <header class="app-header">
     <div class="logo-area">
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="FORGE logo" style="flex-shrink:0">
+      <svg width="38" height="38" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
         <rect x="10" y="10" width="24" height="24" rx="3" fill="#04080f" stroke="#00f0ff" stroke-width="1.2"/>
         <rect x="15" y="15" width="14" height="14" rx="2" fill="#0d1526" stroke="#00f0ff" stroke-width="0.8"/>
-        <line x1="22" y1="15" x2="22" y2="29" stroke="#00f0ff" stroke-width="0.5" opacity="0.5"/>
-        <line x1="15" y1="22" x2="29" y2="22" stroke="#00f0ff" stroke-width="0.5" opacity="0.5"/>
-        <circle cx="15" cy="15" r="1.2" fill="#7b2fff"/>
-        <circle cx="29" cy="15" r="1.2" fill="#7b2fff"/>
-        <circle cx="15" cy="29" r="1.2" fill="#7b2fff"/>
-        <circle cx="29" cy="29" r="1.2" fill="#7b2fff"/>
         <path d="M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z" fill="#00f0ff"/>
       </svg>
-      <h1 class="logo-text">FORGE<span class="accent-dot">.</span></h1>
+      <h1 class="logo-text">FORGE<span class="dot">.</span></h1>
     </div>
     <div class="header-right">
-      <div id="currencySelectorWrapper"></div>
-      <div style="display:flex;align-items:center">
+      <select id="currencySelect" class="currency-select">
+        <option value="PKR">PKR — Pakistani Rupee</option>
+        <option value="USD">USD — US Dollar</option>
+        <option value="EUR">EUR — Euro</option>
+        <option value="GBP">GBP — British Pound</option>
+        <option value="AED">AED — UAE Dirham</option>
+        <option value="SAR">SAR — Saudi Riyal</option>
+        <option value="CAD">CAD — Canadian Dollar</option>
+        <option value="AUD">AUD — Australian Dollar</option>
+      </select>
+      <div class="status-pill">
         <span class="status-dot"></span>
         <span class="status-text">SYSTEMS ONLINE</span>
       </div>
     </div>
   </header>
 
-  <!-- Main workspace -->
-  <main class="workspace">
-
+  <main>
     <!-- CONFIG VIEW -->
-    <section id="onboardingView" class="view active">
-      <div class="welcome-hero">
+    <section id="configView" class="view active">
+      <div class="hero">
         <h2>ENGINEER YOUR ULTIMATE RIG</h2>
-        <p>Input your parameters. FORGE's AI searches live market data to build a precision, budget-scaled hardware blueprint.</p>
+        <p>Input your parameters. FORGE's AI searches live market data to build a precision, budget-scaled hardware blueprint with multiple options per category.</p>
       </div>
-
       <form id="configForm" class="forge-form" novalidate>
-        <!-- Budget section -->
+
+        <!-- API KEY -->
         <div class="form-section">
-          <div class="section-header">
-            <span class="sec-num">01</span>
-            <h3>YOUR BUDGET</h3>
+          <div class="sec-hdr"><span class="sec-num">00</span><h3>GROQ API KEY</h3></div>
+          <div class="api-key-wrap">
+            <input type="password" id="apiKeyInput" placeholder="gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
+            <button type="button" class="toggle-key-btn" id="toggleKeyBtn">SHOW</button>
           </div>
-          <div class="budget-input-wrapper">
-            <span class="currency-indicator" id="currencySymbolPrefix">PKR</span>
-            <input type="number" id="forgeBudgetAmountInput" required min="30000" placeholder="e.g., 250000" step="1000" autocomplete="off">
+          <div class="api-note">
+            <span>ℹ️</span>
+            <span>Free API key from <a href="https://console.groq.com" target="_blank" rel="noopener">console.groq.com</a>. Your key stays in your browser only — never sent to any server except Groq's directly.</span>
           </div>
-          <p class="field-hint">Minimum: Rs 30,000 · Recommended for gaming: Rs 80,000+</p>
-          <p class="field-error" id="budgetError"></p>
+          <p class="err" id="apiKeyError"></p>
         </div>
 
-        <!-- Use case section -->
+        <!-- BUDGET -->
         <div class="form-section">
-          <div class="section-header">
-            <span class="sec-num">02</span>
-            <h3>PRIMARY USE</h3>
+          <div class="sec-hdr"><span class="sec-num">01</span><h3>YOUR BUDGET</h3></div>
+          <div class="budget-wrap">
+            <span class="curr-prefix" id="currPrefix">Rs</span>
+            <input type="number" id="budgetInput" required min="30000" placeholder="e.g., 250000" step="1000" autocomplete="off">
           </div>
+          <p class="hint">Minimum: Rs 30,000 · Recommended for gaming: Rs 80,000+</p>
+          <p class="err" id="budgetError"></p>
+        </div>
+
+        <!-- USE CASE -->
+        <div class="form-section">
+          <div class="sec-hdr"><span class="sec-num">02</span><h3>PRIMARY USE</h3></div>
           <div class="options-grid">
-            <label class="selectable-card active">
+            <label class="sel-card active" id="lbl-gaming">
               <input type="radio" name="purpose" value="gaming" checked>
-              <div class="card-content">
-                <div class="card-icon">🎮</div>
-                <h4>GAMING</h4>
-                <p>High FPS, GPU-first, graphical fidelity.</p>
-              </div>
+              <div class="card-body"><div class="card-icon">🎮</div><h4>GAMING</h4><p>High FPS, GPU-first, graphical fidelity.</p></div>
             </label>
-            <label class="selectable-card">
+            <label class="sel-card" id="lbl-editing">
               <input type="radio" name="purpose" value="editing">
-              <div class="card-content">
-                <div class="card-icon">🎬</div>
-                <h4>CREATIVE</h4>
-                <p>Multi-core, heavy RAM, rendering.</p>
-              </div>
+              <div class="card-body"><div class="card-icon">🎬</div><h4>CREATIVE</h4><p>Multi-core, heavy RAM, rendering.</p></div>
             </label>
-            <label class="selectable-card">
+            <label class="sel-card" id="lbl-coding">
               <input type="radio" name="purpose" value="coding">
-              <div class="card-content">
-                <div class="card-icon">💻</div>
-                <h4>DEVELOPMENT</h4>
-                <p>Compilation, containers, multitasking.</p>
-              </div>
+              <div class="card-body"><div class="card-icon">💻</div><h4>DEVELOPMENT</h4><p>Compilation, containers, multitasking.</p></div>
             </label>
-            <label class="selectable-card">
+            <label class="sel-card" id="lbl-office">
               <input type="radio" name="purpose" value="office">
-              <div class="card-content">
-                <div class="card-icon">💼</div>
-                <h4>OFFICE</h4>
-                <p>Cost-efficient, responsive daily driver.</p>
-              </div>
+              <div class="card-body"><div class="card-icon">💼</div><h4>OFFICE</h4><p>Cost-efficient, responsive daily driver.</p></div>
             </label>
           </div>
         </div>
 
-        <!-- Name section -->
+        <!-- NAME -->
         <div class="form-section">
-          <div class="section-header">
-            <span class="sec-num">03</span>
-            <h3>YOUR NAME (OPTIONAL)</h3>
-          </div>
-          <input
-            type="text"
-            id="customerNameInput"
-            class="name-input"
-            placeholder="e.g., Ahmed Khan — appears on your invoice"
-            maxlength="80"
-            autocomplete="off"
-          >
-          <p class="field-hint">Used only to personalize your invoice. Not stored or shared.</p>
+          <div class="sec-hdr"><span class="sec-num">03</span><h3>YOUR NAME (OPTIONAL)</h3></div>
+          <input type="text" id="nameInput" class="name-input" placeholder="e.g., Ahmed Khan — appears on your invoice" maxlength="80" autocomplete="off">
+          <p class="hint">Used only to personalize your invoice.</p>
         </div>
 
-        <button type="submit" class="forge-submit-btn" id="submitBtn">
-          ⚡ GENERATE MY BUILD
-        </button>
+        <!-- PREFERENCES -->
+        <div class="form-section">
+          <div class="sec-hdr"><span class="sec-num">04</span><h3>PREFERENCES (OPTIONAL)</h3></div>
+          <textarea id="prefInput" class="pref-input" placeholder="e.g., Prefer AMD CPU, need WiFi, RGB lighting preferred, no used parts..." maxlength="400"></textarea>
+          <p class="hint">Any brand preferences, must-haves, or restrictions.</p>
+        </div>
+
+        <button type="submit" class="forge-btn" id="submitBtn">⚡ GENERATE MY BUILD</button>
       </form>
     </section>
 
     <!-- RESULTS VIEW -->
     <section id="resultsView" class="view">
-      <div class="results-actions-bar">
-        <button id="backToConfigBtn" class="action-secondary-btn">← MODIFY PARAMETERS</button>
-        <button id="openInvoiceBtn" class="action-primary-btn">📑 GENERATE BILL</button>
+      <div class="results-bar">
+        <button class="btn-sec" id="backBtn">← MODIFY PARAMETERS</button>
+        <button class="btn-pri" id="invoiceBtn">📑 GENERATE BILL</button>
       </div>
-
-      <div class="results-split-layout">
-        <!-- Build summary -->
-        <aside class="build-summary-panel">
-          <div class="summary-panel-header">
+      <div class="results-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+          <div class="sidebar-hdr">
             <h3>YOUR BUILD</h3>
-            <span class="summary-count" id="buildSummaryCount">—</span>
+            <span class="sidebar-count" id="sidebarCount">—</span>
           </div>
-          <div class="budget-bar-track">
-            <div class="budget-bar-fill" id="budgetProgress"></div>
-          </div>
-          <div class="budget-remaining" id="budgetRemaining">Loading...</div>
-          <div class="summary-list" id="buildSummaryList">
-            <div class="summary-empty">Loading components...</div>
-          </div>
-          <div class="summary-total-block">
-            <span class="summary-total-label">TOTAL</span>
-            <span class="summary-total-value" id="buildSummaryTotal">—</span>
+          <div class="bar-track"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+          <div class="sidebar-total-text" id="sidebarTotalText">Loading...</div>
+          <div class="sidebar-list" id="sidebarList"><div style="font-size:12px;color:var(--text2);text-align:center;padding:20px 0;font-family:var(--font-mono)">Loading components...</div></div>
+          <div class="sidebar-total">
+            <span class="sidebar-total-lbl">TOTAL</span>
+            <span class="sidebar-total-val" id="sidebarTotal">—</span>
           </div>
         </aside>
 
-        <!-- Components -->
-        <div class="parts-matrix-column">
-          <div class="column-title-ribbon">
-            <h3>HARDWARE CONFIGURATION</h3>
-            <span class="ribbon-hint">AI-optimized build</span>
+        <!-- MAIN CONTENT -->
+        <div class="main-col">
+          <!-- Selection instructions -->
+          <div class="select-panel" id="selectPanel">
+            <p>Click a card to <strong>select</strong> it for your build. One per category.</p>
+            <button class="btn-select-all" id="selectAllBtn">✓ AUTO-SELECT BEST</button>
           </div>
 
-          <!-- Core components -->
-          <div class="components-grid" id="componentsDynamicGridContainer"></div>
-
-          <!-- Peripherals -->
-          <div class="column-title-ribbon" style="margin-top: 32px;">
-            <h3>PERIPHERALS</h3>
-            <span class="ribbon-hint">Keyboard, mouse, headset</span>
-          </div>
-          <div class="components-grid" id="peripheralsDynamicGridContainer"></div>
+          <!-- Components -->
+          <div class="ribbon"><h3>HARDWARE CONFIGURATION</h3><span class="ribbon-hint">AI-optimized — 3 options per category</span></div>
+          <div id="componentsContainer"></div>
 
           <!-- Gaming performance -->
-          <div class="column-title-ribbon" style="margin-top: 32px;">
-            <h3>GAMING PERFORMANCE</h3>
-            <span class="ribbon-hint">Estimated FPS at 1080p</span>
-          </div>
-          <div class="components-grid" id="gamingPerformanceTelemetryGrid"></div>
+          <div class="ribbon" style="margin-top:8px"><h3>GAMING PERFORMANCE</h3><span class="ribbon-hint">Estimated FPS at 1080p based on selected build</span></div>
+          <div class="comp-grid" id="fpsGrid"></div>
 
           <!-- Budget allocation -->
-          <div class="column-title-ribbon" style="margin-top: 32px;">
-            <h3>BUDGET ALLOCATION</h3>
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 16px;">
-            <div style="display: flex; height: 16px; border-radius: 4px; overflow: hidden; background: var(--border);" id="budgetAllocationVisualizationGraphBar"></div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;" id="budgetAllocationChartLegendLabels"></div>
-          </div>
+          <div class="ribbon" style="margin-top:8px"><h3>BUDGET ALLOCATION</h3><span class="ribbon-hint">Percentage split across categories</span></div>
+          <div class="alloc-bar" id="allocBar"></div>
+          <div class="legend-grid" id="allocLegend"></div>
 
-          <!-- Summary -->
-          <div style="background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-top: 32px;">
-            <h4 style="font-size: 12px; color: var(--accent); letter-spacing: 2px; margin-bottom: 10px;">BUILD SUMMARY</h4>
-            <p id="forgeOverviewSummaryTextContent" style="font-size: 13px; color: var(--text); line-height: 1.6;">Loading summary...</p>
+          <!-- Build summary -->
+          <div class="summary-box">
+            <h4>BUILD SUMMARY</h4>
+            <p id="buildSummary">Loading summary...</p>
           </div>
         </div>
       </div>
     </section>
-
   </main>
+
+  <footer class="app-footer">
+    <div style="margin-bottom:10px">
+      <a href="#">Privacy</a> •
+      <a href="#">Terms</a> •
+      <a href="#">Cookies</a> •
+      <a href="#">FAQ</a>
+    </div>
+    <div>© 2025 FORGE AI PC Builder. Recommendations for informational purposes only.</div>
+  </footer>
 </div>
 
-<!-- Invoice modal -->
-<div class="modal-overlay" id="invoiceModal" role="dialog" aria-modal="true">
-  <div class="modal-frame">
-    <button class="close-modal-btn" id="closeInvoiceBtn" aria-label="Close">×</button>
-
-    <div class="receipt-header">
+<!-- INVOICE MODAL -->
+<div class="modal" id="invoiceModal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+    <div class="rcpt-hdr">
       <h2>FORGE DIGITAL RECEIPT</h2>
-      <p class="receipt-timestamp" id="invoiceTimestamp">—</p>
-      <div class="bar-separator">════════════════════════════</div>
+      <p class="rcpt-ts" id="rcptTimestamp">—</p>
+      <div class="sep">════════════════════════════════════</div>
     </div>
-
-    <div id="invoiceItemsContainer" style="flex: 1; overflow-y: auto;">Loading invoice...</div>
-
-    <div class="receipt-footer" style="flex-shrink: 0; margin-top: 16px;">
-      <div class="bar-separator">════════════════════════════</div>
-      <div class="total-summary-block">
-        <div class="summary-line"><span>HARDWARE:</span><span id="invoiceHardwareTotal">—</span></div>
-        <div class="summary-line"><span>TAX (est.):</span><span id="invoiceAssemblyFee">—</span></div>
-        <div class="summary-line grand-total-line"><span>TOTAL:</span><span id="invoiceGrandTotal">—</span></div>
+    <div id="rcptItems" style="flex:1;overflow-y:auto">Loading...</div>
+    <div class="rcpt-footer">
+      <div class="sep">════════════════════════════════════</div>
+      <div class="total-block">
+        <div class="total-line"><span>HARDWARE SUBTOTAL:</span><span id="rcptHardware">—</span></div>
+        <div class="total-line"><span>TAX (17% est.):</span><span id="rcptTax">—</span></div>
+        <div class="total-line total-grand"><span>GRAND TOTAL:</span><span id="rcptGrand">—</span></div>
       </div>
-      <div class="bar-separator">════════════════════════════</div>
-      <p style="font-size: 10px; color: var(--text2); text-align: center; margin: 12px 0;">FORGE AI PC Builder | Informational purposes only</p>
-      <button class="print-receipt-btn" onclick="window.print()">🖨️ PRINT RECEIPT</button>
+      <p style="font-size:10px;color:var(--text2);text-align:center;margin:10px 0">FORGE AI PC Builder | Informational purposes only | Verify prices before purchase</p>
+      <button class="print-btn" onclick="window.print()">🖨️ PRINT RECEIPT</button>
     </div>
   </div>
 </div>
 
-<!-- Cookie banner -->
-<div id="cookieBanner" style="display: none;">
-  <span>🍪 We use minimal functional cookies. <a href="cookies.html">Learn more</a></span>
-  <div style="display: flex; gap: 10px;">
-    <button id="declineCookiesBtn">Decline</button>
-    <button id="acceptCookiesBtn">Accept</button>
+<!-- COOKIE BANNER -->
+<div id="cookieBanner">
+  <span>🍪 We use minimal functional storage for preferences. <a href="#">Learn more</a></span>
+  <div style="display:flex;gap:10px">
+    <button class="cookie-btn cookie-decline" id="cookieDecline">Decline</button>
+    <button class="cookie-btn cookie-accept" id="cookieAccept">Accept</button>
   </div>
 </div>
 
-<!-- Footer -->
-<footer style="text-align: center; padding: 2rem 1rem; font-size: 12px; color: var(--text2); border-top: 1px solid var(--border); margin-top: 4rem; font-family: var(--font-mono);">
-  <div style="margin-bottom: 10px;">
-    <a href="privacy.html" style="color: var(--text2); margin: 0 8px; text-decoration: none;">Privacy</a> •
-    <a href="terms.html" style="color: var(--text2); margin: 0 8px; text-decoration: none;">Terms</a> •
-    <a href="cookies.html" style="color: var(--text2); margin: 0 8px; text-decoration: none;">Cookies</a> •
-    <a href="faq.html" style="color: var(--text2); margin: 0 8px; text-decoration: none;">FAQ</a>
-  </div>
-  <div>© 2025 FORGE AI PC Builder. Recommendations for informational purposes only.</div>
-</footer>
+<script>
+"use strict";
 
-<!-- Scripts -->
-<script src="app.js"></script>
+// ── CONSTANTS ──────────────────────────────────────────────────────────────
+const CURRENCIES = {
+  PKR:{symbol:"Rs",name:"Pakistani Rupee",rate:1},
+  USD:{symbol:"$",name:"US Dollar",rate:0.0036},
+  EUR:{symbol:"€",name:"Euro",rate:0.0033},
+  GBP:{symbol:"£",name:"British Pound",rate:0.0028},
+  AED:{symbol:"د.إ",name:"UAE Dirham",rate:0.0131},
+  SAR:{symbol:"ر.س",name:"Saudi Riyal",rate:0.0134},
+  CAD:{symbol:"C$",name:"Canadian Dollar",rate:0.0049},
+  AUD:{symbol:"A$",name:"Australian Dollar",rate:0.0055},
+};
+const CHART_COLORS=["#00f0ff","#ff0055","#bc55ff","#00ff88","#ffb800","#ef4444","#3b82f6","#10b981","#6366f1","#f59e0b","#8b5cf6"];
+const CAT_ICONS={CPU:"⚙️",GPU:"🎮",Motherboard:"🔌",RAM:"💾",Storage:"💿",PSU:"⚡",Cooling:"❄️",Case:"📦",Monitor:"🖥️",Keyboard:"⌨️",Mouse:"🖱️",Headphones:"🎧"};
+const ALL_CATEGORIES=["CPU","GPU","Motherboard","RAM","Storage","PSU","Cooling","Case","Monitor","Keyboard","Mouse","Headphones"];
 
+// ── STATE ──────────────────────────────────────────────────────────────────
+let currency="PKR";
+let buildData=null;
+let selectedComponents={}; // category -> component object
+
+// ── INIT ───────────────────────────────────────────────────────────────────
+document.addEventListener("DOMContentLoaded",()=>{
+  initCanvas();
+  initConsent();
+  initCookies();
+  initCurrency();
+  initForm();
+  initModal();
+  initNavigation();
+  // Restore saved API key
+  const saved=sessionStorage.getItem("forge_api_key");
+  if(saved) document.getElementById("apiKeyInput").value=saved;
+});
+
+// ── CANVAS ─────────────────────────────────────────────────────────────────
+function initCanvas(){
+  const canvas=document.getElementById("ambientCanvas");
+  if(!canvas)return;
+  const ctx=canvas.getContext("2d");
+  function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+  resize();window.addEventListener("resize",resize);
+  const pts=Array.from({length:60},()=>({
+    x:Math.random()*canvas.width,y:Math.random()*canvas.height,
+    vx:Math.random()*.4-.2,vy:Math.random()*.4-.2,
+    op:Math.random()*.5+.1,sz:Math.random()*1.5+.5
+  }));
+  function frame(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>canvas.width||p.y<0||p.y>canvas.height){p.x=Math.random()*canvas.width;p.y=Math.random()*canvas.height}
+      ctx.fillStyle=`rgba(0,240,255,${p.op})`;ctx.beginPath();ctx.arc(p.x,p.y,p.sz,0,Math.PI*2);ctx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  frame();
+  const glow=document.getElementById("cursorGlow");
+  if(glow) window.addEventListener("mousemove",e=>{glow.style.left=e.clientX+"px";glow.style.top=e.clientY+"px"});
+}
+
+// ── CONSENT ────────────────────────────────────────────────────────────────
+function initConsent(){
+  const gate=document.getElementById("termsGate");
+  if(localStorage.getItem("forge_consent")==="true"){gate.style.display="none";return}
+  document.getElementById("acceptBtn").addEventListener("click",()=>{
+    const p=document.getElementById("chkPrivacy").checked;
+    const t=document.getElementById("chkTerms").checked;
+    if(p&&t){localStorage.setItem("forge_consent","true");gate.style.display="none"}
+    else{document.getElementById("consentError").textContent="You must accept both Privacy Policy and Terms & Conditions."}
+  });
+}
+
+// ── COOKIES ────────────────────────────────────────────────────────────────
+function initCookies(){
+  const banner=document.getElementById("cookieBanner");
+  if(!localStorage.getItem("forge_cookies")){banner.style.display="flex"}
+  document.getElementById("cookieAccept").onclick=()=>{localStorage.setItem("forge_cookies","accepted");banner.style.display="none"};
+  document.getElementById("cookieDecline").onclick=()=>{localStorage.setItem("forge_cookies","declined");banner.style.display="none"};
+}
+
+// ── CURRENCY ───────────────────────────────────────────────────────────────
+function initCurrency(){
+  const sel=document.getElementById("currencySelect");
+  sel.addEventListener("change",e=>{
+    currency=e.target.value;
+    const meta=CURRENCIES[currency];
+    document.getElementById("currPrefix").textContent=meta.symbol;
+    const bi=document.getElementById("budgetInput");
+    if(currency==="PKR"){bi.placeholder="e.g., 250000";bi.value=bi.value?bi.value:"";bi.min="30000"}
+    else{bi.placeholder="e.g., 1200";bi.min="300"}
+  });
+}
+
+// ── FORM ───────────────────────────────────────────────────────────────────
+function initForm(){
+  // Radio card active state
+  document.querySelectorAll('input[name="purpose"]').forEach(r=>{
+    r.addEventListener("change",()=>{
+      document.querySelectorAll(".sel-card").forEach(c=>c.classList.remove("active"));
+      r.closest(".sel-card").classList.add("active");
+    });
+  });
+
+  // API key toggle
+  const keyInput=document.getElementById("apiKeyInput");
+  document.getElementById("toggleKeyBtn").onclick=()=>{
+    const show=keyInput.type==="password";
+    keyInput.type=show?"text":"password";
+    document.getElementById("toggleKeyBtn").textContent=show?"HIDE":"SHOW";
+  };
+
+  document.getElementById("configForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    const apiKey=document.getElementById("apiKeyInput").value.trim();
+    const budget=Number(document.getElementById("budgetInput").value)||0;
+    const usage=document.querySelector('input[name="purpose"]:checked')?.value||"gaming";
+    const name=document.getElementById("nameInput").value.trim()||"Valued Customer";
+    const prefs=document.getElementById("prefInput").value.trim()||"None";
+
+    // Validate
+    document.getElementById("apiKeyError").textContent="";
+    document.getElementById("budgetError").textContent="";
+    let valid=true;
+    if(!apiKey||!apiKey.startsWith("gsk_")){document.getElementById("apiKeyError").textContent="Valid Groq API key required (starts with gsk_).";valid=false}
+    if(!budget||budget<1){document.getElementById("budgetError").textContent="Please enter a valid budget.";valid=false}
+    if(!valid)return;
+
+    sessionStorage.setItem("forge_api_key",apiKey);
+    await generateBuild(apiKey,budget,usage,name,prefs,currency);
+  });
+}
+
+// ── GROQ API ────────────────────────────────────────────────────────────────
+async function generateBuild(apiKey,budget,usage,customerName,preferences,curr){
+  showLoading("Crafting your build prompt...");
+  const sym=CURRENCIES[curr].symbol;
+
+  const prompt=`You are FORGE PC Builder AI. Generate a complete PC build recommendation for the following parameters:
+Budget: ${budget} ${curr} (symbol: ${sym})
+Use Case: ${usage}
+Customer Preferences: ${preferences}
+
+CRITICAL REQUIREMENTS:
+1. Return EXACTLY 3 options for EACH of these 12 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Cooling, Case, Monitor, Keyboard, Mouse, Headphones
+2. Total components: 36 (3 per category × 12 categories)
+3. Mix new and used/refurbished options appropriately for the budget
+4. All prices in ${curr}
+5. For CPU include: core count, thread count, base/boost clock, TDP, socket
+6. For GPU include: VRAM, memory type, architecture, TDP, ports
+7. For RAM include: capacity, speed, CAS latency, type (DDR4/DDR5)
+8. For Storage include: capacity, interface (NVMe/SATA), read/write speeds, type (SSD/HDD)
+9. For PSU include: wattage, efficiency rating, modularity
+10. For Motherboard include: socket, chipset, form factor, supported RAM type
+11. For Cooling include: type (air/AIO), TDP rating, fan size
+12. For Case include: form factor, airflow rating, drive bays
+13. For Monitor include: size, resolution, refresh rate, panel type, response time
+14. For Keyboard include: switch type, connectivity, form factor
+15. For Mouse include: DPI range, sensor, connectivity, weight
+16. For Headphones include: driver size, frequency response, connectivity, noise cancellation
+
+Also provide accurate gaming FPS estimates based on the GPU options for these games at 1080p:
+- Valorant, CS2, GTA V, Fortnite, Cyberpunk 2077, Apex Legends, Forza Horizon 5, Call of Duty Warzone, Elden Ring, The Witcher 3
+
+Respond ONLY with valid JSON (no markdown, no code blocks), exactly this structure:
+{
+  "summary": "2-3 sentence build overview",
+  "customerName": "${customerName}",
+  "budgetAllocation": {"CPU":15,"GPU":35,"Motherboard":8,"RAM":10,"Storage":7,"PSU":6,"Cooling":4,"Case":3,"Monitor":5,"Keyboard":3,"Mouse":2,"Headphones":2},
+  "components": [
+    {
+      "category": "CPU",
+      "name": "AMD Ryzen 5 5600X",
+      "brand": "AMD",
+      "price": 42000,
+      "condition": "new",
+      "spec": "6 Cores / 12 Threads | 3.7GHz Base / 4.6GHz Boost | 65W TDP | AM4 Socket",
+      "tier": "budget"
+    }
+    // ... 35 more components (3 per each of 12 categories)
+  ],
+  "gamingPerformance": [
+    {
+      "title": "Valorant",
+      "preset": "High",
+      "resolution": "1080p",
+      "avg_fps": "240+",
+      "low1_fps": "180+",
+      "gpu_used": "RTX 4060"
+    }
+    // ... 9 more games
+  ]
+}`;
+
+  setLoadStatus("Sending request to Groq AI...");
+
+  try{
+    const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{
+      method:"POST",
+      headers:{"Authorization":`Bearer ${apiKey}`,"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"llama-3.3-70b-versatile",
+        messages:[{role:"user",content:prompt}],
+        temperature:0.3,
+        max_tokens:8000
+      })
+    });
+
+    if(!res.ok){
+      const err=await res.json().catch(()=>({}));
+      throw new Error(err.error?.message||`HTTP ${res.status}`);
+    }
+
+    setLoadStatus("Parsing build configuration...");
+    const data=await res.json();
+    let content=data.choices?.[0]?.message?.content||"";
+    // Strip markdown code blocks if present
+    content=content.replace(/^```json?\s*/i,"").replace(/\s*```$/i,"").trim();
+    // Sometimes model wraps in extra text - extract JSON
+    const jsonStart=content.indexOf("{");
+    const jsonEnd=content.lastIndexOf("}");
+    if(jsonStart>=0&&jsonEnd>jsonStart) content=content.slice(jsonStart,jsonEnd+1);
+
+    buildData=JSON.parse(content);
+    buildData.customerName=customerName;
+    buildData.budget=budget;
+    buildData.currency=curr;
+
+    // Auto-select first option per category (best value)
+    selectedComponents={};
+    if(buildData.components){
+      buildData.components.forEach(c=>{
+        if(!selectedComponents[c.category]) selectedComponents[c.category]=c;
+      });
+    }
+
+    hideLoading();
+    switchView("resultsView");
+    setTimeout(()=>{renderResults();window.scrollTo({top:0,behavior:"smooth"})},50);
+
+  }catch(err){
+    hideLoading();
+    console.error("Groq API error:",err);
+    if(err.message.includes("401")||err.message.includes("invalid_api_key")||err.message.includes("Unauthorized")){
+      document.getElementById("apiKeyError").textContent="Invalid API key. Please check your Groq API key at console.groq.com.";
+    }else if(err.message.includes("429")){
+      alert("Rate limit exceeded. Please wait a moment and try again.");
+    }else{
+      alert("⚠️ Build generation failed:\n\n"+err.message+"\n\nPlease check your API key and internet connection.");
+    }
+  }
+}
+
+// ── LOADING ────────────────────────────────────────────────────────────────
+function showLoading(msg){
+  const ol=document.getElementById("loadingOverlay");
+  ol.classList.add("show");
+  setLoadStatus(msg||"Processing...");
+}
+function hideLoading(){document.getElementById("loadingOverlay").classList.remove("show")}
+function setLoadStatus(msg){
+  const el=document.getElementById("loadStatus");
+  if(el)el.textContent=msg;
+}
+
+// ── SWITCH VIEW ─────────────────────────────────────────────────────────────
+function switchView(id){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  const v=document.getElementById(id);
+  if(v)v.classList.add("active");
+}
+
+// ── RENDER RESULTS ──────────────────────────────────────────────────────────
+function renderResults(){
+  if(!buildData)return;
+  const sym=CURRENCIES[currency].symbol;
+  renderComponents(sym);
+  renderFPS();
+  renderAllocation();
+  updateSidebar(sym);
+  document.getElementById("buildSummary").textContent=buildData.summary||"AI-generated build configuration optimized for your budget and use case.";
+}
+
+function getCategoryTier(cat){
+  if(cat==="GPU")return "gpu-tier";
+  if(cat==="CPU")return "cpu-tier";
+  return "";
+}
+
+function renderComponents(sym){
+  const container=document.getElementById("componentsContainer");
+  if(!container||!buildData.components)return;
+  container.innerHTML="";
+
+  const grouped={};
+  buildData.components.forEach(c=>{
+    if(!grouped[c.category])grouped[c.category]=[];
+    grouped[c.category].push(c);
+  });
+
+  // Render in a defined order
+  ALL_CATEGORIES.forEach(cat=>{
+    const items=grouped[cat];
+    if(!items||items.length===0)return;
+
+    const section=document.createElement("div");
+    section.className="cat-section";
+
+    section.innerHTML=`
+      <div class="cat-hdr">
+        <span class="cat-icon">${CAT_ICONS[cat]||"📦"}</span>
+        <span class="cat-title">${cat}</span>
+        <span class="cat-count">${items.length} option${items.length!==1?"s":""}</span>
+      </div>
+      <div class="cat-cards" id="cards-${cat}"></div>
+    `;
+    container.appendChild(section);
+
+    const cardsDiv=section.querySelector(`#cards-${cat}`);
+    items.forEach((item,idx)=>{
+      const card=createCard(item,sym,cat,idx);
+      cardsDiv.appendChild(card);
+    });
+  });
+}
+
+function createCard(item,sym,cat,idx){
+  const card=document.createElement("div");
+  const isSelected=selectedComponents[cat]===item||(selectedComponents[cat]&&selectedComponents[cat].name===item.name);
+  const conditionNew=item.condition!=="used";
+  card.className=`comp-card ${getCategoryTier(cat)}${isSelected?" selected":""}`;
+  card.dataset.category=cat;
+  card.dataset.idx=idx;
+
+  card.innerHTML=`
+    <div class="card-top">
+      <span class="card-brand">${item.brand||"Generic"}</span>
+      <span class="card-badge" style="background:${conditionNew?"rgba(0,240,255,.12)":"rgba(255,183,0,.12)"};color:${conditionNew?"var(--accent)":"var(--gold)"}">${conditionNew?"NEW":"USED"}</span>
+    </div>
+    <div class="card-name">${item.name}</div>
+    <div class="card-spec">${item.spec||"—"}</div>
+    <div class="card-foot">
+      <span class="card-foot-lbl">PRICE</span>
+      <span class="card-price">${sym} ${Number(item.price||0).toLocaleString()}</span>
+    </div>
+  `;
+
+  card.addEventListener("click",()=>{
+    selectedComponents[cat]=item;
+    // Refresh all cards in this category
+    document.querySelectorAll(`.comp-card[data-category="${cat}"]`).forEach(c=>c.classList.remove("selected"));
+    card.classList.add("selected");
+    updateSidebar(sym);
+    renderFPS(); // Recalculate FPS based on selected GPU
+  });
+
+  return card;
+}
+
+// ── FPS RENDERING ───────────────────────────────────────────────────────────
+function renderFPS(){
+  const container=document.getElementById("fpsGrid");
+  if(!container||!buildData.gamingPerformance)return;
+  container.innerHTML="";
+
+  const selectedGPU=selectedComponents["GPU"];
+
+  buildData.gamingPerformance.forEach(game=>{
+    const card=document.createElement("div");
+    card.className="game-strip";
+    card.innerHTML=`
+      <div class="game-name">${game.title}</div>
+      <div class="game-preset">${game.preset||"High"} Preset · ${game.resolution||"1080p"}${selectedGPU?` · ${selectedGPU.name}`:""}</div>
+      <div class="fps-row">
+        <div class="fps-box">
+          <span class="fps-lbl">AVG FPS</span>
+          <span class="fps-val">${game.avg_fps}</span>
+        </div>
+        <div class="fps-box">
+          <span class="fps-lbl">1% LOW</span>
+          <span class="fps-val low">${game.low1_fps}</span>
+        </div>
+        ${game.gpu_used?`<div class="fps-box"><span class="fps-lbl">GPU</span><span style="font-size:10px;color:var(--text2);font-family:var(--font-mono)">${game.gpu_used}</span></div>`:""}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// ── BUDGET ALLOCATION ────────────────────────────────────────────────────────
+function renderAllocation(){
+  const bar=document.getElementById("allocBar");
+  const legend=document.getElementById("allocLegend");
+  if(!bar||!legend||!buildData.budgetAllocation)return;
+  bar.innerHTML="";legend.innerHTML="";
+
+  Object.entries(buildData.budgetAllocation).forEach(([key,pct],i)=>{
+    if(!pct||pct<=0)return;
+    const color=CHART_COLORS[i%CHART_COLORS.length];
+    const seg=document.createElement("div");
+    seg.className="alloc-seg";
+    seg.style.cssText=`width:${pct}%;background:${color}`;
+    seg.title=`${key}: ${pct}%`;
+    bar.appendChild(seg);
+
+    const li=document.createElement("div");
+    li.className="legend-item";
+    li.innerHTML=`<span class="legend-dot" style="background:${color}"></span><span>${key} (${pct}%)</span>`;
+    legend.appendChild(li);
+  });
+}
+
+// ── SIDEBAR ──────────────────────────────────────────────────────────────────
+function updateSidebar(sym){
+  const list=document.getElementById("sidebarList");
+  const countEl=document.getElementById("sidebarCount");
+  const totalEl=document.getElementById("sidebarTotal");
+  const totalTextEl=document.getElementById("sidebarTotalText");
+  if(!list)return;
+
+  list.innerHTML="";
+  let total=0;
+  let count=0;
+
+  ALL_CATEGORIES.forEach(cat=>{
+    const item=selectedComponents[cat];
+    if(!item)return;
+    total+=Number(item.price||0);
+    count++;
+    const row=document.createElement("div");
+    row.className="s-item";
+    row.innerHTML=`
+      <div class="s-item-info">
+        <span class="s-cat">${cat}</span>
+        <span class="s-name">${item.name}</span>
+      </div>
+      <span class="s-price">${sym} ${Number(item.price||0).toLocaleString()}</span>
+    `;
+    list.appendChild(row);
+  });
+
+  if(countEl) countEl.textContent=count+" selected";
+  if(totalEl) totalEl.textContent=`${sym} ${total.toLocaleString()}`;
+  if(totalTextEl) totalTextEl.textContent=`Selected components total`;
+  document.getElementById("barFill").style.width=
+    buildData.budget?Math.min(100,Math.round(total/buildData.budget*100))+"%":"100%";
+}
+
+// ── AUTO-SELECT ──────────────────────────────────────────────────────────────
+function initNavigation(){
+  document.getElementById("backBtn").onclick=()=>switchView("configView");
+  document.getElementById("selectAllBtn").onclick=()=>{
+    // Auto-select middle tier (index 1) for balanced value
+    selectedComponents={};
+    if(buildData&&buildData.components){
+      const grouped={};
+      buildData.components.forEach(c=>{if(!grouped[c.category])grouped[c.category]=[];grouped[c.category].push(c)});
+      Object.entries(grouped).forEach(([cat,items])=>{selectedComponents[cat]=items[1]||items[0]});
+    }
+    const sym=CURRENCIES[currency].symbol;
+    renderComponents(sym);
+    updateSidebar(sym);
+    renderFPS();
+  };
+}
+
+// ── INVOICE ──────────────────────────────────────────────────────────────────
+function initModal(){
+  const modal=document.getElementById("invoiceModal");
+  document.getElementById("invoiceBtn").onclick=()=>{generateInvoice();modal.classList.add("open")};
+  document.getElementById("modalClose").onclick=()=>modal.classList.remove("open");
+  modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("open")});
+}
+
+function generateInvoice(){
+  if(!buildData)return;
+  const sym=CURRENCIES[currency].symbol;
+  const today=new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+  const invoiceId=`FRG-${Math.floor(100000+Math.random()*900000)}`;
+  document.getElementById("rcptTimestamp").textContent=`📅 ${today} | 📑 ${invoiceId} | 👤 ${buildData.customerName||"Guest"}`;
+
+  let html="";
+  let total=0;
+
+  ALL_CATEGORIES.forEach(cat=>{
+    const item=selectedComponents[cat];
+    if(!item)return;
+    const p=Number(item.price||0);
+    total+=p;
+    html+=`<div class="rcpt-row">
+      <span class="rcpt-cat">${cat}</span>
+      <span class="rcpt-item"><strong>${item.name}</strong><br><small>${item.spec||""}</small></span>
+      <span class="rcpt-price">${sym} ${p.toLocaleString()}</span>
+    </div>`;
+  });
+
+  // Gaming performance
+  let fpsHtml="";
+  if(buildData.gamingPerformance?.length){
+    fpsHtml=`<div style="margin-top:16px">
+      <div class="perf-title">🎮 GAMING PERFORMANCE ESTIMATES (1080p)</div>
+      ${buildData.gamingPerformance.map(g=>`
+        <div class="perf-row">
+          <span class="perf-game">${g.title}</span>
+          <span class="perf-fps">${g.preset} | ${g.avg_fps} FPS avg | 1% Low: ${g.low1_fps}</span>
+        </div>`).join("")}
+    </div>`;
+  }
+
+  const tax=Math.floor(total*.17);
+  const grand=total+tax;
+  document.getElementById("rcptItems").innerHTML=`
+    <div style="background:rgba(0,240,255,.05);border-left:3px solid var(--accent);padding:12px;border-radius:4px;margin-bottom:16px">
+      <strong style="color:var(--accent);font-size:11px;letter-spacing:1px">BUILD SUMMARY</strong>
+      <p style="font-size:12px;color:var(--text2);margin-top:6px;line-height:1.5">${buildData.summary||"AI-generated build configuration."}</p>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-bottom:16px">
+      <h3 style="font-size:11px;color:var(--accent);font-family:var(--font-display);letter-spacing:2px;margin-bottom:10px">SELECTED COMPONENTS</h3>
+      ${html}
+    </div>
+    ${fpsHtml}
+  `;
+  document.getElementById("rcptHardware").textContent=`${sym} ${total.toLocaleString()}`;
+  document.getElementById("rcptTax").textContent=`${sym} ${tax.toLocaleString()}`;
+  document.getElementById("rcptGrand").textContent=`${sym} ${grand.toLocaleString()}`;
+}
+</script>
 </body>
 </html>
