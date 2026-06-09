@@ -1,4 +1,4 @@
-//  Powered by Groq (drop-in replacement for Gemini)
+// api/gemini.js — Powered by Groq (drop-in replacement for Gemini)
 // Vercel Serverless Function
 
 // ── Rate limiting ────────────────────────────────────────────────────────────
