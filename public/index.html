@@ -213,17 +213,158 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 
 .error-banner{background:rgba(255,60,90,.1);border:1px solid rgba(255,60,90,.3);border-radius:8px;padding:14px 16px;font-family:var(--font-mono);font-size:12px;color:var(--danger);margin-bottom:16px;line-height:1.5}
 
+/* ─── TERMS GATE ────────────────────────────────────────────────────────── */
+#termsGate{display:none;position:fixed;inset:0;z-index:9999;background:rgba(4,8,15,.96);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+.terms-gate-box{background:var(--bg2);border:1px solid var(--accent);border-radius:16px;padding:40px 36px;max-width:520px;width:100%;text-align:center;box-shadow:0 0 60px rgba(0,240,255,.08)}
+.terms-gate-logo{font-family:var(--font-display);font-size:28px;color:var(--accent);letter-spacing:4px;margin-bottom:8px;text-shadow:0 0 20px rgba(0,240,255,.4)}
+.terms-gate-subtitle{font-size:13px;color:var(--text2);font-family:var(--font-mono);margin-bottom:28px;letter-spacing:1px}
+.terms-gate-box h3{font-family:var(--font-display);font-size:13px;color:var(--text);letter-spacing:2px;margin-bottom:20px}
+.consent-row{display:flex;align-items:flex-start;gap:12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px;text-align:left;cursor:pointer;transition:border-color .2s}
+.consent-row:hover{border-color:var(--accent)}
+.consent-row input[type="checkbox"]{width:16px;height:16px;accent-color:var(--accent);margin-top:2px;flex-shrink:0;cursor:pointer}
+.consent-text{font-size:13px;color:var(--text);line-height:1.5}
+.consent-text a{color:var(--accent);text-decoration:none}
+.consent-text a:hover{text-decoration:underline}
+#consentError{font-family:var(--font-mono);font-size:11px;color:var(--danger);min-height:18px;margin-bottom:10px}
+.terms-accept-btn{width:100%;padding:15px;background:linear-gradient(135deg,rgba(0,240,255,.18),rgba(123,47,255,.18));border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .3s}
+.terms-accept-btn:hover{background:linear-gradient(135deg,rgba(0,240,255,.28),rgba(123,47,255,.28));box-shadow:0 0 24px rgba(0,240,255,.2)}
+
+/* ─── GAMING PERFORMANCE TABLE ──────────────────────────────────────────── */
+.gaming-perf-section{background:var(--panel);border:1px solid rgba(123,47,255,.3);border-radius:12px;padding:24px;margin-top:32px}
+.perf-disclaimer{font-family:var(--font-mono);font-size:10px;color:var(--text2);background:rgba(255,183,0,.06);border:1px solid rgba(255,183,0,.2);border-radius:6px;padding:8px 12px;margin-bottom:18px;line-height:1.5}
+.perf-table{display:flex;flex-direction:column;gap:8px}
+.perf-row{display:grid;grid-template-columns:180px 80px 1fr 1fr;gap:12px;align-items:center;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;transition:border-color .2s}
+.perf-row:hover{border-color:rgba(123,47,255,.4)}
+@media(max-width:640px){.perf-row{grid-template-columns:1fr 1fr;gap:8px;padding:8px 12px}}
+.perf-game{font-size:12px;color:var(--text);font-weight:600}
+.perf-preset{font-family:var(--font-mono);font-size:10px;color:var(--accent2);background:rgba(123,47,255,.15);border-radius:4px;padding:3px 7px;text-align:center;white-space:nowrap}
+.perf-fps,.perf-low{display:flex;align-items:center;gap:5px}
+.fps-label{font-family:var(--font-mono);font-size:9px;color:var(--text2);letter-spacing:1px;min-width:32px}
+.fps-value{font-family:var(--font-mono);font-size:14px;color:var(--accent);font-weight:700}
+.fps-value.fps-low{color:var(--gold)}
+.fps-unit{font-family:var(--font-mono);font-size:9px;color:var(--text2)}
+
+/* ─── ANIMATED PC VISUAL ────────────────────────────────────────────────── */
+.pc-visual-container{display:flex;justify-content:center;margin:32px 0;pointer-events:none}
+.pc-rig-svg{filter:drop-shadow(0 0 18px rgba(0,240,255,.25))}
+@keyframes pcGlow{0%,100%{filter:drop-shadow(0 0 12px rgba(0,240,255,.3))}50%{filter:drop-shadow(0 0 28px rgba(0,240,255,.6))}}
+@keyframes pcFan{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pcPulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes ledChase{0%,100%{opacity:.2}50%{opacity:.9}}
+.pc-fan-group{transform-origin:50% 50%;animation:pcFan 2s linear infinite}
+.pc-fan-group2{transform-origin:50% 50%;animation:pcFan 2.5s linear infinite reverse}
+.pc-led{animation:ledChase 1.2s ease-in-out infinite}
+.pc-led:nth-child(2){animation-delay:.2s}
+.pc-led:nth-child(3){animation-delay:.4s}
+.pc-led:nth-child(4){animation-delay:.6s}
+.pc-rig-svg{animation:pcGlow 3s ease-in-out infinite}
+
+/* ─── INVOICE FIXES ─────────────────────────────────────────────────────── */
+.receipt-box{display:flex;flex-direction:column}
+.receipt-body{flex:1;overflow-y:auto}
+.receipt-footer{flex-shrink:0}
+.receipt-perf-block{margin-top:4px}
+.receipt-section-title{font-family:var(--font-display);font-size:10px;color:var(--accent2);letter-spacing:2px;margin:10px 0 8px;padding:4px 0}
+.receipt-perf-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2);font-size:11px}
+.receipt-game{color:var(--text);font-weight:600;min-width:100px;flex-shrink:0}
+.receipt-game-fps{font-family:var(--font-mono);font-size:10px;color:var(--text2);text-align:right}
+.receipt-perf-note{font-family:var(--font-mono);font-size:9px;color:var(--text2);margin-top:8px;line-height:1.5;font-style:italic}
+.total-summary-block{padding:4px 0}
+.receipt-empty{font-family:var(--font-mono);font-size:12px;color:var(--text2);text-align:center;padding:24px 0;line-height:1.6}
+/* Print: clean invoice, no background colors */
 @media print{
-  body{background:white;color:black}
-  .app-header,.forge-form,.results-actions-bar,.build-summary-panel,.parts-matrix-column{display:none}
-  .modal-overlay{display:flex!important;position:static;background:none}
-  .modal-frame{border:1px solid #ccc;border-radius:0;box-shadow:none}
-  .receipt-header h2,.receipt-cat,.receipt-price,.grand-total-line{color:#000}
-  .close-modal-btn,.print-receipt-btn{display:none}
+  body{background:#fff;color:#000}
+  *{color:#000!important;background:transparent!important;border-color:#ccc!important;box-shadow:none!important}
+  #termsGate,#cookieBanner,.app-header,.forge-form,.results-actions-bar,
+  .build-summary-panel,.parts-matrix-column,
+  canvas,#cursorGlow,.grid-overlay,footer{display:none!important}
+  .modal-overlay{display:flex!important;position:static!important;background:none!important;padding:0!important}
+  .modal-frame{border:1px solid #ccc!important;border-radius:0!important;max-height:none!important;overflow:visible!important}
+  .close-modal-btn,.print-receipt-btn{display:none!important}
+  .receipt-row,.receipt-perf-row{break-inside:avoid}
 }
 </style>
 </head>
 <body>
+
+<!-- ── TERMS & PRIVACY GATE ────────────────────────────────────────────────── -->
+<div id="termsGate" style="display:flex">
+  <div class="terms-gate-box">
+    <div class="terms-gate-logo">FORGE<span style="color:#7b2fff">.</span></div>
+    <div class="terms-gate-subtitle">AI PC BUILDER — PAKISTAN MARKET</div>
+    <!-- Animated PC visual -->
+    <div class="pc-visual-container">
+      <svg class="pc-rig-svg" width="120" height="100" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Case body -->
+        <rect x="10" y="10" width="55" height="80" rx="4" fill="#080f1a" stroke="#00f0ff" stroke-width="1.2"/>
+        <!-- Front panel -->
+        <rect x="14" y="14" width="47" height="72" rx="3" fill="#04080f" stroke="#1a2f50" stroke-width="0.8"/>
+        <!-- GPU slot glow -->
+        <rect x="18" y="45" width="39" height="12" rx="2" fill="#0d1526" stroke="#7b2fff" stroke-width="0.8" opacity="0.8"/>
+        <rect x="19" y="46" width="22" height="10" rx="1.5" fill="#0a1220"/>
+        <!-- GPU fan -->
+        <g class="pc-fan-group" style="transform-origin:28px 51px">
+          <circle cx="28" cy="51" r="4.5" fill="none" stroke="#00f0ff" stroke-width="0.7" opacity="0.6"/>
+          <line x1="28" y1="46.5" x2="28" y2="55.5" stroke="#00f0ff" stroke-width="0.8" opacity="0.6"/>
+          <line x1="23.5" y1="51" x2="32.5" y2="51" stroke="#00f0ff" stroke-width="0.8" opacity="0.6"/>
+          <line x1="25.3" y1="47.8" x2="30.7" y2="54.2" stroke="#00f0ff" stroke-width="0.8" opacity="0.4"/>
+          <line x1="30.7" y1="47.8" x2="25.3" y2="54.2" stroke="#00f0ff" stroke-width="0.8" opacity="0.4"/>
+        </g>
+        <!-- CPU fan (top) -->
+        <g class="pc-fan-group2" style="transform-origin:34px 28px">
+          <circle cx="34" cy="28" r="7" fill="#080f1a" stroke="#00f0ff" stroke-width="0.8" opacity="0.7"/>
+          <circle cx="34" cy="28" r="2" fill="#0d1526" stroke="#7b2fff" stroke-width="0.5"/>
+          <line x1="34" y1="21" x2="34" y2="35" stroke="#00f0ff" stroke-width="0.7" opacity="0.5"/>
+          <line x1="27" y1="28" x2="41" y2="28" stroke="#00f0ff" stroke-width="0.7" opacity="0.5"/>
+          <line x1="29" y1="23" x2="39" y2="33" stroke="#00f0ff" stroke-width="0.7" opacity="0.3"/>
+          <line x1="39" y1="23" x2="29" y2="33" stroke="#00f0ff" stroke-width="0.7" opacity="0.3"/>
+        </g>
+        <!-- RGB LEDs strip -->
+        <rect x="14" y="62" width="4" height="20" rx="2" fill="#080f1a" stroke="#1a2f50" stroke-width="0.5"/>
+        <rect class="pc-led" x="15" y="63" width="2" height="3" rx="0.5" fill="#00f0ff"/>
+        <rect class="pc-led" x="15" y="68" width="2" height="3" rx="0.5" fill="#7b2fff"/>
+        <rect class="pc-led" x="15" y="73" width="2" height="3" rx="0.5" fill="#00f0ff"/>
+        <rect class="pc-led" x="15" y="78" width="2" height="3" rx="0.5" fill="#7b2fff"/>
+        <!-- Storage LED -->
+        <circle cx="52" cy="20" r="1.5" fill="#00f0ff" class="pc-led"/>
+        <!-- Power button -->
+        <circle cx="52" cy="26" r="2.5" fill="#0d1526" stroke="#00f0ff" stroke-width="0.8"/>
+        <!-- Monitor -->
+        <rect x="72" y="22" width="44" height="30" rx="3" fill="#080f1a" stroke="#00f0ff" stroke-width="1.1"/>
+        <rect x="75" y="25" width="38" height="24" rx="2" fill="#04080f"/>
+        <!-- Screen glow lines -->
+        <line x1="78" y1="30" x2="110" y2="30" stroke="#00f0ff" stroke-width="0.6" opacity="0.3"/>
+        <line x1="78" y1="34" x2="100" y2="34" stroke="#7b2fff" stroke-width="0.6" opacity="0.4"/>
+        <line x1="78" y1="38" x2="105" y2="38" stroke="#00f0ff" stroke-width="0.6" opacity="0.2"/>
+        <line x1="78" y1="42" x2="95" y2="42" stroke="#7b2fff" stroke-width="0.6" opacity="0.3"/>
+        <!-- FORGE text on screen -->
+        <text x="80" y="29" font-size="4" fill="#00f0ff" font-family="monospace" opacity="0.9">FORGE AI</text>
+        <!-- Monitor stand -->
+        <rect x="90" y="52" width="4" height="8" rx="1" fill="#080f1a" stroke="#1a2f50" stroke-width="0.6"/>
+        <rect x="84" y="59" width="16" height="2.5" rx="1" fill="#080f1a" stroke="#1a2f50" stroke-width="0.6"/>
+        <!-- Keyboard outline -->
+        <rect x="72" y="74" width="44" height="12" rx="2" fill="#080f1a" stroke="#1a2f50" stroke-width="0.8"/>
+        <rect x="74" y="76" width="40" height="8" rx="1.5" fill="#04080f"/>
+        <rect x="75" y="77" width="5" height="2" rx="0.5" fill="#1a2f50" opacity="0.8"/>
+        <rect x="82" y="77" width="5" height="2" rx="0.5" fill="#1a2f50" opacity="0.8"/>
+        <rect x="89" y="77" width="5" height="2" rx="0.5" fill="#1a2f50" opacity="0.8"/>
+        <rect x="96" y="77" width="5" height="2" rx="0.5" fill="#1a2f50" opacity="0.8"/>
+        <rect x="76" y="81" width="14" height="2" rx="0.5" fill="#1a2f50" opacity="0.8"/>
+      </svg>
+    </div>
+    <h3>TO CONTINUE, PLEASE ACCEPT</h3>
+    <label class="consent-row">
+      <input type="checkbox" id="consentPrivacy">
+      <span class="consent-text">I have read and agree to the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>. I understand how my data is used.</span>
+    </label>
+    <label class="consent-row">
+      <input type="checkbox" id="consentTerms">
+      <span class="consent-text">I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>. I understand these are AI-generated recommendations for informational purposes only.</span>
+    </label>
+    <p id="consentError"></p>
+    <button class="terms-accept-btn" id="acceptTermsBtn">⚡ ACCEPT &amp; ENTER FORGE</button>
+  </div>
+</div>
 
 <div class="cursor-glow" id="cursorGlow"></div>
 <div class="grid-overlay"></div>
@@ -276,7 +417,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
       <h1 class="logo-text">FORGE<span class="accent-dot">.</span></h1>
     </div>
     <div class="header-right">
-      <select class="currency-select" id="currencySelect"></select>
+      <div id="currencySelectorWrapper"></div>
       <div class="system-status" style="display:flex;align-items:center">
         <span class="status-dot pulsing"></span>
         <span class="status-text">SYSTEMS ONLINE</span>
@@ -404,7 +545,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 
         <div class="parts-matrix-column">
           <div class="column-title-ribbon">
-            <h3>HARDWARE MATRIX — SELECT YOUR COMPONENTS</h3>
+            <h3 id="buildRibbonTitle">HARDWARE MATRIX — SELECT YOUR COMPONENTS</h3>
             <span class="ribbon-hint">Click to select · Click again to deselect</span>
           </div>
           <div class="components-grid" id="partsContainer"></div>
