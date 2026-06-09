@@ -6,7 +6,6 @@
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="X-Frame-Options" content="DENY">
 <title>FAQ — FORGE AI PC Builder</title>
-<meta name="description" content="Frequently asked questions about FORGE AI PC Builder — AI-powered PC build recommendations for the Pakistani market.">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   body{font-family:"Plus Jakarta Sans",sans-serif;background:#04080f;color:#c8d8f0;max-width:820px;margin:0 auto;padding:2rem 1.5rem;line-height:1.7}
@@ -31,47 +30,37 @@
 
 <div class="faq-item">
   <div class="faq-q">What is FORGE AI PC Builder?<span class="toggle">+</span></div>
-  <div class="faq-a">FORGE is an AI-powered PC build recommendation tool designed for the Pakistani market. Enter your budget and use case (gaming or workstation), and FORGE uses Google Gemini AI with live Google Search to recommend components at current Pakistani market prices from sources like Daraz.pk and OLX Pakistan.</div>
+  <div class="faq-a">FORGE is an AI-powered PC build recommendation tool optimized for the Pakistani market. Input your budget and use case, and FORGE uses Groq AI with live market research to recommend components at current Pakistani retail prices.</div>
 </div>
 
 <div class="faq-item">
-  <div class="faq-q">Are the prices accurate and up to date?<span class="toggle">+</span></div>
-  <div class="faq-a">FORGE uses Google Gemini AI with Google Search grounding to fetch current 2024–2025 prices from Pakistani retailers. However, prices fluctuate daily. Always verify prices directly with sellers before purchasing. FORGE is a research starting point, not a final price quote.</div>
+  <div class="faq-q">Are the prices accurate?<span class="toggle">+</span></div>
+  <div class="faq-a">FORGE fetches current market data from Pakistani retailers. However, prices fluctuate daily. Always verify directly with sellers before purchasing. FORGE is a research starting point.</div>
 </div>
 
 <div class="faq-item">
   <div class="faq-q">What currencies are supported?<span class="toggle">+</span></div>
-  <div class="faq-a">FORGE supports PKR, USD, EUR, GBP, AED, SAR, CAD, and AUD. Select your preferred currency from the dropdown — all prices are converted from PKR at approximate exchange rates. Use PKR for the most accurate Pakistani market prices.</div>
+  <div class="faq-a">FORGE supports PKR, USD, EUR, GBP, AED, SAR, CAD, and AUD. Select your currency and all prices convert automatically. PKR gives the most accurate Pakistani prices.</div>
 </div>
 
 <div class="faq-item">
   <div class="faq-q">What is the minimum budget?<span class="toggle">+</span></div>
-  <div class="faq-a">The minimum budget is Rs 30,000 PKR (or equivalent). At this level, FORGE recommends the most basic functional configuration. For a proper gaming or workstation build, we recommend at least Rs 80,000 PKR.</div>
+  <div class="faq-a">Minimum is Rs 30,000 PKR. For proper gaming, we recommend at least Rs 80,000. Creative work requires Rs 150,000+.</div>
 </div>
 
 <div class="faq-item">
-  <div class="faq-q">Why does FORGE show "Using cached data"?<span class="toggle">+</span></div>
-  <div class="faq-a">This means the connection to Google Gemini AI failed and FORGE is showing pre-built fallback recommendations instead. Common causes: (1) API key not configured or invalid, (2) internet connectivity issue, (3) API quota exceeded. The cached recommendations are still high-quality and budget-appropriate — they just may not reflect today's exact prices. Click "↺ Retry" to try again.</div>
-</div>
-
-<div class="faq-item">
-  <div class="faq-q">Can I trust Used / Refurbished recommendations?<span class="toggle">+</span></div>
-  <div class="faq-a">Used and refurbished options (often from OLX Pakistan) can offer excellent value, particularly for GPUs and CPUs. Always: (1) buy from sellers with good ratings and reviews, (2) test the component before finalizing payment, (3) verify the component's age and condition, (4) prefer sellers who offer a short return window.</div>
-</div>
-
-<div class="faq-item">
-  <div class="faq-q">Does FORGE guarantee component compatibility?<span class="toggle">+</span></div>
-  <div class="faq-a">No. FORGE makes compatibility-aware recommendations (e.g., matching CPU socket to motherboard platform), but you should always verify compatibility independently using tools like <a href="https://pcpartpicker.com" target="_blank" rel="noopener noreferrer">PCPartPicker.com</a> before purchasing.</div>
+  <div class="faq-q">Can I trust the recommendations?<span class="toggle">+</span></div>
+  <div class="faq-a">FORGE recommendations are AI-generated and compatibility-aware. However, always verify compatibility independently using tools like PCPartPicker before purchasing. FORGE is informational.</div>
 </div>
 
 <div class="faq-item">
   <div class="faq-q">Is my data private?<span class="toggle">+</span></div>
-  <div class="faq-a">FORGE does not store your data on any server we operate. Your budget and use-case preference are sent to Google's Gemini API to generate recommendations. See our <a href="privacy.html">Privacy Policy</a> for full details.</div>
+  <div class="faq-a">FORGE does not store your data. Your budget is sent only to Groq AI to generate recommendations. See our Privacy Policy for full details.</div>
 </div>
 
 <div class="faq-item">
-  <div class="faq-q">Why is there a "rate limit" error?<span class="toggle">+</span></div>
-  <div class="faq-a">FORGE limits API calls to 5 per minute to prevent accidental overuse of the Gemini API quota. Simply wait 60 seconds and try again. If you need more frequent access, you can self-host FORGE with your own API key configured with a higher quota in Google AI Studio.</div>
+  <div class="faq-q">Why did I get an error?<span class="toggle">+</span></div>
+  <div class="faq-a">Check your internet connection. If the problem persists, the Groq API may be temporarily unavailable. FORGE will show cached fallback recommendations which are still high-quality.</div>
 </div>
 
 <script>
@@ -92,7 +81,7 @@ document.querySelectorAll(".faq-q").forEach(q=>{
 </script>
 
 <div class="legal-links">
-  <a href="privacy.html">Privacy Policy</a>·<a href="terms.html">Terms &amp; Conditions</a>·<a href="cookies.html">Cookie Policy</a>
+  <a href="privacy.html">Privacy</a> • <a href="terms.html">Terms</a> • <a href="cookies.html">Cookies</a>
 </div>
 </body>
 </html>
