@@ -1,6 +1,6 @@
 /**
- * FORGE — AI PC BUILDER v7.2 COMPLETE
- * Full Groq Integration with all fixes
+ * FORGE — AI PC BUILDER v7.4 COMPLETE FIX
+ * Full Groq Integration with working receipt generation
  */
 
 "use strict";
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ════════════════════════════════════════════════════════════════════════════
-// CONSENT GATE - FIXED
+// CONSENT GATE
 // ════════════════════════════════════════════════════════════════════════════
 
 function setupConsentGate() {
@@ -63,31 +63,22 @@ function setupConsentGate() {
     return;
   }
 
-  // Check if already accepted
   const consentStored = localStorage.getItem("forge_consent_accepted");
-  console.log("📋 Consent check - stored value:", consentStored);
   
   if (consentStored === "true") {
-    console.log("✅ Consent previously accepted, hiding gate");
     gate.style.display = "none";
     return;
   }
 
-  // Button click handler
   acceptBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    console.log("🔘 Accept button clicked");
-    console.log("   Privacy checked:", privacyCheck?.checked);
-    console.log("   Terms checked:", termsCheck?.checked);
 
     if (privacyCheck?.checked && termsCheck?.checked) {
-      console.log("✅ Both checkboxes checked - storing consent");
       localStorage.setItem("forge_consent_accepted", "true");
       gate.style.display = "none";
       if (errorMsg) errorMsg.textContent = "";
     } else {
       const msg = "You must accept both Privacy Policy and Terms & Conditions";
-      console.warn("⚠️", msg);
       if (errorMsg) errorMsg.textContent = msg;
     }
   });
@@ -122,11 +113,10 @@ function setupCookieBanner() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// CURRENCY SELECTOR - FIXED
+// CURRENCY SELECTOR
 // ════════════════════════════════════════════════════════════════════════════
 
 function setupCurrencySelector() {
-  // Create selector if doesn't exist
   let selector = document.getElementById("forgeCurrencySelector");
   
   if (!selector) {
@@ -169,7 +159,7 @@ function setupCurrencySelector() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// FORM SUBMISSION - GROQ INTEGRATED & FIXED
+// FORM SUBMISSION
 // ════════════════════════════════════════════════════════════════════════════
 
 function bindFormSubmission() {
@@ -226,7 +216,7 @@ function bindFormSubmission() {
       }
 
       activeBuildPayload = await response.json();
-      console.log("✅ Build received:", activeBuildPayload);
+      console.log("✅ Build received with", activeBuildPayload.components?.length, "components");
 
       if (activeBuildPayload.note) {
         console.warn("⚠️ Fallback note:", activeBuildPayload.note);
@@ -235,9 +225,11 @@ function bindFormSubmission() {
       activeBuildPayload.customerName = customerName;
 
       switchView("resultsView");
-      renderBuildResults();
       
+      // Small delay to ensure DOM is ready
       setTimeout(() => {
+        renderBuildResults();
+        
         const resultsContainer = document.getElementById("forgeResultsDynamicPresentationContainer");
         if (resultsContainer) {
           resultsContainer.scrollIntoView({ behavior: "smooth" });
@@ -246,7 +238,7 @@ function bindFormSubmission() {
 
     } catch (error) {
       console.error("❌ Build generation failed:", error);
-      alert(`❌ Build Generation Failed:\n\n${error.message}\n\nPlease check:\n1. Internet connection\n2. Groq API key configured\n3. Budget is valid`);
+      alert(`❌ Build Generation Failed:\n\n${error.message}`);
     } finally {
       submitBtn.classList.remove("processing-state");
       submitBtn.disabled = false;
@@ -256,19 +248,76 @@ function bindFormSubmission() {
 }
 
 // ════════════════════════════════════════════════════════════════════════════
-// RESULTS RENDERING - COMPLETE
+// RESULTS RENDERING - FIXED
 // ════════════════════════════════════════════════════════════════════════════
 
 function renderBuildResults() {
-  if (!activeBuildPayload) return;
+  if (!activeBuildPayload) {
+    console.error("❌ No build payload");
+    return;
+  }
+
+  console.log("🎨 Rendering build results...");
 
   const symbol = REGIONAL_CURRENCY_EXCHANGE[selectedCurrency].symbol;
 
+  // Render all sections
+  renderBuildSummaryPanel(symbol);
   renderComponentCards(symbol);
   renderPeripherals(symbol);
   renderGamingPerformance();
   renderBudgetAllocation();
-  renderBuildSummary(symbol);
+
+  console.log("✅ Build rendering complete");
+}
+
+function renderBuildSummaryPanel(symbol) {
+  // Calculate total price
+  let totalPrice = 0;
+  
+  if (activeBuildPayload.components) {
+    activeBuildPayload.components.forEach(c => {
+      totalPrice += Number(c.price || 0);
+    });
+  }
+
+  if (activeBuildPayload.peripherals) {
+    Object.values(activeBuildPayload.peripherals).forEach(p => {
+      if (p) totalPrice += Number(p.price || 0);
+    });
+  }
+
+  // Update summary panel
+  const countEl = document.getElementById("buildSummaryCount");
+  const remainingEl = document.getElementById("budgetRemaining");
+  const totalEl = document.getElementById("buildSummaryTotal");
+  const barEl = document.getElementById("budgetProgress");
+  const listEl = document.getElementById("buildSummaryList");
+
+  if (countEl) countEl.textContent = (activeBuildPayload.components?.length || 0) + " components";
+  if (remainingEl) remainingEl.textContent = `${symbol} ${totalPrice.toLocaleString()}`;
+  if (totalEl) totalEl.textContent = `${symbol} ${totalPrice.toLocaleString()}`;
+  if (barEl) barEl.style.width = "100%";
+
+  // Build summary list
+  if (listEl) {
+    listEl.innerHTML = "";
+    
+    if (activeBuildPayload.components) {
+      activeBuildPayload.components.forEach(comp => {
+        const item = document.createElement("div");
+        item.className = "summary-item";
+        item.innerHTML = `
+          <div class="summary-item-info">
+            <div class="summary-cat">${comp.category}</div>
+            <div class="summary-name">${comp.name}</div>
+          </div>
+          <div class="summary-price">${symbol} ${Number(comp.price || 0).toLocaleString()}</div>
+        `;
+        listEl.appendChild(item);
+      });
+    }
+  }
 }
 
 function getCategoryIcon(category) {
@@ -307,7 +356,7 @@ function createComponentCard(part, symbol, category) {
     
     <div class="card-node-title-string">${part.name}</div>
     
-    <div class="card-node-specifications-text">${part.spec || "Specifications not available"}</div>
+    <div class="card-node-specifications-text">${part.spec || "Specifications available"}</div>
     
     <div class="card-node-financial-row">
       <span class="financial-row-label">PRICE</span>
@@ -320,7 +369,15 @@ function createComponentCard(part, symbol, category) {
 
 function renderComponentCards(symbol) {
   const container = document.getElementById("componentsDynamicGridContainer");
-  if (!container || !activeBuildPayload.components) return;
+  if (!container) {
+    console.error("❌ Components container not found");
+    return;
+  }
+
+  if (!activeBuildPayload.components || activeBuildPayload.components.length === 0) {
+    container.innerHTML = "<p>No components received</p>";
+    return;
+  }
 
   container.innerHTML = "";
 
@@ -331,31 +388,41 @@ function renderComponentCards(symbol) {
     grouped[part.category].push(part);
   });
 
+  console.log("📊 Component groups:", Object.keys(grouped));
+
   // Render each category
   Object.entries(grouped).forEach(([category, items]) => {
     const section = document.createElement("div");
     section.className = "category-section";
+    section.style.marginBottom = "32px";
 
     const header = document.createElement("div");
-    header.className = "category-header";
+    header.style.display = "flex";
+    header.style.alignItems = "center";
+    header.style.marginBottom = "16px";
+    header.style.paddingBottom = "12px";
+    header.style.borderBottom = "2px solid var(--border)";
+
     header.innerHTML = `
-      <span style="font-size: 20px; margin-right: 12px;">${getCategoryIcon(category)}</span>
+      <span style="font-size: 24px; margin-right: 12px;">${getCategoryIcon(category)}</span>
       <h3 style="
         font-family: var(--font-display);
-        font-size: 13px;
+        font-size: 14px;
         color: var(--accent);
         letter-spacing: 2px;
         text-transform: uppercase;
         margin: 0;
+        flex: 1;
       ">${category}</h3>
-      <span style="margin-left: auto; font-size: 11px; color: var(--text2);">${items.length} options</span>
+      <span style="font-size: 12px; color: var(--text2); font-family: var(--font-mono);">
+        ${items.length} option${items.length !== 1 ? 's' : ''}
+      </span>
     `;
 
     const grid = document.createElement("div");
     grid.style.display = "grid";
-    grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(200px, 1fr))";
+    grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(220px, 1fr))";
     grid.style.gap = "12px";
-    grid.style.marginTop = "12px";
 
     items.forEach(part => {
       grid.appendChild(createComponentCard(part, symbol, category));
@@ -365,11 +432,18 @@ function renderComponentCards(symbol) {
     section.appendChild(grid);
     container.appendChild(section);
   });
+
+  console.log("✅ Components rendered");
 }
 
 function renderPeripherals(symbol) {
   const container = document.getElementById("peripheralsDynamicGridContainer");
-  if (!container || !activeBuildPayload.peripherals) return;
+  if (!container) return;
+
+  if (!activeBuildPayload.peripherals) {
+    container.innerHTML = "";
+    return;
+  }
 
   container.innerHTML = "";
 
@@ -389,7 +463,7 @@ function renderPeripherals(symbol) {
       card.innerHTML = `
         <div class="card-node-category-label">${item.label}</div>
         <div class="card-node-title-string">${data.name}</div>
-        <div class="card-node-specifications-text">${data.spec || "Specifications not available"}</div>
+        <div class="card-node-specifications-text">${data.spec || "Specifications available"}</div>
         <div class="card-node-financial-row">
           <span class="financial-row-label">PRICE</span>
           <span class="financial-row-value-string">${symbol} ${Number(data.price || 0).toLocaleString()}</span>
@@ -402,7 +476,12 @@ function renderPeripherals(symbol) {
 
 function renderGamingPerformance() {
   const container = document.getElementById("gamingPerformanceTelemetryGrid");
-  if (!container || !activeBuildPayload.gamingPerformance) return;
+  if (!container) return;
+
+  if (!activeBuildPayload.gamingPerformance || activeBuildPayload.gamingPerformance.length === 0) {
+    container.innerHTML = "";
+    return;
+  }
 
   container.innerHTML = "";
 
@@ -432,7 +511,13 @@ function renderBudgetAllocation() {
   const barContainer = document.getElementById("budgetAllocationVisualizationGraphBar");
   const legendContainer = document.getElementById("budgetAllocationChartLegendLabels");
 
-  if (!barContainer || !legendContainer || !activeBuildPayload.budgetAllocation) return;
+  if (!barContainer || !legendContainer) return;
+
+  if (!activeBuildPayload.budgetAllocation) {
+    barContainer.innerHTML = "";
+    legendContainer.innerHTML = "";
+    return;
+  }
 
   barContainer.innerHTML = "";
   legendContainer.innerHTML = "";
@@ -464,15 +549,8 @@ function renderBudgetAllocation() {
   });
 }
 
-function renderBuildSummary(symbol) {
-  const summaryText = document.getElementById("forgeOverviewSummaryTextContent");
-  if (summaryText) {
-    summaryText.textContent = activeBuildPayload.summary || "Build optimized for maximum performance and value.";
-  }
-}
-
 // ════════════════════════════════════════════════════════════════════════════
-// INVOICE GENERATION - FIXED
+// INVOICE GENERATION - COMPLETE FIX
 // ════════════════════════════════════════════════════════════════════════════
 
 function bindInvoiceModal() {
@@ -486,6 +564,7 @@ function bindInvoiceModal() {
   }
 
   openBtn.addEventListener("click", () => {
+    console.log("📋 Opening invoice...");
     generateInvoice();
     modal.classList.add("active");
     modal.style.display = "flex";
@@ -506,11 +585,19 @@ function bindInvoiceModal() {
 
 function generateInvoice() {
   if (!activeBuildPayload) {
-    alert("No build generated yet");
+    alert("❌ No build generated yet");
+    console.error("❌ No build payload for invoice");
     return;
   }
 
+  console.log("📝 Generating invoice...");
+
   const container = document.getElementById("invoiceItemsContainer");
+  if (!container) {
+    console.error("❌ Invoice container not found");
+    return;
+  }
+
   const symbol = REGIONAL_CURRENCY_EXCHANGE[selectedCurrency].symbol;
   const today = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   const invoiceId = `FRG-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -519,14 +606,17 @@ function generateInvoice() {
   let itemsHTML = "";
 
   // Components
-  if (activeBuildPayload.components) {
+  if (activeBuildPayload.components && Array.isArray(activeBuildPayload.components)) {
     activeBuildPayload.components.forEach(part => {
       const price = Number(part.price || 0);
       totalPrice += price;
       itemsHTML += `
         <div class="receipt-row">
-          <span class="receipt-cat">${part.category}</span>
-          <span class="receipt-item">${part.name}<br><small>${part.spec || ""}</small></span>
+          <span class="receipt-cat">${part.category || "ITEM"}</span>
+          <span class="receipt-item">
+            <strong>${part.name}</strong>
+            <br><small>${part.spec || ""}</small>
+          </span>
           <span class="receipt-price">${symbol} ${price.toLocaleString()}</span>
         </div>
       `;
@@ -534,7 +624,7 @@ function generateInvoice() {
   }
 
   // Peripherals
-  if (activeBuildPayload.peripherals) {
+  if (activeBuildPayload.peripherals && typeof activeBuildPayload.peripherals === 'object') {
     Object.entries(activeBuildPayload.peripherals).forEach(([key, item]) => {
       if (item && item.price) {
         const price = Number(item.price);
@@ -542,7 +632,10 @@ function generateInvoice() {
         itemsHTML += `
           <div class="receipt-row">
             <span class="receipt-cat">PERIPHERAL</span>
-            <span class="receipt-item">${item.name}<br><small>${item.spec || ""}</small></span>
+            <span class="receipt-item">
+              <strong>${item.name}</strong>
+              <br><small>${item.spec || ""}</small>
+            </span>
             <span class="receipt-price">${symbol} ${price.toLocaleString()}</span>
           </div>
         `;
@@ -552,10 +645,10 @@ function generateInvoice() {
 
   // Gaming performance
   let gamingHTML = "";
-  if (activeBuildPayload.gamingPerformance) {
+  if (activeBuildPayload.gamingPerformance && Array.isArray(activeBuildPayload.gamingPerformance)) {
     gamingHTML = `
-      <div class="receipt-perf-block">
-        <div class="receipt-section-title">🎮 GAMING PERFORMANCE</div>
+      <div class="receipt-perf-block" style="margin-top: 16px;">
+        <div class="receipt-section-title">🎮 GAMING PERFORMANCE ESTIMATES</div>
         ${activeBuildPayload.gamingPerformance.map(game => `
           <div class="receipt-perf-row">
             <span class="receipt-game">${game.title}</span>
@@ -572,42 +665,63 @@ function generateInvoice() {
   container.innerHTML = `
     <div class="receipt-header">
       <h2>FORGE DIGITAL RECEIPT</h2>
-      <p class="receipt-timestamp">Date: ${today}</p>
-      <p class="receipt-timestamp">Invoice: ${invoiceId}</p>
-      <p class="receipt-timestamp">Customer: ${activeBuildPayload.customerName || "Guest"}</p>
-      <div class="bar-separator">═══════════════════════════</div>
+      <p class="receipt-timestamp">📅 Date: ${today}</p>
+      <p class="receipt-timestamp">📑 Invoice: ${invoiceId}</p>
+      <p class="receipt-timestamp">👤 Customer: ${activeBuildPayload.customerName || "Guest"}</p>
+      <div class="bar-separator">═══════════════════════════════════</div>
     </div>
 
     <div class="receipt-body">
-      <div style="margin-bottom: 16px;">
-        <strong>📋 BUILD SUMMARY:</strong>
-        <p style="font-size: 12px; color: #7090b0; margin-top: 4px;">${activeBuildPayload.summary}</p>
+      <div style="margin-bottom: 20px; background: rgba(0,240,255,.05); border-left: 3px solid var(--accent); padding: 12px; border-radius: 4px;">
+        <strong style="color: var(--accent);">📋 BUILD SUMMARY:</strong>
+        <p style="font-size: 12px; color: var(--text2); margin-top: 8px; line-height: 1.5;">
+          ${activeBuildPayload.summary || "Optimized PC build configuration"}
+        </p>
       </div>
 
-      <div style="border-top: 1px solid #1a2f50; padding-top: 12px; margin-bottom: 16px;">
+      <div style="border-top: 1px solid var(--border); padding-top: 16px; margin-bottom: 20px;">
+        <h3 style="font-size: 12px; color: var(--accent); font-family: var(--font-display); letter-spacing: 2px; margin-bottom: 12px; text-transform: uppercase;">COMPONENTS</h3>
         ${itemsHTML}
       </div>
 
-      <div class="total-summary-block" style="border-top: 1px solid #1a2f50; padding-top: 12px;">
-        <div class="summary-line"><span>SUBTOTAL:</span><span>${symbol} ${totalPrice.toLocaleString()}</span></div>
-        <div class="summary-line"><span>TAX (17%):</span><span>${symbol} ${tax.toLocaleString()}</span></div>
-        <div class="summary-line grand-total-line"><span>GRAND TOTAL:</span><span>${symbol} ${grandTotal.toLocaleString()}</span></div>
+      <div class="total-summary-block" style="border-top: 2px solid var(--border); padding-top: 16px; margin-top: 16px;">
+        <div class="summary-line">
+          <span>HARDWARE SUBTOTAL:</span>
+          <span style="font-weight: 700;">${symbol} ${totalPrice.toLocaleString()}</span>
+        </div>
+        <div class="summary-line">
+          <span>TAX (17%):</span>
+          <span style="font-weight: 700;">${symbol} ${tax.toLocaleString()}</span>
+        </div>
+        <div class="summary-line grand-total-line" style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;">
+          <span style="font-size: 14px;">GRAND TOTAL:</span>
+          <span style="font-size: 16px; font-weight: 900; color: var(--accent);">${symbol} ${grandTotal.toLocaleString()}</span>
+        </div>
       </div>
 
       ${gamingHTML}
 
-      <div style="margin-top: 20px; padding-top: 12px; border-top: 1px solid #1a2f50; text-align: center; font-size: 10px; color: #7090b0;">
-        FORGE AI PC BUILDER | Recommendations for informational purposes only<br>
-        Verify all prices and availability before purchasing
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); text-align: center; font-size: 10px; color: var(--text2); line-height: 1.6;">
+        <strong style="display: block; margin-bottom: 8px; font-family: var(--font-display); letter-spacing: 1px;">FORGE AI PC BUILDER</strong>
+        Recommendations for informational purposes only<br>
+        Verify all prices and availability before purchasing<br>
+        © 2025 FORGE - All rights reserved
       </div>
     </div>
   `;
 
-  // Update modal totals
-  document.getElementById("invoiceHardwareTotal").textContent = `${symbol} ${totalPrice.toLocaleString()}`;
-  document.getElementById("invoiceAssemblyFee").textContent = `${symbol} ${tax.toLocaleString()}`;
-  document.getElementById("invoiceGrandTotal").textContent = `${symbol} ${grandTotal.toLocaleString()}`;
-  document.getElementById("invoiceTimestamp").textContent = `DATE: ${today}`;
+  // Update modal header totals
+  const hardwareEl = document.getElementById("invoiceHardwareTotal");
+  const taxEl = document.getElementById("invoiceAssemblyFee");
+  const grandTotalEl = document.getElementById("invoiceGrandTotal");
+  const timestampEl = document.getElementById("invoiceTimestamp");
+
+  if (hardwareEl) hardwareEl.textContent = `${symbol} ${totalPrice.toLocaleString()}`;
+  if (taxEl) taxEl.textContent = `${symbol} ${tax.toLocaleString()}`;
+  if (grandTotalEl) grandTotalEl.textContent = `${symbol} ${grandTotal.toLocaleString()}`;
+  if (timestampEl) timestampEl.textContent = `DATE: ${today} | INVOICE: ${invoiceId}`;
+
+  console.log("✅ Invoice generated:", { totalPrice, tax, grandTotal });
 }
 
 // ════════════════════════════════════════════════════════════════════════════
@@ -617,6 +731,7 @@ function generateInvoice() {
 function bindNavigationButtons() {
   const backBtn = document.getElementById("backToConfigBtn");
   backBtn?.addEventListener("click", () => {
+    console.log("🔄 Returning to config view");
     switchView("onboardingView");
   });
 }
@@ -640,7 +755,7 @@ function switchView(viewId) {
 function initializeBackgroundAnimation() {
   const canvas = document.getElementById("ambientHardwareVisualizerMatrix");
   if (!canvas) {
-    console.warn("⚠️ Canvas not found for background animation");
+    console.warn("⚠️ Canvas not found");
     return;
   }
 
@@ -689,7 +804,6 @@ function initializeBackgroundAnimation() {
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Grid
     ctx.strokeStyle = "rgba(0, 240, 255, 0.015)";
     ctx.lineWidth = 0.5;
     const gridSize = 40;
