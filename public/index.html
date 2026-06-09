@@ -9,6 +9,7 @@
 <meta property="og:description" content="AI-powered PC build recommendations for Pakistani market — Gaming & Workstation">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#00f0ff">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='44' height='44' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='44' height='44' rx='8' fill='%2304080f'/%3E%3Crect x='10' y='10' width='24' height='24' rx='3' fill='%2304080f' stroke='%2300f0ff' stroke-width='1.2'/%3E%3Crect x='15' y='15' width='14' height='14' rx='2' fill='%230d1526' stroke='%2300f0ff' stroke-width='0.8'/%3E%3Cline x1='22' y1='15' x2='22' y2='29' stroke='%2300f0ff' stroke-width='0.5' opacity='0.5'/%3E%3Cline x1='15' y1='22' x2='29' y2='22' stroke='%2300f0ff' stroke-width='0.5' opacity='0.5'/%3E%3Ccircle cx='15' cy='15' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='29' cy='15' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='15' cy='29' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='29' cy='29' r='1.2' fill='%237b2fff'/%3E%3Cline x1='17' y1='10' x2='17' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='22' y1='10' x2='22' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='27' y1='10' x2='27' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='17' y1='34' x2='17' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='22' y1='34' x2='22' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='27' y1='34' x2='27' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='17' x2='6' y2='17' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='22' x2='6' y2='22' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='27' x2='6' y2='27' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='17' x2='38' y2='17' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='22' x2='38' y2='22' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='27' x2='38' y2='27' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cpath d='M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z' fill='%2300f0ff'/%3E%3C/svg%3E">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="X-Frame-Options" content="DENY">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
@@ -212,17 +213,158 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 
 .error-banner{background:rgba(255,60,90,.1);border:1px solid rgba(255,60,90,.3);border-radius:8px;padding:14px 16px;font-family:var(--font-mono);font-size:12px;color:var(--danger);margin-bottom:16px;line-height:1.5}
 
+/* ─── TERMS GATE ────────────────────────────────────────────────────────── */
+#termsGate{display:none;position:fixed;inset:0;z-index:9999;background:rgba(4,8,15,.96);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+.terms-gate-box{background:var(--bg2);border:1px solid var(--accent);border-radius:16px;padding:40px 36px;max-width:520px;width:100%;text-align:center;box-shadow:0 0 60px rgba(0,240,255,.08)}
+.terms-gate-logo{font-family:var(--font-display);font-size:28px;color:var(--accent);letter-spacing:4px;margin-bottom:8px;text-shadow:0 0 20px rgba(0,240,255,.4)}
+.terms-gate-subtitle{font-size:13px;color:var(--text2);font-family:var(--font-mono);margin-bottom:28px;letter-spacing:1px}
+.terms-gate-box h3{font-family:var(--font-display);font-size:13px;color:var(--text);letter-spacing:2px;margin-bottom:20px}
+.consent-row{display:flex;align-items:flex-start;gap:12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px;text-align:left;cursor:pointer;transition:border-color .2s}
+.consent-row:hover{border-color:var(--accent)}
+.consent-row input[type="checkbox"]{width:16px;height:16px;accent-color:var(--accent);margin-top:2px;flex-shrink:0;cursor:pointer}
+.consent-text{font-size:13px;color:var(--text);line-height:1.5}
+.consent-text a{color:var(--accent);text-decoration:none}
+.consent-text a:hover{text-decoration:underline}
+#consentError{font-family:var(--font-mono);font-size:11px;color:var(--danger);min-height:18px;margin-bottom:10px}
+.terms-accept-btn{width:100%;padding:15px;background:linear-gradient(135deg,rgba(0,240,255,.18),rgba(123,47,255,.18));border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .3s}
+.terms-accept-btn:hover{background:linear-gradient(135deg,rgba(0,240,255,.28),rgba(123,47,255,.28));box-shadow:0 0 24px rgba(0,240,255,.2)}
+
+/* ─── GAMING PERFORMANCE TABLE ──────────────────────────────────────────── */
+.gaming-perf-section{background:var(--panel);border:1px solid rgba(123,47,255,.3);border-radius:12px;padding:24px;margin-top:32px}
+.perf-disclaimer{font-family:var(--font-mono);font-size:10px;color:var(--text2);background:rgba(255,183,0,.06);border:1px solid rgba(255,183,0,.2);border-radius:6px;padding:8px 12px;margin-bottom:18px;line-height:1.5}
+.perf-table{display:flex;flex-direction:column;gap:8px}
+.perf-row{display:grid;grid-template-columns:180px 80px 1fr 1fr;gap:12px;align-items:center;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:10px 14px;transition:border-color .2s}
+.perf-row:hover{border-color:rgba(123,47,255,.4)}
+@media(max-width:640px){.perf-row{grid-template-columns:1fr 1fr;gap:8px;padding:8px 12px}}
+.perf-game{font-size:12px;color:var(--text);font-weight:600}
+.perf-preset{font-family:var(--font-mono);font-size:10px;color:var(--accent2);background:rgba(123,47,255,.15);border-radius:4px;padding:3px 7px;text-align:center;white-space:nowrap}
+.perf-fps,.perf-low{display:flex;align-items:center;gap:5px}
+.fps-label{font-family:var(--font-mono);font-size:9px;color:var(--text2);letter-spacing:1px;min-width:32px}
+.fps-value{font-family:var(--font-mono);font-size:14px;color:var(--accent);font-weight:700}
+.fps-value.fps-low{color:var(--gold)}
+.fps-unit{font-family:var(--font-mono);font-size:9px;color:var(--text2)}
+
+/* ─── ANIMATED PC VISUAL ────────────────────────────────────────────────── */
+.pc-visual-container{display:flex;justify-content:center;margin:32px 0;pointer-events:none}
+.pc-rig-svg{filter:drop-shadow(0 0 18px rgba(0,240,255,.25))}
+@keyframes pcGlow{0%,100%{filter:drop-shadow(0 0 12px rgba(0,240,255,.3))}50%{filter:drop-shadow(0 0 28px rgba(0,240,255,.6))}}
+@keyframes pcFan{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes pcPulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes ledChase{0%,100%{opacity:.2}50%{opacity:.9}}
+.pc-fan-group{transform-origin:50% 50%;animation:pcFan 2s linear infinite}
+.pc-fan-group2{transform-origin:50% 50%;animation:pcFan 2.5s linear infinite reverse}
+.pc-led{animation:ledChase 1.2s ease-in-out infinite}
+.pc-led:nth-child(2){animation-delay:.2s}
+.pc-led:nth-child(3){animation-delay:.4s}
+.pc-led:nth-child(4){animation-delay:.6s}
+.pc-rig-svg{animation:pcGlow 3s ease-in-out infinite}
+
+/* ─── INVOICE FIXES ─────────────────────────────────────────────────────── */
+.receipt-box{display:flex;flex-direction:column}
+.receipt-body{flex:1;overflow-y:auto}
+.receipt-footer{flex-shrink:0}
+.receipt-perf-block{margin-top:4px}
+.receipt-section-title{font-family:var(--font-display);font-size:10px;color:var(--accent2);letter-spacing:2px;margin:10px 0 8px;padding:4px 0}
+.receipt-perf-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border2);font-size:11px}
+.receipt-game{color:var(--text);font-weight:600;min-width:100px;flex-shrink:0}
+.receipt-game-fps{font-family:var(--font-mono);font-size:10px;color:var(--text2);text-align:right}
+.receipt-perf-note{font-family:var(--font-mono);font-size:9px;color:var(--text2);margin-top:8px;line-height:1.5;font-style:italic}
+.total-summary-block{padding:4px 0}
+.receipt-empty{font-family:var(--font-mono);font-size:12px;color:var(--text2);text-align:center;padding:24px 0;line-height:1.6}
+/* Print: clean invoice, no background colors */
 @media print{
-  body{background:white;color:black}
-  .app-header,.forge-form,.results-actions-bar,.build-summary-panel,.parts-matrix-column{display:none}
-  .modal-overlay{display:flex!important;position:static;background:none}
-  .modal-frame{border:1px solid #ccc;border-radius:0;box-shadow:none}
-  .receipt-header h2,.receipt-cat,.receipt-price,.grand-total-line{color:#000}
-  .close-modal-btn,.print-receipt-btn{display:none}
+  body{background:#fff;color:#000}
+  *{color:#000!important;background:transparent!important;border-color:#ccc!important;box-shadow:none!important}
+  #termsGate,#cookieBanner,.app-header,.forge-form,.results-actions-bar,
+  .build-summary-panel,.parts-matrix-column,
+  canvas,#cursorGlow,.grid-overlay,footer{display:none!important}
+  .modal-overlay{display:flex!important;position:static!important;background:none!important;padding:0!important}
+  .modal-frame{border:1px solid #ccc!important;border-radius:0!important;max-height:none!important;overflow:visible!important}
+  .close-modal-btn,.print-receipt-btn{display:none!important}
+  .receipt-row,.receipt-perf-row{break-inside:avoid}
 }
 </style>
 </head>
 <body>
+
+<!-- ── TERMS & PRIVACY GATE ────────────────────────────────────────────────── -->
+<div id="termsGate" style="display:flex">
+  <div class="terms-gate-box">
+    <div class="terms-gate-logo">FORGE<span style="color:#7b2fff">.</span></div>
+    <div class="terms-gate-subtitle">AI PC BUILDER — PAKISTAN MARKET</div>
+    <!-- Animated PC visual -->
+    <div class="pc-visual-container">
+      <svg class="pc-rig-svg" width="120" height="100" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Case body -->
+        <rect x="10" y="10" width="55" height="80" rx="4" fill="#080f1a" stroke="#00f0ff" stroke-width="1.2"/>
+        <!-- Front panel -->
+        <rect x="14" y="14" width="47" height="72" rx="3" fill="#04080f" stroke="#1a2f50" stroke-width="0.8"/>
+        <!-- GPU slot glow -->
+        <rect x="18" y="45" width="39" height="12" rx="2" fill="#0d1526" stroke="#7b2fff" stroke-width="0.8" opacity="0.8"/>
+        <rect x="19" y="46" width="22" height="10" rx="1.5" fill="#0a1220"/>
+        <!-- GPU fan -->
+        <g class="pc-fan-group" style="transform-origin:28px 51px">
+          <circle cx="28" cy="51" r="4.5" fill="none" stroke="#00f0ff" stroke-width="0.7" opacity="0.6"/>
+          <line x1="28" y1="46.5" x2="28" y2="55.5" stroke="#00f0ff" stroke-width="0.8" opacity="0.6"/>
+          <line x1="23.5" y1="51" x2="32.5" y2="51" stroke="#00f0ff" stroke-width="0.8" opacity="0.6"/>
+          <line x1="25.3" y1="47.8" x2="30.7" y2="54.2" stroke="#00f0ff" stroke-width="0.8" opacity="0.4"/>
+          <line x1="30.7" y1="47.8" x2="25.3" y2="54.2" stroke="#00f0ff" stroke-width="0.8" opacity="0.4"/>
+        </g>
+        <!-- CPU fan (top) -->
+        <g class="pc-fan-group2" style="transform-origin:34px 28px">
+          <circle cx="34" cy="28" r="7" fill="#080f1a" stroke="#00f0ff" stroke-width="0.8" opacity="0.7"/>
+          <circle cx="34" cy="28" r="2" fill="#0d1526" stroke="#7b2fff" stroke-width="0.5"/>
+          <line x1="34" y1="21" x2="34" y2="35" stroke="#00f0ff" stroke-width="0.7" opacity="0.5"/>
+          <line x1="27" y1="28" x2="41" y2="28" stroke="#00f0ff" stroke-width="0.7" opacity="0.5"/>
+          <line x1="29" y1="23" x2="39" y2="33" stroke="#00f0ff" stroke-width="0.7" opacity="0.3"/>
+          <line x1="39" y1="23" x2="29" y2="33" stroke="#00f0ff" stroke-width="0.7" opacity="0.3"/>
+        </g>
+        <!-- RGB LEDs strip -->
+        <rect x="14" y="62" width="4" height="20" rx="2" fill="#080f1a" stroke="#1a2f50" stroke-width="0.5"/>
+        <rect class="pc-led" x="15" y="63" width="2" height="3" rx="0.5" fill="#00f0ff"/>
+        <rect class="pc-led" x="15" y="68" width="2" height="3" rx="0.5" fill="#7b2fff"/>
+        <rect class="pc-led" x="15" y="73" width="2" height="3" rx="0.5" fill="#00f0ff"/>
+        <rect class="pc-led" x="15" y="78" width="2" height="3" rx="0.5" fill="#7b2fff"/>
+        <!-- Storage LED -->
+        <circle cx="52" cy="20" r="1.5" fill="#00f0ff" class="pc-led"/>
+        <!-- Power button -->
+        <circle cx="52" cy="26" r="2.5" fill="#0d1526" stroke="#00f0ff" stroke-width="0.8"/>
+        <!-- Monitor -->
+        <rect x="72" y="22" width="44" height="30" rx="3" fill="#080f1a" stroke="#00f0ff" stroke-width="1.1"/>
+        <rect x="75" y="25" width="38" height="24" rx="2" fill="#04080f"/>
+        <!-- Screen glow lines -->
+        <line x1="78" y1="30" x2="110" y2="30" stroke="#00f0ff" stroke-width="0.6" opacity="0.3"/>
+        <line x1="78" y1="34" x2="100" y2="34" stroke="#7b2fff" stroke-width="0.6" opacity="0.4"/>
+        <line x1="78" y1="38" x2="105" y2="38" stroke="#00f0ff" stroke-width="0.6" opacity="0.2"/>
+        <line x1="78" y1="42" x2="95" y2="42" stroke="#7b2fff" stroke-width="0.6" opacity="0.3"/>
+        <!-- FORGE text on screen -->
+        <text x="80" y="29" font-size="4" fill="#00f0ff" font-family="monospace" opacity="0.9">FORGE AI</text>
+        <!-- Monitor stand -->
+        <rect x="90" y="52" width="4" height="8" rx="1" fill="#080f1a" stroke="#1a2f50" stroke-width="0.6"/>
+        <rect x="84" y="59" width="16" height="2.5" rx="1" fill="#080f1a" stroke="#1a2f50" stroke-width="0.6"/>
+        <!-- Keyboard outline -->
+        <rect x="72" y="74" width="44" height="12" rx="2" fill="#080f1a" stroke="#1a2f50" stroke-width="0.8"/>
+        <rect x="74" y="76" width="40" height="8" rx="1.5" fill="#04080f"/>
+        <rect x="75" y="77" width="5" height="2" rx="0.5" fill="#1a2f50" opacity="0.8"/>
+        <rect x="82" y="77" width="5" height="2" rx="0.5" fill="#1a2f50" opacity="0.8"/>
+        <rect x="89" y="77" width="5" height="2" rx="0.5" fill="#1a2f50" opacity="0.8"/>
+        <rect x="96" y="77" width="5" height="2" rx="0.5" fill="#1a2f50" opacity="0.8"/>
+        <rect x="76" y="81" width="14" height="2" rx="0.5" fill="#1a2f50" opacity="0.8"/>
+      </svg>
+    </div>
+    <h3>TO CONTINUE, PLEASE ACCEPT</h3>
+    <label class="consent-row">
+      <input type="checkbox" id="consentPrivacy">
+      <span class="consent-text">I have read and agree to the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>. I understand how my data is used.</span>
+    </label>
+    <label class="consent-row">
+      <input type="checkbox" id="consentTerms">
+      <span class="consent-text">I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>. I understand these are AI-generated recommendations for informational purposes only.</span>
+    </label>
+    <p id="consentError"></p>
+    <button class="terms-accept-btn" id="acceptTermsBtn">⚡ ACCEPT &amp; ENTER FORGE</button>
+  </div>
+</div>
 
 <div class="cursor-glow" id="cursorGlow"></div>
 <div class="grid-overlay"></div>
@@ -232,11 +374,50 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 
   <header class="app-header">
     <div class="logo-area">
-      <span class="logo-icon">⚡</span>
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="FORGE logo icon" style="flex-shrink:0">
+        <!-- Outer ring -->
+        <circle cx="22" cy="22" r="20" stroke="#00f0ff" stroke-width="1" fill="none" opacity="0.4"/>
+        <!-- CPU chip body -->
+        <rect x="10" y="10" width="24" height="24" rx="3" fill="#04080f" stroke="#00f0ff" stroke-width="1.2"/>
+        <!-- Inner core -->
+        <rect x="15" y="15" width="14" height="14" rx="2" fill="#0d1526" stroke="#00f0ff" stroke-width="0.8"/>
+        <!-- Core grid lines -->
+        <line x1="22" y1="15" x2="22" y2="29" stroke="#00f0ff" stroke-width="0.5" opacity="0.5"/>
+        <line x1="15" y1="22" x2="29" y2="22" stroke="#00f0ff" stroke-width="0.5" opacity="0.5"/>
+        <!-- Corner accent dots -->
+        <circle cx="15" cy="15" r="1.2" fill="#7b2fff"/>
+        <circle cx="29" cy="15" r="1.2" fill="#7b2fff"/>
+        <circle cx="15" cy="29" r="1.2" fill="#7b2fff"/>
+        <circle cx="29" cy="29" r="1.2" fill="#7b2fff"/>
+        <!-- Pins top -->
+        <line x1="17" y1="10" x2="17" y2="6" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="22" y1="10" x2="22" y2="6" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="27" y1="10" x2="27" y2="6" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Pins bottom -->
+        <line x1="17" y1="34" x2="17" y2="38" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="22" y1="34" x2="22" y2="38" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="27" y1="34" x2="27" y2="38" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Pins left -->
+        <line x1="10" y1="17" x2="6" y2="17" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="10" y1="22" x2="6" y2="22" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="10" y1="27" x2="6" y2="27" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Pins right -->
+        <line x1="34" y1="17" x2="38" y2="17" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="34" y1="22" x2="38" y2="22" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="34" y1="27" x2="38" y2="27" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Lightning bolt center -->
+        <path d="M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z" fill="#00f0ff" filter="url(#glow)"/>
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+      </svg>
       <h1 class="logo-text">FORGE<span class="accent-dot">.</span></h1>
     </div>
     <div class="header-right">
-      <select class="currency-select" id="currencySelect"></select>
+      <div id="currencySelectorWrapper"></div>
       <div class="system-status" style="display:flex;align-items:center">
         <span class="status-dot pulsing"></span>
         <span class="status-text">SYSTEMS ONLINE</span>
@@ -364,7 +545,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 
         <div class="parts-matrix-column">
           <div class="column-title-ribbon">
-            <h3>HARDWARE MATRIX — SELECT YOUR COMPONENTS</h3>
+            <h3 id="buildRibbonTitle">HARDWARE MATRIX — SELECT YOUR COMPONENTS</h3>
             <span class="ribbon-hint">Click to select · Click again to deselect</span>
           </div>
           <div class="components-grid" id="partsContainer"></div>
@@ -538,7 +719,7 @@ async function handleFormSubmit(e){
 
   let usedAI=false;
   try{
-    STATE.blueprint=await fetchBuildFromGemini(budgetPKR,purpose);
+    STATE.blueprint=await fetchBuildFromGroq(budgetPKR,purpose);
     usedAI=true;
   }catch(err){
     console.warn("AI error — using fallback:",err.message);
@@ -558,13 +739,13 @@ async function handleFormSubmit(e){
     const txt=document.getElementById("aiSourceText");
     if(ind&&txt){
       ind.style.display="flex";
-      if(usedAI){
-        txt.textContent="✓ Fetching LIVE data via Gemini AI + Google Search";
+      if(usedAI){txt.textContent="✓ Build generated via Groq AI (Llama 3.3 70B)";
+        
         ind.style.borderColor="rgba(0,230,118,.4)";
         txt.style.color="#00e676";
       }else{
-        ind.innerHTML=`<span style="color:#ffb700;">⚠ Using cached data — Gemini not connected</span>
-          <button onclick="location.reload()" style="margin-left:12px;background:transparent;border:1px solid #ffb700;color:#ffb700;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font-mono);">↺ Retry</button>`;
+       ind.innerHTML=`<span style="color:#ffb700;">⚠ Using cached data — Groq not connected</span>
+  <button onclick="location.reload()" style="margin-left:12px;background:transparent;border:1px solid #ffb700;color:#ffb700;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font-mono);">↺ Retry</button>`;
       }
     }
     if(btn)btn.disabled=false;
@@ -584,59 +765,46 @@ function checkRateLimit(){
   RATE_LIMIT.timestamps.push(now);
 }
 
-// ── Gemini API CALL (FIXED v4.2) ─────────────────────────────────────────────
-async function fetchBuildFromGemini(budgetPKR,purpose){
-  // IMPORTANT: Replace with your real key from https://aistudio.google.com/app/apikey
-  // Gemini API keys always start with "AIza" (39 chars total).
-  const API_KEY="AIzaSyYOUR_REAL_KEY_HERE";
-  const MODEL="gemini-2.0-flash";
-  const ENDPOINT=`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
+// ── GROQ API CALL ─────────────────────────────────────────────────────────────
+async function fetchBuildFromGroq(budgetPKR, purpose) {
+  console.log("[FORGE] Calling Groq API...", { budgetPKR, purpose });
 
-  // Validate key format before wasting an API call
-  if(!API_KEY||!API_KEY.startsWith("AIza")||API_KEY.includes("YOUR_REAL_KEY")){
-    throw new Error("API_KEY_INVALID: Please set a valid Gemini API key (must start with AIza). Get one at https://aistudio.google.com/app/apikey");
-  }
-
-  console.log("[FORGE] Calling Gemini API...",{budgetPKR,purpose,model:MODEL});
-
-  const tier=getBudgetTier(budgetPKR);
-  const tierGuide={
-    entry:"Entry-level: very basic components, skip expensive peripherals",
-    budget:"Budget: solid mid-entry AMD/Intel CPUs, GTX 1660/RX 6600 class GPU",
+  const tier = getBudgetTier(budgetPKR);
+  const tierGuide = {
+    entry:      "Entry-level: very basic components, skip expensive peripherals",
+    budget:     "Budget: solid mid-entry AMD/Intel CPUs, GTX 1660/RX 6600 class GPU",
     "mid-range":"Mid-range: RTX 3060-3080/RX 6700XT, Ryzen 5 5600X / i5-12600K",
-    "high-end":"High-end: RTX 3080Ti/4070-4080, Ryzen 7 5800X3D / i7-13700K",
-    enthusiast:"Enthusiast: RTX 4080/5070Ti, Ryzen 9 7900X / i9-13900K",
-    flagship:"Flagship: RTX 5090/4090, Ryzen 9 9950X / Threadripper"
+    "high-end": "High-end: RTX 3080Ti/4070-4080, Ryzen 7 5800X3D / i7-13700K",
+    enthusiast: "Enthusiast: RTX 4080/5070Ti, Ryzen 9 7900X / i9-13900K",
+    flagship:   "Flagship: RTX 5090/4090, Ryzen 9 9950X / Threadripper"
   };
 
-  const alloc=purpose==="gaming"
-    ?"GPU 35-45%, CPU 20-25%, Motherboard 8-12%, RAM 5-10%, Storage 5-8%, PSU 5-8%, Case 2-4%, Monitor+Peripherals 10-15%"
-    :"CPU 30-35%, GPU 15-20%, RAM 10-15%, Motherboard 10-12%, Storage 8-12%, PSU 5-8%, Case 2-4%, rest for peripherals";
+  const alloc = purpose === "gaming"
+    ? "GPU 35-45%, CPU 20-25%, Motherboard 8-12%, RAM 5-10%, Storage 5-8%, PSU 5-8%, Case 2-4%, Monitor+Peripherals 10-15%"
+    : "CPU 30-35%, GPU 15-20%, RAM 10-15%, Motherboard 10-12%, Storage 8-12%, PSU 5-8%, Case 2-4%, rest for peripherals";
 
-  const prompt=`You are FORGE, an expert PC hardware analyst for the Pakistani market.
+  const prompt = `You are FORGE, an expert PC hardware analyst for the Pakistani market.
 Generate a complete PC build for budget: ${budgetPKR.toLocaleString()} PKR
 Use case: ${purpose}
 Budget tier: ${tier} — ${tierGuide[tier]}
 Budget allocation: ${alloc}
 
-Search the web for current 2024-2025 Pakistani market prices from Daraz.pk, OLX Pakistan, itech.com.pk.
-
 RULES:
 1. Return ONLY a valid JSON object. No explanation text, no markdown fences.
 2. Exactly 3 options per category: recommended (New), budget pick (Used/cheaper), best value
-3. All prices in PKR based on real current Pakistani prices
-4. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR*0.93).toLocaleString()} PKR
+3. All prices in PKR based on real current Pakistani market prices (Hafeez Centre, Daraz, itech.com.pk)
+4. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR * 0.93).toLocaleString()} PKR
 5. Include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals
 6. Scale components dramatically with budget tier
 7. For entry budgets under 80k PKR: skip expensive monitors/peripherals, maximize core hardware
 
-Return this exact JSON structure:
+Return this EXACT JSON structure only (no markdown, no text before or after):
 {
   "tier": "${tier}",
   "categories": [
     {
       "cat": "CPU",
-      "icon": "\u{1F532}",
+      "icon": "🔲",
       "options": [
         {"name": "Intel Core i5-13600K", "price": 58000, "condition": "New", "badge": "RECOMMENDED", "note": "Best gaming IPC"},
         {"name": "AMD Ryzen 5 5600X", "price": 28000, "condition": "Used", "badge": "BUDGET PICK", "note": "Great value"},
@@ -645,75 +813,55 @@ Return this exact JSON structure:
     }
   ]
 }
-Icons: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Case=📦, Monitor=🖥️, Peripherals=🎧`;
+Icons to use: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Case=📦, Monitor=🖥️, Peripherals=🎧`;
 
-  const requestBody={
-    contents:[{parts:[{text:prompt}]}],
-    generationConfig:{
-      // NOTE: responseMimeType INTENTIONALLY OMITTED — it is incompatible with googleSearch grounding.
-      // Including both causes a 400 INVALID_ARGUMENT error from the Gemini API.
-      temperature:0.3,
-      topP:0.85,
-      maxOutputTokens:4096
-    },
-    systemInstruction:{
-      parts:[{text:"You are FORGE, an elite AI PC hardware analyst. Always return a raw JSON object only. No markdown fences, no preamble, no explanation — just the JSON object."}]
-    },
-    tools:[{googleSearch:{}}]
-  };
-
-  console.log("[FORGE] Request prepared, sending fetch...");
-
-  const response=await fetch(ENDPOINT,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify(requestBody)
+  const response = await fetch("/api/gemini", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "custom",
+      prompt: prompt,
+      budgetPKR,
+      purpose
+    })
   });
 
-  console.log("[FORGE] Response status:",response.status);
+  console.log("[FORGE] Response status:", response.status);
 
-  if(!response.ok){
-    const errText=await response.text().catch(()=>"");
-    console.error("[FORGE] API Error body:",errText);
-    throw new Error(`Gemini API error ${response.status}: ${errText.slice(0,300)}`);
+  if (!response.ok) {
+    const errText = await response.text().catch(() => "");
+    console.error("[FORGE] API Error body:", errText);
+    throw new Error(`Groq API error ${response.status}: ${errText.slice(0, 300)}`);
   }
 
-  const data=await response.json();
-  console.log("[FORGE] Raw response received, extracting text...");
+  const data = await response.json();
+  console.log("[FORGE] Raw response received, extracting...");
 
-  let rawText="";
-  const parts=data?.candidates?.[0]?.content?.parts??[];
-  for(const p of parts){if(p.text){rawText=p.text;break;}}
+  // Handle raw flag (JSON parse failed on server side)
+  let rawText = typeof data.result === "string" ? data.result : JSON.stringify(data.result);
 
-  if(!rawText){
-    console.error("[FORGE] Empty response. Full data:",JSON.stringify(data).slice(0,500));
-    throw new Error("Gemini returned empty response");
-  }
-
-  console.log("[FORGE] Raw text (first 200 chars):",rawText.slice(0,200));
-
-  // Strip markdown fences the model adds when responseMimeType is not set
-  const clean=rawText.trim()
-    .replace(/^```(?:json)?\s*/im,"")
-    .replace(/\s*```\s*$/m,"")
+  // Strip markdown fences if any
+  const clean = rawText.trim()
+    .replace(/^```(?:json)?\s*/im, "")
+    .replace(/\s*```\s*$/m, "")
     .trim();
 
-  const jsonMatch=clean.match(/\{[\s\S]*\}/);
-  if(!jsonMatch)throw new Error("No JSON object found in Gemini response");
+  const jsonMatch = clean.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("No JSON found in Groq response");
 
   let parsed;
-  try{parsed=JSON.parse(jsonMatch[0]);}
-  catch(e){
-    console.error("[FORGE] JSON parse failed. Raw:",clean.slice(0,500));
-    throw new Error("JSON parse failed: "+e.message);
+  try { parsed = JSON.parse(jsonMatch[0]); }
+  catch (e) {
+    console.error("[FORGE] JSON parse failed:", clean.slice(0, 500));
+    throw new Error("JSON parse failed: " + e.message);
   }
 
-  if(!Array.isArray(parsed.categories)||parsed.categories.length===0){
-    throw new Error("Invalid response structure — missing categories array");
+  if (!Array.isArray(parsed.categories) || parsed.categories.length === 0) {
+    throw new Error("Invalid response — missing categories array");
   }
 
-  console.log("[FORGE] ✓ Success! Categories received:",parsed.categories.length);
-  parsed._aiPowered=true;
+  console.log("[FORGE] ✓ Success! Categories:", parsed.categories.length);
+  parsed._aiPowered = true;
   return parsed;
 }
 
