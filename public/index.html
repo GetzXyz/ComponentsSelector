@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FORGE — AI PC Builder</title>
-<meta name="description" content="FORGE AI PC Builder — Groq-powered PC build recommendations optimised for Pakistani market prices. Gaming or workstation builds across all budgets.">
+<meta name="description" content="FORGE AI PC Builder — Get AI-powered PC build recommendations optimized for Pakistani market prices. Gaming or workstation builds across all budgets.">
 <meta property="og:title" content="FORGE AI PC Builder">
-<meta property="og:description" content="AI-powered PC builds for the Pakistani market — Gaming & Workstation">
+<meta property="og:description" content="AI-powered PC build recommendations for Pakistani market — Gaming & Workstation">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#00f0ff">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='44' height='44' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='44' height='44' rx='8' fill='%2304080f'/%3E%3Crect x='10' y='10' width='24' height='24' rx='3' fill='%2304080f' stroke='%2300f0ff' stroke-width='1.2'/%3E%3Crect x='15' y='15' width='14' height='14' rx='2' fill='%230d1526' stroke='%2300f0ff' stroke-width='0.8'/%3E%3Cpath d='M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z' fill='%2300f0ff'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='44' height='44' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='44' height='44' rx='8' fill='%2304080f'/%3E%3Crect x='10' y='10' width='24' height='24' rx='3' fill='%2304080f' stroke='%2300f0ff' stroke-width='1.2'/%3E%3Crect x='15' y='15' width='14' height='14' rx='2' fill='%230d1526' stroke='%2300f0ff' stroke-width='0.8'/%3E%3Cline x1='22' y1='15' x2='22' y2='29' stroke='%2300f0ff' stroke-width='0.5' opacity='0.5'/%3E%3Cline x1='15' y1='22' x2='29' y2='22' stroke='%2300f0ff' stroke-width='0.5' opacity='0.5'/%3E%3Ccircle cx='15' cy='15' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='29' cy='15' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='15' cy='29' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='29' cy='29' r='1.2' fill='%237b2fff'/%3E%3Cline x1='17' y1='10' x2='17' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='22' y1='10' x2='22' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='27' y1='10' x2='27' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='17' y1='34' x2='17' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='22' y1='34' x2='22' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='27' y1='34' x2='27' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='17' x2='6' y2='17' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='22' x2='6' y2='22' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='27' x2='6' y2='27' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='17' x2='38' y2='17' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='22' x2='38' y2='22' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='27' x2='38' y2='27' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cpath d='M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z' fill='%2300f0ff'/%3E%3C/svg%3E">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="X-Frame-Options" content="DENY">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
@@ -40,33 +40,14 @@
 }
 
 body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-height:100vh;overflow-x:hidden}
+
 #particleCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.4;will-change:transform}
 .grid-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(0,240,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
 .cursor-glow{position:fixed;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,240,255,.06) 0%,transparent 70%);pointer-events:none;transform:translate(-50%,-50%);z-index:1;transition:opacity .2s}
+
 .app-container{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 20px 60px}
 
-/* ── TERMS GATE ──────────────────────────────────────────────────────────── */
-.terms-gate{position:fixed;inset:0;z-index:9000;background:rgba(4,8,15,.97);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px}
-.terms-gate.hidden{display:none}
-.tg-box{background:var(--bg2);border:1px solid var(--accent);border-radius:16px;padding:40px 36px;max-width:500px;width:100%;text-align:center;position:relative;overflow:hidden}
-.tg-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),var(--accent2),transparent)}
-.tg-logo{font-family:var(--font-display);font-size:32px;font-weight:900;color:var(--accent);letter-spacing:6px;text-shadow:0 0 30px rgba(0,240,255,.5);margin-bottom:6px}
-.tg-sub{font-family:var(--font-mono);font-size:10px;color:var(--accent2);letter-spacing:3px;margin-bottom:24px}
-.tg-title{font-family:var(--font-display);font-size:14px;color:var(--text);letter-spacing:2px;margin-bottom:10px}
-.tg-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:28px}
-.tg-checks{display:flex;flex-direction:column;gap:12px;margin-bottom:28px;text-align:left}
-.tg-check-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:rgba(0,240,255,.04);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .2s}
-.tg-check-row:has(input:checked){border-color:rgba(0,240,255,.4);background:rgba(0,240,255,.07)}
-.tg-check-row input{width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;margin-top:1px;cursor:pointer}
-.tg-check-row span{font-size:13px;color:var(--text);line-height:1.5}
-.tg-check-row a{color:var(--accent);text-decoration:none}
-.tg-check-row a:hover{text-decoration:underline}
-.tg-enter-btn{width:100%;padding:16px;background:linear-gradient(135deg,rgba(0,240,255,.18),rgba(123,47,255,.18));border:1px solid var(--accent);border-radius:10px;color:var(--accent);font-family:var(--font-display);font-size:13px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
-.tg-enter-btn:not(:disabled):hover{background:linear-gradient(135deg,rgba(0,240,255,.3),rgba(123,47,255,.3));box-shadow:0 0 30px rgba(0,240,255,.25);transform:translateY(-1px)}
-.tg-enter-btn:disabled{opacity:.35;cursor:not-allowed}
-.tg-chip-deco{margin:0 auto 24px;opacity:.6}
-
-/* ── HEADER ──────────────────────────────────────────────────────────────── */
+/* HEADER */
 .app-header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);margin-bottom:40px;gap:16px;flex-wrap:wrap}
 .logo-area{display:flex;align-items:center;gap:10px}
 .logo-icon{font-size:28px}
@@ -77,31 +58,27 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 .status-dot.pulsing{animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,230,118,.4)}50%{box-shadow:0 0 0 6px rgba(0,230,118,0)}}
 .status-text{font-family:var(--font-mono);font-size:11px;color:var(--text2);letter-spacing:1px}
-.currency-select{background:var(--bg3);color:var(--accent);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:var(--font-mono);font-size:13px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300f0ff' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+
+/* CURRENCY SELECTOR */
+.currency-select{background:var(--bg3);color:var(--accent);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:var(--font-mono);font-size:13px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300f0ff' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
 .currency-select:hover{border-color:var(--accent)}
 
-/* ── VIEWS ───────────────────────────────────────────────────────────────── */
+/* VIEWS */
 .view{display:none}
 .view.active{display:block;animation:fadeIn .4s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── CONFIG VIEW ─────────────────────────────────────────────────────────── */
-.welcome-hero{text-align:center;margin-bottom:48px;position:relative}
+/* CONFIG VIEW */
+.welcome-hero{text-align:center;margin-bottom:48px}
 .welcome-hero h2{font-family:var(--font-display);font-size:clamp(22px,4vw,38px);font-weight:900;color:var(--accent);letter-spacing:3px;text-shadow:0 0 30px rgba(0,240,255,.4);margin-bottom:14px}
 .welcome-hero p{color:var(--text2);font-size:16px;max-width:580px;margin:0 auto;line-height:1.6}
-.hero-chip-container{display:flex;justify-content:center;margin-bottom:30px}
-.hero-chip{animation:chipFloat 4s ease-in-out infinite}
-@keyframes chipFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.chip-pin{animation:pinPulse 2s ease-in-out infinite}
-@keyframes pinPulse{0%,100%{opacity:.6}50%{opacity:1}}
-.chip-core{animation:coreGlow 2.5s ease-in-out infinite}
-@keyframes coreGlow{0%,100%{filter:drop-shadow(0 0 4px rgba(0,240,255,.5))}50%{filter:drop-shadow(0 0 12px rgba(0,240,255,.9))}}
 
 .forge-form{max-width:700px;margin:0 auto}
 .form-section{margin-bottom:36px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:28px}
 .section-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
 .sec-num{font-family:var(--font-display);font-size:11px;color:var(--accent2);letter-spacing:2px;background:rgba(123,47,255,.15);padding:4px 8px;border-radius:4px}
 .section-header h3{font-family:var(--font-display);font-size:13px;color:var(--text);letter-spacing:2px}
+
 .budget-input-wrapper{display:flex;align-items:center;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:var(--bg3)}
 .budget-input-wrapper:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,240,255,.1)}
 .currency-indicator{font-family:var(--font-mono);font-size:13px;color:var(--accent);padding:0 14px;background:rgba(0,240,255,.05);border-right:1px solid var(--border);white-space:nowrap;min-width:55px;text-align:center}
@@ -110,6 +87,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 .field-hint{font-size:12px;color:var(--text2);margin-top:8px;font-family:var(--font-mono)}
 .field-error{font-size:12px;color:var(--danger);margin-top:6px;font-family:var(--font-mono);min-height:16px}
 .budget-input-wrapper.error-state{border-color:var(--danger)}
+
 .options-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
 .selectable-card{cursor:pointer;display:block}
 .selectable-card input{display:none}
@@ -119,32 +97,31 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 .card-icon{font-size:26px;margin-bottom:8px}
 .card-content h4{font-family:var(--font-display);font-size:10px;color:var(--accent);letter-spacing:1.5px;margin-bottom:6px}
 .card-content p{font-size:11px;color:var(--text2);line-height:1.4}
+
 .forge-submit-btn{width:100%;padding:18px;background:linear-gradient(135deg,rgba(0,240,255,.15),rgba(123,47,255,.15));border:1px solid var(--accent);border-radius:10px;color:var(--accent);font-family:var(--font-display);font-size:14px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
 .forge-submit-btn:hover:not(:disabled){background:linear-gradient(135deg,rgba(0,240,255,.25),rgba(123,47,255,.25));box-shadow:0 0 30px rgba(0,240,255,.2);transform:translateY(-1px)}
 .forge-submit-btn:disabled{opacity:.5;cursor:not-allowed}
 
-/* ── LOADING VIEW ────────────────────────────────────────────────────────── */
+/* LOADING VIEW */
 .loading-view-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:40px}
-.cyber-spinner-wrap{position:relative;width:80px;height:80px}
-.cyber-spinner{width:80px;height:80px;border:2px solid var(--border);border-top:2px solid var(--accent);border-radius:50%;animation:spin 1s linear infinite;box-shadow:0 0 20px rgba(0,240,255,.2)}
-.cyber-spinner-inner{position:absolute;top:50%;left:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border:1px solid var(--border);border-bottom:1px solid var(--accent2);border-radius:50%;animation:spin 0.7s linear infinite reverse}
+.cyber-spinner{width:70px;height:70px;border:2px solid var(--border);border-top:2px solid var(--accent);border-radius:50%;animation:spin 1s linear infinite;box-shadow:0 0 20px rgba(0,240,255,.2)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .matrix-terminal{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:24px 28px;width:100%;max-width:520px;font-family:var(--font-mono);font-size:13px}
 .terminal-line{color:var(--text2);padding:4px 0;opacity:0;transition:all .3s}
 .terminal-line.active-line{color:var(--accent);opacity:1}
 .terminal-line.processed-line{color:var(--text2);opacity:.6}
-.t-prefix{color:var(--accent2);margin-right:4px}
 
-/* ── RESULTS VIEW ────────────────────────────────────────────────────────── */
+/* RESULTS VIEW */
 .results-actions-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:12px;flex-wrap:wrap}
 .action-secondary-btn{background:transparent;border:1px solid var(--border);color:var(--text2);padding:10px 18px;border-radius:7px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .2s;letter-spacing:1px}
 .action-secondary-btn:hover{border-color:var(--accent);color:var(--accent)}
 .action-primary-btn{background:rgba(123,47,255,.2);border:1px solid var(--accent2);color:var(--accent2);padding:10px 18px;border-radius:7px;font-family:var(--font-mono);font-size:12px;cursor:pointer;transition:all .2s;letter-spacing:1px}
 .action-primary-btn:hover{background:rgba(123,47,255,.35);box-shadow:0 0 15px rgba(123,47,255,.3)}
+
 .results-split-layout{display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start}
 @media(max-width:768px){.results-split-layout{grid-template-columns:1fr}}
 
-/* Build Summary Panel */
+/* BUILD SUMMARY PANEL */
 .build-summary-panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;position:sticky;top:20px}
 .summary-panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .summary-panel-header h3{font-family:var(--font-display);font-size:12px;color:var(--accent);letter-spacing:2px}
@@ -157,6 +134,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 .budget-remaining.over{color:var(--danger)}
 .summary-list{display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;margin-bottom:16px;padding-right:4px}
 .summary-list::-webkit-scrollbar{width:3px}
+.summary-list::-webkit-scrollbar-track{background:transparent}
 .summary-list::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 .summary-empty{font-size:12px;color:var(--text2);text-align:center;padding:20px 0;font-family:var(--font-mono)}
 .summary-item{display:flex;justify-content:space-between;align-items:center;gap:8px;background:var(--bg3);border-radius:6px;padding:8px 10px}
@@ -168,7 +146,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 .summary-total-label{font-family:var(--font-display);font-size:10px;color:var(--text2);letter-spacing:1.5px}
 .summary-total-value{font-family:var(--font-mono);font-size:16px;color:var(--accent);font-weight:700}
 
-/* Parts Matrix */
+/* PARTS MATRIX */
 .parts-matrix-column{}
 .column-title-ribbon{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 20px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .column-title-ribbon h3{font-family:var(--font-display);font-size:11px;color:var(--accent);letter-spacing:2px}
@@ -182,6 +160,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 .cat-selection-status.status-selected{color:var(--success)}
 .cat-options-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:600px){.cat-options-row{grid-template-columns:1fr}}
+
 .option-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
 .option-card:hover{border-color:var(--accent);background:var(--card-hover);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3)}
 .option-card.selected{border-color:var(--success);background:rgba(0,230,118,.06);box-shadow:0 0 16px rgba(0,230,118,.15)}
@@ -202,249 +181,120 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 .option-select-indicator{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;background:rgba(0,230,118,.12);color:var(--success);font-family:var(--font-display);font-size:12px;letter-spacing:2px;opacity:0;transition:opacity .2s;pointer-events:none}
 .option-card.selected .option-select-indicator{opacity:1}
 
-/* ── GAMING PERFORMANCE ──────────────────────────────────────────────────── */
-.gaming-perf-section{margin-top:32px;border:1px solid rgba(123,47,255,.35);border-radius:12px;overflow:hidden;animation:fadeIn .5s ease}
-.gp-header{background:linear-gradient(135deg,rgba(123,47,255,.18),rgba(0,240,255,.08));padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid rgba(123,47,255,.25)}
-.gp-title-row{display:flex;align-items:center;gap:10px}
-.gp-icon{font-size:22px}
-.gp-title{font-family:var(--font-display);font-size:12px;color:var(--accent);letter-spacing:2px}
-.gp-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.gp-badge{font-family:var(--font-mono);font-size:10px;padding:4px 10px;border-radius:5px;letter-spacing:1px}
-.gp-badge-res{background:rgba(0,240,255,.12);color:var(--accent);border:1px solid rgba(0,240,255,.25)}
-.gp-badge-gpu{background:rgba(123,47,255,.15);color:#b680ff;border:1px solid rgba(123,47,255,.3);max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.gp-note{font-family:var(--font-mono);font-size:10px;color:var(--text2);padding:10px 22px;background:rgba(255,183,0,.04);border-bottom:1px solid var(--border2)}
-.gp-table-wrap{overflow-x:auto;padding:0 0 4px}
-.gp-table{width:100%;border-collapse:collapse}
-.gp-table th{font-family:var(--font-display);font-size:9px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;padding:10px 16px;background:var(--panel);text-align:left;border-bottom:1px solid var(--border)}
-.gp-table td{font-size:12px;padding:10px 16px;border-bottom:1px solid var(--border2);transition:background .2s}
-.gp-table tr:last-child td{border-bottom:none}
-.gp-table tr:hover td{background:rgba(0,240,255,.03)}
-.gp-game{font-weight:600;color:var(--text)}
-.gp-preset{font-family:var(--font-mono);font-size:10px;color:var(--text2)}
-.gp-fps{font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--accent)}
-.gp-fps-low{font-family:var(--font-mono);font-size:12px;color:var(--gold)}
-.gp-fps-bar{display:inline-block;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--accent2),var(--accent));vertical-align:middle;margin-left:6px;opacity:.6}
-
-/* ── AI SOURCE INDICATOR ─────────────────────────────────────────────────── */
-.ai-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(123,47,255,.15);border:1px solid rgba(123,47,255,.3);border-radius:6px;padding:4px 10px;font-family:var(--font-mono);font-size:10px;color:#b680ff;margin-bottom:14px}
-.ai-dot{width:6px;height:6px;border-radius:50%;background:#b680ff;animation:pulse2 1.5s infinite}
-@keyframes pulse2{0%,100%{opacity:1}50%{opacity:.3}}
-.search-indicator{background:rgba(0,240,255,.05);border:1px solid rgba(0,240,255,.15);border-radius:8px;padding:10px 14px;font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:8px}
-.search-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite}
-.error-banner{background:rgba(255,60,90,.1);border:1px solid rgba(255,60,90,.3);border-radius:8px;padding:14px 16px;font-family:var(--font-mono);font-size:12px;color:var(--danger);margin-bottom:16px;line-height:1.5}
-
-/* ── INVOICE MODAL ───────────────────────────────────────────────────────── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
 .modal-overlay.active{display:flex}
-.modal-frame{background:var(--bg2);border:1px solid var(--accent);border-radius:14px;padding:32px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
+.modal-frame{background:var(--bg2);border:1px solid var(--accent);border-radius:14px;padding:32px;max-width:540px;width:100%;max-height:85vh;overflow-y:auto;position:relative}
 .close-modal-btn{position:absolute;top:14px;right:16px;background:transparent;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1;transition:color .2s}
 .close-modal-btn:hover{color:var(--accent)}
 .receipt-header{text-align:center;margin-bottom:20px}
 .receipt-header h2{font-family:var(--font-display);font-size:18px;color:var(--accent);letter-spacing:3px;margin-bottom:8px}
 .receipt-timestamp{font-family:var(--font-mono);font-size:11px;color:var(--text2)}
-.bar-separator{font-family:var(--font-mono);font-size:10px;color:var(--border);letter-spacing:1px;margin:12px 0;word-break:break-all}
+.bar-separator{font-family:var(--font-mono);font-size:10px;color:var(--border);letter-spacing:1px;margin:12px 0}
 .receipt-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border2)}
-.receipt-cat{font-family:var(--font-mono);font-size:10px;color:var(--accent2);min-width:90px;flex-shrink:0}
-.receipt-item{font-size:12px;color:var(--text);flex:1;min-width:0}
-.receipt-price{font-family:var(--font-mono);font-size:13px;color:var(--accent);white-space:nowrap;flex-shrink:0}
+.receipt-cat{font-family:var(--font-mono);font-size:10px;color:var(--accent2);min-width:90px}
+.receipt-item{font-size:12px;color:var(--text);flex:1}
+.receipt-price{font-family:var(--font-mono);font-size:13px;color:var(--accent);white-space:nowrap}
 .summary-line{display:flex;justify-content:space-between;padding:6px 0;font-family:var(--font-mono);font-size:13px;color:var(--text2)}
-.grand-total-line{color:var(--accent);font-size:16px;font-weight:700;padding:10px 0}
+.grand-total-line{color:var(--accent);font-size:15px;font-weight:700}
 .receipt-footer-tagline{font-family:var(--font-mono);font-size:10px;color:var(--text2);text-align:center;margin:16px 0 12px}
 .print-receipt-btn{width:100%;padding:12px;background:rgba(0,240,255,.1);border:1px solid var(--accent);border-radius:7px;color:var(--accent);font-family:var(--font-mono);font-size:12px;cursor:pointer;letter-spacing:1px;transition:all .2s}
 .print-receipt-btn:hover{background:rgba(0,240,255,.2)}
 .receipt-empty{font-family:var(--font-mono);font-size:12px;color:var(--text2);text-align:center;padding:20px 0}
 
-/* Invoice Gaming Performance (in receipt) */
-.receipt-gp-section{margin-top:16px}
-.receipt-gp-header{font-family:var(--font-display);font-size:11px;color:var(--accent2);letter-spacing:2px;margin-bottom:8px}
-.receipt-gp-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border2);font-size:11px}
-.receipt-gp-game{color:var(--text);flex:1}
-.receipt-gp-preset{font-family:var(--font-mono);font-size:10px;color:var(--text2);margin:0 8px}
-.receipt-gp-fps{font-family:var(--font-mono);color:var(--accent);white-space:nowrap}
+/* AI SOURCE TAG */
+.ai-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(123,47,255,.15);border:1px solid rgba(123,47,255,.3);border-radius:6px;padding:4px 10px;font-family:var(--font-mono);font-size:10px;color:#b680ff;margin-bottom:14px}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:#b680ff;animation:pulse2 1.5s infinite}
+@keyframes pulse2{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ── PRINT AREA (clean PDF/print output) ─────────────────────────────────── */
-#printArea{display:none}
+/* SEARCH INDICATOR */
+.search-indicator{background:rgba(0,240,255,.05);border:1px solid rgba(0,240,255,.15);border-radius:8px;padding:10px 14px;font-family:var(--font-mono);font-size:11px;color:var(--text2);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.search-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1.5s infinite}
 
-@media print {
-  /* Hide everything except printArea */
-  body > *:not(#printArea) { display: none !important; }
-  #printArea {
-    display: block !important;
-    position: static;
-    width: 100%;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11pt;
-    color: #000;
-    background: #fff;
-  }
-  .print-doc { max-width: 680px; margin: 0 auto; padding: 20px; }
-  .print-doc-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 16px; }
-  .print-doc-header h1 { font-size: 22pt; font-family: 'Orbitron', monospace; letter-spacing: 4px; }
-  .print-doc-header p { font-size: 9pt; color: #555; }
-  .print-section-title { font-size: 10pt; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; margin: 14px 0 6px; border-top: 1px solid #ccc; padding-top: 10px; }
-  .print-item-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dotted #ddd; font-size: 10pt; }
-  .print-item-cat { font-size: 9pt; color: #555; min-width: 100px; }
-  .print-item-name { flex: 1; padding: 0 8px; }
-  .print-item-price { font-weight: bold; white-space: nowrap; }
-  .print-total-block { border-top: 2px solid #000; margin-top: 10px; padding-top: 10px; }
-  .print-total-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 11pt; }
-  .print-grand-total { font-size: 14pt; font-weight: bold; }
-  .print-gp-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-  .print-gp-table th { font-size: 9pt; text-align: left; padding: 4px 8px; background: #f0f0f0; border: 1px solid #ccc; }
-  .print-gp-table td { font-size: 9pt; padding: 4px 8px; border: 1px solid #ddd; }
-  .print-footer { text-align: center; margin-top: 20px; font-size: 8pt; color: #888; border-top: 1px solid #ddd; padding-top: 10px; }
-  .print-disclaimer { font-size: 8pt; color: #888; margin-top: 8px; font-style: italic; }
+.error-banner{background:rgba(255,60,90,.1);border:1px solid rgba(255,60,90,.3);border-radius:8px;padding:14px 16px;font-family:var(--font-mono);font-size:12px;color:var(--danger);margin-bottom:16px;line-height:1.5}
+
+@media print{
+  body{background:white;color:black}
+  .app-header,.forge-form,.results-actions-bar,.build-summary-panel,.parts-matrix-column{display:none}
+  .modal-overlay{display:flex!important;position:static;background:none}
+  .modal-frame{border:1px solid #ccc;border-radius:0;box-shadow:none}
+  .receipt-header h2,.receipt-cat,.receipt-price,.grand-total-line{color:#000}
+  .close-modal-btn,.print-receipt-btn{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- ── TERMS GATE ─────────────────────────────────────────────────────────── -->
-<div id="termsGate" class="terms-gate">
-  <div class="tg-box">
-    <!-- Animated chip deco -->
-    <div class="tg-chip-deco">
-      <svg class="hero-chip" width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="32" cy="32" r="30" stroke="#00f0ff" stroke-width="0.8" fill="none" opacity="0.3"/>
-        <rect x="16" y="16" width="32" height="32" rx="4" fill="#04080f" stroke="#00f0ff" stroke-width="1.5"/>
-        <rect x="22" y="22" width="20" height="20" rx="2" fill="#0d1526" stroke="#00f0ff" stroke-width="1" class="chip-core"/>
-        <line x1="32" y1="22" x2="32" y2="42" stroke="#00f0ff" stroke-width="0.6" opacity="0.5"/>
-        <line x1="22" y1="32" x2="42" y2="32" stroke="#00f0ff" stroke-width="0.6" opacity="0.5"/>
-        <circle cx="22" cy="22" r="1.5" fill="#7b2fff"/>
-        <circle cx="42" cy="22" r="1.5" fill="#7b2fff"/>
-        <circle cx="22" cy="42" r="1.5" fill="#7b2fff"/>
-        <circle cx="42" cy="42" r="1.5" fill="#7b2fff"/>
-        <path d="M34 25L30 32H33L31 39L36 31H33L34 25Z" fill="#00f0ff"/>
-        <line class="chip-pin" x1="24" y1="16" x2="24" y2="10" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line class="chip-pin" x1="32" y1="16" x2="32" y2="10" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line class="chip-pin" x1="40" y1="16" x2="40" y2="10" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line class="chip-pin" x1="24" y1="48" x2="24" y2="54" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line class="chip-pin" x1="32" y1="48" x2="32" y2="54" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line class="chip-pin" x1="40" y1="48" x2="40" y2="54" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line class="chip-pin" x1="16" y1="24" x2="10" y2="24" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line class="chip-pin" x1="16" y1="32" x2="10" y2="32" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line class="chip-pin" x1="16" y1="40" x2="10" y2="40" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line class="chip-pin" x1="48" y1="24" x2="54" y2="24" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line class="chip-pin" x1="48" y1="32" x2="54" y2="32" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-        <line class="chip-pin" x1="48" y1="40" x2="54" y2="40" stroke="#00f0ff" stroke-width="1.5" stroke-linecap="round"/>
-      </svg>
-    </div>
-    <div class="tg-logo">FORGE<span style="color:#7b2fff">.</span></div>
-    <div class="tg-sub">AI PC BUILDER — POWERED BY GROQ</div>
-    <div class="tg-title">BEFORE YOU ENTER</div>
-    <p class="tg-desc">FORGE uses AI to recommend PC builds and displays estimated market prices for informational purposes only. Please read and accept the following before proceeding.</p>
-    <div class="tg-checks">
-      <label class="tg-check-row">
-        <input type="checkbox" id="chkTerms">
-        <span>I have read and agree to the <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>. I understand recommendations are informational and prices should be verified.</span>
-      </label>
-      <label class="tg-check-row">
-        <input type="checkbox" id="chkPrivacy">
-        <span>I have read and agree to the <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>. I understand how my data is handled.</span>
-      </label>
-    </div>
-    <button id="enterForgeBtn" class="tg-enter-btn" disabled>⚡ ENTER FORGE</button>
-  </div>
-</div>
-
-<!-- ── BACKGROUND ─────────────────────────────────────────────────────────── -->
 <div class="cursor-glow" id="cursorGlow"></div>
 <div class="grid-overlay"></div>
 <canvas id="particleCanvas"></canvas>
 
-<!-- ── PRINT AREA (only visible during print) ────────────────────────────── -->
-<div id="printArea"></div>
-
-<!-- ── MAIN APP ───────────────────────────────────────────────────────────── -->
 <div class="app-container">
 
   <header class="app-header">
     <div class="logo-area">
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="FORGE logo" style="flex-shrink:0">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="FORGE logo icon" style="flex-shrink:0">
+        <!-- Outer ring -->
         <circle cx="22" cy="22" r="20" stroke="#00f0ff" stroke-width="1" fill="none" opacity="0.4"/>
+        <!-- CPU chip body -->
         <rect x="10" y="10" width="24" height="24" rx="3" fill="#04080f" stroke="#00f0ff" stroke-width="1.2"/>
+        <!-- Inner core -->
         <rect x="15" y="15" width="14" height="14" rx="2" fill="#0d1526" stroke="#00f0ff" stroke-width="0.8"/>
+        <!-- Core grid lines -->
         <line x1="22" y1="15" x2="22" y2="29" stroke="#00f0ff" stroke-width="0.5" opacity="0.5"/>
         <line x1="15" y1="22" x2="29" y2="22" stroke="#00f0ff" stroke-width="0.5" opacity="0.5"/>
-        <circle cx="15" cy="15" r="1.2" fill="#7b2fff"/><circle cx="29" cy="15" r="1.2" fill="#7b2fff"/>
-        <circle cx="15" cy="29" r="1.2" fill="#7b2fff"/><circle cx="29" cy="29" r="1.2" fill="#7b2fff"/>
+        <!-- Corner accent dots -->
+        <circle cx="15" cy="15" r="1.2" fill="#7b2fff"/>
+        <circle cx="29" cy="15" r="1.2" fill="#7b2fff"/>
+        <circle cx="15" cy="29" r="1.2" fill="#7b2fff"/>
+        <circle cx="29" cy="29" r="1.2" fill="#7b2fff"/>
+        <!-- Pins top -->
         <line x1="17" y1="10" x2="17" y2="6" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
         <line x1="22" y1="10" x2="22" y2="6" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
         <line x1="27" y1="10" x2="27" y2="6" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Pins bottom -->
         <line x1="17" y1="34" x2="17" y2="38" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
         <line x1="22" y1="34" x2="22" y2="38" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
         <line x1="27" y1="34" x2="27" y2="38" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Pins left -->
         <line x1="10" y1="17" x2="6" y2="17" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
         <line x1="10" y1="22" x2="6" y2="22" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
         <line x1="10" y1="27" x2="6" y2="27" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Pins right -->
         <line x1="34" y1="17" x2="38" y2="17" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
         <line x1="34" y1="22" x2="38" y2="22" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
         <line x1="34" y1="27" x2="38" y2="27" stroke="#00f0ff" stroke-width="1.2" stroke-linecap="round"/>
-        <path d="M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z" fill="#00f0ff"/>
+        <!-- Lightning bolt center -->
+        <path d="M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z" fill="#00f0ff" filter="url(#glow)"/>
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
       </svg>
       <h1 class="logo-text">FORGE<span class="accent-dot">.</span></h1>
     </div>
     <div class="header-right">
-      <button id="groqKeyBtn" onclick="promptGroqKey()" style="background:transparent;border:1px solid var(--warn);color:var(--warn);padding:7px 13px;border-radius:6px;font-family:var(--font-mono);font-size:11px;cursor:pointer;letter-spacing:1px;transition:all .2s;" title="Configure your free Groq API key">🔑 Add Groq Key</button>
       <select class="currency-select" id="currencySelect"></select>
-      <div style="display:flex;align-items:center">
-        <span class="status-dot pulsing" id="groqStatusDot"></span>
-        <span class="status-text" id="groqStatusText">NO KEY</span>
+      <div class="system-status" style="display:flex;align-items:center">
+        <span class="status-dot pulsing"></span>
+        <span class="status-text">SYSTEMS ONLINE</span>
       </div>
     </div>
   </header>
 
   <main class="workspace">
 
-    <!-- VIEW 1: CONFIG ──────────────────────────────────────────────────── -->
+    <!-- VIEW 1: CONFIG -->
     <section id="onboardingView" class="view active">
       <div class="welcome-hero">
-        <!-- Animated CPU/GPU chip visual -->
-        <div class="hero-chip-container">
-          <svg class="hero-chip" width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <circle cx="60" cy="60" r="58" stroke="#00f0ff" stroke-width="0.6" fill="none" opacity="0.2" stroke-dasharray="4 8"/>
-            <circle cx="60" cy="60" r="48" stroke="#7b2fff" stroke-width="0.5" fill="none" opacity="0.3"/>
-            <rect x="28" y="28" width="64" height="64" rx="6" fill="#04080f" stroke="#00f0ff" stroke-width="1.5"/>
-            <rect x="38" y="38" width="44" height="44" rx="4" fill="#080f1a" stroke="#00f0ff" stroke-width="1" class="chip-core"/>
-            <!-- Grid lines -->
-            <line x1="60" y1="38" x2="60" y2="82" stroke="#00f0ff" stroke-width="0.5" opacity="0.4"/>
-            <line x1="38" y1="60" x2="82" y2="60" stroke="#00f0ff" stroke-width="0.5" opacity="0.4"/>
-            <line x1="49" y1="38" x2="49" y2="82" stroke="#00f0ff" stroke-width="0.3" opacity="0.25"/>
-            <line x1="71" y1="38" x2="71" y2="82" stroke="#00f0ff" stroke-width="0.3" opacity="0.25"/>
-            <line x1="38" y1="49" x2="82" y2="49" stroke="#00f0ff" stroke-width="0.3" opacity="0.25"/>
-            <line x1="38" y1="71" x2="82" y2="71" stroke="#00f0ff" stroke-width="0.3" opacity="0.25"/>
-            <!-- Corner accent dots -->
-            <circle cx="38" cy="38" r="2.5" fill="#7b2fff"/><circle cx="82" cy="38" r="2.5" fill="#7b2fff"/>
-            <circle cx="38" cy="82" r="2.5" fill="#7b2fff"/><circle cx="82" cy="82" r="2.5" fill="#7b2fff"/>
-            <!-- Centre lightning bolt -->
-            <path d="M63 46L56 62H61L58 74L67 57H62L63 46Z" fill="#00f0ff" opacity="0.9"/>
-            <!-- Pins top -->
-            <line class="chip-pin" x1="43" y1="28" x2="43" y2="20" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="55" y1="28" x2="55" y2="20" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="67" y1="28" x2="67" y2="20" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="78" y1="28" x2="78" y2="20" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <!-- Pins bottom -->
-            <line class="chip-pin" x1="43" y1="92" x2="43" y2="100" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="55" y1="92" x2="55" y2="100" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="67" y1="92" x2="67" y2="100" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="78" y1="92" x2="78" y2="100" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <!-- Pins left -->
-            <line class="chip-pin" x1="28" y1="43" x2="20" y2="43" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="28" y1="55" x2="20" y2="55" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="28" y1="67" x2="20" y2="67" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="28" y1="78" x2="20" y2="78" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <!-- Pins right -->
-            <line class="chip-pin" x1="92" y1="43" x2="100" y2="43" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="92" y1="55" x2="100" y2="55" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="92" y1="67" x2="100" y2="67" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-            <line class="chip-pin" x1="92" y1="78" x2="100" y2="78" stroke="#00f0ff" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
         <h2>ENGINEER YOUR ULTIMATE RIG</h2>
-        <p>Input your parameters. FORGE's Groq AI searches market intelligence to build a precision, budget-scaled hardware blueprint — with real Pakistani market prices.</p>
+        <p>Input your parameters. FORGE's AI searches live market data to build a precision, budget-scaled hardware blueprint.</p>
       </div>
 
       <form id="configForm" class="forge-form" novalidate>
+
         <div class="form-section">
           <div class="section-header">
             <span class="sec-num">01</span>
@@ -454,7 +304,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
             <span class="currency-indicator" id="currencyIndicator">PKR</span>
             <input type="number" id="budgetInput" required min="0" placeholder="e.g., 180000" step="1000" autocomplete="off">
           </div>
-          <p class="field-hint" id="budgetHint">Minimum: Rs 30,000. Recommended for modern computing: Rs 80,000+</p>
+          <p class="field-hint" id="budgetHint">Minimum: Rs 30,000. Recommended: Rs 80,000+</p>
           <p class="field-error" id="budgetError"></p>
         </div>
 
@@ -505,27 +355,23 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
       </form>
     </section>
 
-    <!-- VIEW 2: LOADING ─────────────────────────────────────────────────── -->
+    <!-- VIEW 2: LOADING -->
     <section id="loadingView" class="view">
       <div class="loading-view-inner">
-        <div class="cyber-spinner-wrap">
-          <div class="cyber-spinner"></div>
-          <div class="cyber-spinner-inner"></div>
-        </div>
+        <div class="cyber-spinner"></div>
         <div class="matrix-terminal">
-          <div class="terminal-line" data-delay="0"><span class="t-prefix">&gt;&gt;</span> INITIALISING FORGE NEURAL ENGINE...</div>
-          <div class="terminal-line" data-delay="700"><span class="t-prefix">&gt;&gt;</span> CONNECTING TO GROQ AI (LLAMA 3.3 70B)...</div>
-          <div class="terminal-line" data-delay="1500"><span class="t-prefix">&gt;&gt;</span> QUERYING PAKISTANI MARKET INTELLIGENCE...</div>
-          <div class="terminal-line" data-delay="2400"><span class="t-prefix">&gt;&gt;</span> CROSS-CHECKING HAFEEZ CENTRE PRICING...</div>
-          <div class="terminal-line" data-delay="3200"><span class="t-prefix">&gt;&gt;</span> CALCULATING OPTIMAL BUDGET RATIOS...</div>
-          <div class="terminal-line" data-delay="4100"><span class="t-prefix">&gt;&gt;</span> GENERATING GAMING PERFORMANCE BENCHMARKS...</div>
-          <div class="terminal-line" data-delay="5000"><span class="t-prefix">&gt;&gt;</span> FILTERING ANOMALIES &amp; DUPLICATE LISTINGS...</div>
-          <div class="terminal-line" data-delay="5800"><span class="t-prefix">&gt;&gt;</span> BLUEPRINT FINALISED — RENDERING MATRIX...</div>
+          <div class="terminal-line" data-delay="0">>> INITIALIZING NEURAL ENGINE...</div>
+          <div class="terminal-line" data-delay="900">>> QUERYING AI INTELLIGENCE LAYER...</div>
+          <div class="terminal-line" data-delay="2000">>> SEARCHING LIVE MARKET DATA...</div>
+          <div class="terminal-line" data-delay="3100">>> CALCULATING BUDGET ALLOCATION RATIOS...</div>
+          <div class="terminal-line" data-delay="4000">>> DETECTING NEW & USED OPTIONS...</div>
+          <div class="terminal-line" data-delay="5000">>> OPTIMIZING COMPONENT BALANCE...</div>
+          <div class="terminal-line" data-delay="5700">>> BLUEPRINT FINALIZED. RENDERING MATRIX...</div>
         </div>
       </div>
     </section>
 
-    <!-- VIEW 3: RESULTS ─────────────────────────────────────────────────── -->
+    <!-- VIEW 3: RESULTS -->
     <section id="resultsView" class="view">
       <div class="results-actions-bar">
         <button id="backToConfigBtn" class="action-secondary-btn">← MODIFY PARAMETERS</button>
@@ -534,7 +380,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
 
       <div id="aiSourceIndicator" style="display:none" class="search-indicator">
         <span class="search-dot"></span>
-        <span id="aiSourceText">Results powered by Groq AI</span>
+        <span id="aiSourceText">Results powered by AI web search</span>
       </div>
 
       <div class="results-split-layout">
@@ -562,111 +408,57 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
             <span class="ribbon-hint">Click to select · Click again to deselect</span>
           </div>
           <div class="components-grid" id="partsContainer"></div>
-
-          <!-- Gaming Performance Section (injected after build) -->
-          <div id="gamingPerfSection" class="gaming-perf-section" style="display:none">
-            <div class="gp-header">
-              <div class="gp-title-row">
-                <span class="gp-icon">🎮</span>
-                <span class="gp-title">ESTIMATED GAMING PERFORMANCE</span>
-              </div>
-              <div class="gp-meta">
-                <span class="gp-badge gp-badge-res" id="gpResolutionBadge">1080p</span>
-                <span class="gp-badge gp-badge-gpu" id="gpGpuBadge">GPU</span>
-              </div>
-            </div>
-            <div class="gp-note" id="gpNote">Estimated FPS based on real benchmark data. Actual performance varies by driver, settings and system config.</div>
-            <div class="gp-table-wrap">
-              <table class="gp-table">
-                <thead>
-                  <tr>
-                    <th>GAME</th>
-                    <th>PRESET</th>
-                    <th>AVG FPS</th>
-                    <th>1% LOW FPS</th>
-                  </tr>
-                </thead>
-                <tbody id="gpTableBody"></tbody>
-              </table>
-            </div>
-          </div>
         </div>
       </div>
     </section>
 
   </main>
-</div><!-- .app-container -->
+</div>
 
-<!-- ── INVOICE MODAL ──────────────────────────────────────────────────────── -->
-<div class="modal-overlay" id="invoiceModal" role="dialog" aria-modal="true" aria-label="Build Invoice">
+<!-- INVOICE MODAL -->
+<div class="modal-overlay" id="invoiceModal" role="dialog" aria-modal="true">
   <div class="modal-frame receipt-box">
     <button class="close-modal-btn" id="closeInvoiceBtn" aria-label="Close">×</button>
     <div class="receipt-header">
       <h2 id="invoiceTitle">FORGE DIGITAL RECEIPT</h2>
       <p class="receipt-timestamp" id="invoiceTimestamp">DATETIME: --/--/---- --:--</p>
-      <div class="bar-separator">════════════════════════════════════════</div>
+      <div class="bar-separator">========================================</div>
     </div>
-    <div id="invoiceItemsContainer"></div>
-    <div class="receipt-footer" id="invoiceFooter">
-      <div class="bar-separator">════════════════════════════════════════</div>
+    <div class="receipt-body" id="invoiceItemsContainer"></div>
+    <div class="receipt-footer">
+      <div class="bar-separator">========================================</div>
       <div class="total-summary-block">
         <div class="summary-line"><span>HARDWARE TOTAL:</span><span id="invoiceHardwareTotal">—</span></div>
-        <div class="summary-line"><span>ASSEMBLY / TECH FEE:</span><span id="invoiceAssemblyFee">—</span></div>
+        <div class="summary-line"><span>ASSEMBLY FEE:</span><span id="invoiceAssemblyFee">—</span></div>
         <div class="summary-line grand-total-line"><span>GRAND TOTAL:</span><span id="invoiceGrandTotal">—</span></div>
       </div>
-      <div class="bar-separator">════════════════════════════════════════</div>
-      <!-- Gaming Performance in receipt -->
-      <div id="invoiceGamingPerf"></div>
-      <p class="receipt-footer-tagline">THANK YOU FOR CHOOSING FORGE · SYSTEM BLUEPRINTS EXPORTED</p>
-      <button class="print-receipt-btn" id="printReceiptBtn">🖨️ PRINT / SAVE AS PDF</button>
+      <div class="bar-separator">========================================</div>
+      <p class="receipt-footer-tagline">THANK YOU FOR CHOOSING FORGE. SYSTEM BLUEPRINTS EXPORTED.</p>
+      <button class="print-receipt-btn" onclick="window.print()">🖨️ PRINT RECEIPT</button>
     </div>
   </div>
 </div>
 
-<!-- ── FOOTER ──────────────────────────────────────────────────────────────── -->
-<footer style="text-align:center;padding:2rem 1rem;font-size:12px;color:#7090b0;border-top:1px solid #1a2f50;margin-top:4rem;font-family:'JetBrains Mono',monospace;">
-  <div style="margin-bottom:10px;">
-    <a href="privacy.html" style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener">Privacy Policy</a>·
-    <a href="terms.html"   style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener">Terms &amp; Conditions</a>·
-    <a href="cookies.html" style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener">Cookie Policy</a>·
-    <a href="faq.html"     style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener">FAQ</a>
-  </div>
-  <div>© 2025 FORGE AI PC Builder. Recommendations for informational purposes only. Verify all prices before purchasing.</div>
-</footer>
-
-<!-- ── COOKIE CONSENT ─────────────────────────────────────────────────────── -->
-<div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:8000;
-  background:#080f1a;border-top:1px solid #1a2f50;padding:14px 24px;
-  flex-wrap:wrap;gap:12px;font-size:13px;color:#c8d8f0;align-items:center;justify-content:space-between;">
-  <span>🍪 We use minimal functional cookies.
-    <a href="cookies.html" style="color:#00f0ff;" rel="noopener">Cookie Policy</a> ·
-    <a href="privacy.html" style="color:#00f0ff;" rel="noopener">Privacy Policy</a>
-  </span>
-  <div style="display:flex;gap:10px;flex-shrink:0;">
-    <button onclick="declineCookies()" style="background:transparent;border:1px solid #1a2f50;color:#7090b0;padding:6px 16px;border-radius:4px;cursor:pointer;font-size:12px;font-family:'JetBrains Mono',monospace;">Decline</button>
-    <button onclick="acceptCookies()" style="background:#00f0ff;border:none;color:#04080f;padding:6px 16px;border-radius:4px;cursor:pointer;font-weight:700;font-size:12px;font-family:'JetBrains Mono',monospace;">Accept</button>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════════════════════════════════ -->
 <script>
 "use strict";
 
-// ── CURRENCIES ────────────────────────────────────────────────────────────────
+// ── CURRENCIES ──────────────────────────────────────────────────────────────
 const CURRENCIES = {
-  PKR:{symbol:"Rs",  name:"Pakistani Rupee",   rate:1},
-  USD:{symbol:"$",   name:"US Dollar",         rate:0.0036},
-  EUR:{symbol:"€",   name:"Euro",              rate:0.0033},
-  GBP:{symbol:"£",   name:"British Pound",     rate:0.0028},
-  AED:{symbol:"د.إ", name:"UAE Dirham",        rate:0.0131},
-  SAR:{symbol:"ر.س", name:"Saudi Riyal",       rate:0.0134},
-  CAD:{symbol:"C$",  name:"Canadian Dollar",   rate:0.0049},
-  AUD:{symbol:"A$",  name:"Australian Dollar", rate:0.0055}
+  PKR:{symbol:"Rs",name:"Pakistani Rupee",rate:1},
+  USD:{symbol:"$",name:"US Dollar",rate:0.0036},
+  EUR:{symbol:"€",name:"Euro",rate:0.0033},
+  GBP:{symbol:"£",name:"British Pound",rate:0.0028},
+  AED:{symbol:"د.إ",name:"UAE Dirham",rate:0.0131},
+  SAR:{symbol:"ر.س",name:"Saudi Riyal",rate:0.0134},
+  CAD:{symbol:"C$",name:"Canadian Dollar",rate:0.0049},
+  AUD:{symbol:"A$",name:"Australian Dollar",rate:0.0055}
 };
-let activeCurrency = "PKR";
+let activeCurrency="PKR";
+
 function setActiveCurrency(c){if(CURRENCIES[c])activeCurrency=c;}
 function getActiveCurrency(){return activeCurrency;}
 function convertFromPKR(p){return p*(CURRENCIES[activeCurrency]?.rate??1);}
+function convertToPKR(a){return Math.round(a/(CURRENCIES[activeCurrency]?.rate??1));}
 function formatPrice(pkr){
   const c=CURRENCIES[activeCurrency];
   const v=convertFromPKR(pkr);
@@ -677,67 +469,27 @@ function formatRaw(v){
   return c.symbol+v.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});
 }
 
-// ── STATE ──────────────────────────────────────────────────────────────────────
-const STATE={
-  blueprint:  null,
-  selections: {},
-  budgetPKR:  0,
-  purpose:    "gaming",
-  assemblyFee:3500,
-  gamingPerf: null
-};
+// ── STATE ────────────────────────────────────────────────────────────────────
+const STATE={blueprint:null,selections:{},budgetPKR:0,purpose:"gaming",assemblyFee:3500};
 
-// ── BOOT ───────────────────────────────────────────────────────────────────────
+// ── BOOT ─────────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded",()=>{
-  initTermsGate();
   initParticles();
   setupCursorGlow();
   renderCurrencySelector();
   bindEvents();
   updateBudgetHint();
-  initCookieBanner();
-  updateGroqKeyUI();
 });
 
-// ── TERMS GATE ─────────────────────────────────────────────────────────────────
-function initTermsGate(){
-  const gate     = document.getElementById("termsGate");
-  const chkTerms = document.getElementById("chkTerms");
-  const chkPriv  = document.getElementById("chkPrivacy");
-  const btn      = document.getElementById("enterForgeBtn");
-  if(!gate)return;
-
-  // Already accepted? Hide immediately
-  try{
-    if(localStorage.getItem("forge_terms_v2")==="accepted"){
-      gate.classList.add("hidden");
-      return;
-    }
-  }catch(e){}
-
-  function checkBoth(){
-    btn.disabled = !(chkTerms.checked && chkPriv.checked);
-  }
-  chkTerms.addEventListener("change",checkBoth);
-  chkPriv.addEventListener("change",checkBoth);
-
-  btn.addEventListener("click",()=>{
-    if(!chkTerms.checked||!chkPriv.checked)return;
-    try{localStorage.setItem("forge_terms_v2","accepted");}catch(e){}
-    gate.style.opacity="0";
-    gate.style.transition="opacity 0.4s ease";
-    setTimeout(()=>gate.classList.add("hidden"),400);
-  });
-}
-
-// ── CURRENCY SELECTOR ──────────────────────────────────────────────────────────
+// ── CURRENCY SELECTOR ────────────────────────────────────────────────────────
 function renderCurrencySelector(){
   const sel=document.getElementById("currencySelect");
   if(!sel)return;
   sel.innerHTML="";
   Object.entries(CURRENCIES).forEach(([code,info])=>{
     const opt=document.createElement("option");
-    opt.value=code;opt.textContent=info.symbol+" "+code;
+    opt.value=code;
+    opt.textContent=info.symbol+" "+code;
     if(code==="PKR")opt.selected=true;
     sel.appendChild(opt);
   });
@@ -756,7 +508,7 @@ function updateBudgetHint(){
   if(hint)hint.textContent=`Minimum: ${formatRaw(Math.round(30000*cur.rate))}. Recommended: ${formatRaw(Math.round(80000*cur.rate))}+`;
 }
 
-// ── EVENTS ─────────────────────────────────────────────────────────────────────
+// ── EVENTS ───────────────────────────────────────────────────────────────────
 function bindEvents(){
   document.querySelectorAll('.selectable-card input[type="radio"]').forEach(r=>{
     r.addEventListener("change",()=>{
@@ -773,252 +525,206 @@ function bindEvents(){
   document.getElementById("openInvoiceBtn")?.addEventListener("click",openInvoice);
   document.getElementById("closeInvoiceBtn")?.addEventListener("click",closeInvoice);
   document.getElementById("invoiceModal")?.addEventListener("click",e=>{if(e.target===document.getElementById("invoiceModal"))closeInvoice();});
-  document.getElementById("printReceiptBtn")?.addEventListener("click",doPrint);
   document.addEventListener("keydown",e=>{if(e.key==="Escape")closeInvoice();});
 }
 
-// ── FORM SUBMIT ────────────────────────────────────────────────────────────────
+// ── FORM SUBMIT ──────────────────────────────────────────────────────────────
 async function handleFormSubmit(e){
   e.preventDefault();
   const raw=parseFloat(document.getElementById("budgetInput").value);
   const cur=CURRENCIES[getActiveCurrency()];
 
+  // Strict input validation — reject NaN, Infinity, negatives, absurd values
   if(!Number.isFinite(raw)||raw<=0||raw>100000000){
-    showError("Please enter a valid budget amount.");return;
+    document.getElementById("budgetError").textContent="Please enter a valid budget amount.";
+    document.getElementById("budgetWrapper")?.classList.add("error-state");
+    document.getElementById("budgetInput").focus();
+    return;
   }
+
   const budgetPKR=Math.round(raw/cur.rate);
   const purpose=document.querySelector('input[name="purpose"]:checked')?.value||"gaming";
   const minInCur=Math.round(30000*cur.rate);
-  if(raw<minInCur){showError(`Minimum budget is ${formatRaw(minInCur)}.`);return;}
 
+  if(raw<minInCur){
+    document.getElementById("budgetError").textContent=`Minimum budget is ${formatRaw(minInCur)}.`;
+    document.getElementById("budgetWrapper")?.classList.add("error-state");
+    document.getElementById("budgetInput").focus();
+    return;
+  }
+
+  // Rate limit check — max 5 requests per minute
   try{checkRateLimit();}
   catch(err){
     if(err.message.startsWith("RATE_LIMITED:")){
-      showError(err.message.replace("RATE_LIMITED:",""));return;
+      document.getElementById("budgetError").textContent=err.message.replace("RATE_LIMITED:","");
+      document.getElementById("budgetWrapper")?.classList.add("error-state");
+      return;
     }
   }
 
   STATE.budgetPKR=budgetPKR;
   STATE.purpose=purpose;
   STATE.selections={};
-  STATE.gamingPerf=null;
 
   const btn=document.getElementById("submitBtn");
   if(btn)btn.disabled=true;
+
   navigateTo("loadingView");
   runTerminal();
 
-  const t0=Date.now();
+  const startTime=Date.now();
+  const MIN_LOADING_MS=2500;
+
   let usedAI=false;
   try{
     STATE.blueprint=await fetchBuildFromGroq(budgetPKR,purpose);
-    STATE.gamingPerf=STATE.blueprint.gaming_performance||null;
     usedAI=true;
   }catch(err){
     console.warn("AI error — using fallback:",err.message);
+    console.error("FULL ERROR:",err);
     STATE.blueprint=buildFallback(budgetPKR,purpose);
-    STATE.gamingPerf=STATE.blueprint.gaming_performance||null;
     usedAI=false;
   }
 
-  const remaining=Math.max(0,2500-(Date.now()-t0));
+  const elapsed=Date.now()-startTime;
+  const remaining=Math.max(0,MIN_LOADING_MS-elapsed);
+
   setTimeout(()=>{
     renderResults(STATE.blueprint);
-    if(STATE.gamingPerf&&purpose==="gaming")renderGamingPerformance(STATE.gamingPerf);
     updateBuildSummary();
     navigateTo("resultsView");
     const ind=document.getElementById("aiSourceIndicator");
     const txt=document.getElementById("aiSourceText");
     if(ind&&txt){
       ind.style.display="flex";
-      if(usedAI){
-        txt.textContent="✓ Build generated via Groq AI (Llama 3.3 70B) · Market-aware pricing";
-        ind.style.borderColor="rgba(0,230,118,.4)";txt.style.color="#00e676";
+      if(usedAI){txt.textContent="✓ Build generated via Groq AI (Llama 3.3 70B)";
+        
+        ind.style.borderColor="rgba(0,230,118,.4)";
+        txt.style.color="#00e676";
       }else{
-        const noKey=!getGroqApiKey();
-        ind.innerHTML=`<span style="color:#ffb700;">⚠ Using cached market data — ${noKey?"No Groq API key set":"Groq request failed"}</span>
-        <button onclick="${noKey?"promptGroqKey()":"location.reload()"}" style="margin-left:12px;background:transparent;border:1px solid #ffb700;color:#ffb700;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font-mono);">${noKey?"🔑 Add Key":"↺ Retry"}</button>`;
+       ind.innerHTML=`<span style="color:#ffb700;">⚠ Using cached data — Groq not connected</span>
+  <button onclick="location.reload()" style="margin-left:12px;background:transparent;border:1px solid #ffb700;color:#ffb700;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font-mono);">↺ Retry</button>`;
       }
     }
     if(btn)btn.disabled=false;
   },remaining);
 }
 
-// ── GROQ API KEY MANAGEMENT ────────────────────────────────────────────────────
-function getGroqApiKey(){
-  try{return localStorage.getItem("forge_groq_key")||"";}catch(e){return"";}
-}
-function setGroqApiKey(key){
-  try{if(key)localStorage.setItem("forge_groq_key",key.trim());else localStorage.removeItem("forge_groq_key");}catch(e){}
-}
-function promptGroqKey(){
-  const existing=getGroqApiKey();
-  const k=window.prompt(
-    "Enter your Groq API key (free at console.groq.com):\n\nYour key is stored only in this browser (localStorage) and sent directly to Groq — never to any third-party server.",
-    existing||"gsk_..."
-  );
-  if(k===null)return;
-  const trimmed=k.trim();
-  if(!trimmed.startsWith("gsk_")){
-    alert("Invalid key — Groq keys start with 'gsk_'. Key not saved.");return;
-  }
-  setGroqApiKey(trimmed);
-  alert("✓ Groq API key saved. Your next build will use live AI.");
-  updateGroqKeyUI();
-}
-function updateGroqKeyUI(){
-  const hasKey=!!getGroqApiKey();
-  const btn=document.getElementById("groqKeyBtn");
-  if(btn){
-    btn.textContent=hasKey?"🔑 Groq Key ✓":"🔑 Add Groq Key";
-    btn.style.borderColor=hasKey?"var(--success)":"var(--warn)";
-    btn.style.color=hasKey?"var(--success)":"var(--warn)";
-  }
-  const dot=document.getElementById("groqStatusDot");
-  const txt=document.getElementById("groqStatusText");
-  if(dot){dot.style.background=hasKey?"var(--success)":"var(--warn)";}
-  if(txt){txt.textContent=hasKey?"GROQ READY":"NO KEY";}
-}
-
-// ── RATE LIMITER ───────────────────────────────────────────────────────────────
-const RL={max:5,window:60000,ts:[]};
+// ── RATE LIMITER ─────────────────────────────────────────────────────────────
+const RATE_LIMIT={maxRequests:5,windowMs:60000,timestamps:[]};
 function checkRateLimit(){
   const now=Date.now();
-  RL.ts=RL.ts.filter(t=>now-t<RL.window);
-  if(RL.ts.length>=RL.max){
-    const wait=Math.ceil((RL.window-(now-RL.ts[0]))/1000);
-    throw new Error(`RATE_LIMITED:Too many requests. Please wait ${wait}s before trying again.`);
+  RATE_LIMIT.timestamps=RATE_LIMIT.timestamps.filter(t=>now-t<RATE_LIMIT.windowMs);
+  if(RATE_LIMIT.timestamps.length>=RATE_LIMIT.maxRequests){
+    const oldest=RATE_LIMIT.timestamps[0];
+    const waitSec=Math.ceil((RATE_LIMIT.windowMs-(now-oldest))/1000);
+    throw new Error("RATE_LIMITED:Too many requests. Please wait "+waitSec+" seconds before trying again.");
   }
-  RL.ts.push(now);
+  RATE_LIMIT.timestamps.push(now);
 }
 
-// ── GROQ API CALL ──────────────────────────────────────────────────────────────
-async function fetchBuildFromGroq(budgetPKR,purpose){
-  const tier=getBudgetTier(budgetPKR);
+// ── GROQ API CALL ─────────────────────────────────────────────────────────────
+async function fetchBuildFromGroq(budgetPKR, purpose) {
+  console.log("[FORGE] Calling Groq API...", { budgetPKR, purpose });
 
-  const tierGuide={
-    entry:       "Entry (< 80k PKR): budget components, max core hardware, minimal peripherals",
-    budget:      "Budget (80k–200k PKR): solid mid-range, RTX 3060 / RX 6600, Ryzen 5 5600",
-    "mid-range": "Mid-Range (200k–400k PKR): 1440p capable, RTX 4070 / RX 7800 XT, Ryzen 7",
-    "high-end":  "High-End (400k–700k PKR): 4K ready, RTX 4080 / RX 7900 XTX, Ryzen 9",
-    enthusiast:  "Enthusiast (700k–1.2M PKR): flagship consumer, RTX 5080 / RTX 4090, Ryzen 9 9950X",
-    flagship:    "FLAGSHIP (1.2M+ PKR): ABSOLUTE BEST — RTX 5090, top-tier Threadripper / Ryzen 9 9950X, 0 compromises"
+  const tier = getBudgetTier(budgetPKR);
+  const tierGuide = {
+    entry:      "Entry-level: very basic components, skip expensive peripherals",
+    budget:     "Budget: solid mid-entry AMD/Intel CPUs, GTX 1660/RX 6600 class GPU",
+    "mid-range":"Mid-range: RTX 3060-3080/RX 6700XT, Ryzen 5 5600X / i5-12600K",
+    "high-end": "High-end: RTX 3080Ti/4070-4080, Ryzen 7 5800X3D / i7-13700K",
+    enthusiast: "Enthusiast: RTX 4080/5070Ti, Ryzen 9 7900X / i9-13900K",
+    flagship:   "Flagship: RTX 5090/4090, Ryzen 9 9950X / Threadripper"
   };
 
-  const allocMap={
-    gaming:     "GPU 38-42%, CPU 18-22%, Motherboard 8-10%, RAM 6-8%, Storage 5-7%, PSU 5-7%, Case 3-5%, Monitor 8-10%, Keyboard 2-3%, Mouse 1-2%, Headphones 2-3%",
-    editing:    "CPU 28-32%, GPU 18-22%, RAM 12-15%, Motherboard 10-12%, Storage 10-12%, PSU 5-7%, Case 3-4%, Monitor 8-10%, Keyboard 2-3%, Mouse 1-2%, Headphones 2-3%",
-    coding:     "CPU 30-35%, RAM 15-18%, Motherboard 10-12%, GPU 12-15%, Storage 10-12%, PSU 5-7%, Case 3-4%, Monitor 8-10%, Keyboard 2-3%, Mouse 1-2%, Headphones 2-3%",
-    office:     "CPU (iGPU) 30-35%, RAM 15-20%, Motherboard 12-15%, Storage 10-12%, PSU 5-7%, Case 3-4%, Monitor 10-12%, Keyboard 3-4%, Mouse 2-3%, Headphones 2-3%"
-  };
+  const alloc = purpose === "gaming"
+    ? "GPU 35-45%, CPU 20-25%, Motherboard 8-12%, RAM 5-10%, Storage 5-8%, PSU 5-8%, Case 2-4%, Monitor+Peripherals 10-15%"
+    : "CPU 30-35%, GPU 15-20%, RAM 10-15%, Motherboard 10-12%, Storage 8-12%, PSU 5-8%, Case 2-4%, rest for peripherals";
 
-  const resTarget={entry:"1080p",budget:"1080p","mid-range":"1440p","high-end":"1440p/4K",enthusiast:"4K",flagship:"4K 240Hz+"}[tier];
-
-  const prompt=`You are FORGE, expert PC hardware analyst for Pakistan (2025-2026 prices).
-
-BUILD PARAMETERS:
-- Budget: ${budgetPKR.toLocaleString()} PKR
-- Use case: ${purpose}
-- Tier: ${tier} — ${tierGuide[tier]}
-- Budget allocation: ${allocMap[purpose]||allocMap.gaming}
-- Max recommended total: ${Math.round(budgetPKR*0.92).toLocaleString()} PKR
-
-PRICING CONTEXT (use these as reference):
-- RTX 4060: ~65,000-75,000 PKR | RTX 4070: ~110,000-130,000 PKR | RTX 4080: ~210,000-240,000 PKR
-- RTX 5080: ~290,000-350,000 PKR | RTX 5090: ~550,000-650,000 PKR | RTX 4090: ~340,000-380,000 PKR
-- RX 7800 XT: ~90,000-105,000 PKR | RX 7900 XTX: ~180,000-210,000 PKR
-- Ryzen 5 5600: ~22,000-28,000 PKR | Ryzen 7 5800X3D: ~60,000-70,000 PKR | Ryzen 9 7900X: ~95,000-110,000 PKR
-- Ryzen 9 9950X: ~150,000-175,000 PKR | i7-14700K: ~85,000-100,000 PKR
-- 16GB DDR4 3200: ~9,000-12,000 PKR | 32GB DDR5-6000: ~30,000-40,000 PKR
-- 1TB NVMe Gen4: ~13,000-17,000 PKR | 2TB NVMe Gen4: ~24,000-30,000 PKR
-- 650W 80+ Gold: ~11,000-14,000 PKR | 850W 80+ Gold: ~16,000-20,000 PKR
-- 27in QHD 165Hz: ~35,000-50,000 PKR | 27in 4K 144Hz: ~65,000-85,000 PKR
+  const prompt = `You are FORGE, an expert PC hardware analyst for the Pakistani market.
+Generate a complete PC build for budget: ${budgetPKR.toLocaleString()} PKR
+Use case: ${purpose}
+Budget tier: ${tier} — ${tierGuide[tier]}
+Budget allocation: ${alloc}
 
 RULES:
-1. Return ONLY valid JSON. No markdown, no text outside JSON.
-2. EXACTLY 11 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Keyboard, Mouse, Headphones
-3. Exactly 3 options per category (RECOMMENDED=best new, BUDGET PICK=cheaper/used, BEST VALUE=best alt)
-4. All prices realistic for Pakistani market (Hafeez Centre, itech.com.pk, skymesh.pk)
-5. For flagship budgets: use RTX 5090/4090 class GPU, top CPU, DO NOT leave budget unspent
-6. Include gaming_performance section with all 10 games
+1. Return ONLY a valid JSON object. No explanation text, no markdown fences.
+2. Exactly 3 options per category: recommended (New), budget pick (Used/cheaper), best value
+3. All prices in PKR based on real current Pakistani market prices (Hafeez Centre, Daraz, itech.com.pk)
+4. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR * 0.93).toLocaleString()} PKR
+5. Include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals
+6. Scale components dramatically with budget tier
+7. For entry budgets under 80k PKR: skip expensive monitors/peripherals, maximize core hardware
 
-JSON STRUCTURE (return ONLY this, pure JSON):
+Return this EXACT JSON structure only (no markdown, no text before or after):
 {
   "tier": "${tier}",
   "categories": [
-    {"cat":"CPU","icon":"🔲","options":[
-      {"name":"...","price":0,"condition":"New","badge":"RECOMMENDED","note":"..."},
-      {"name":"...","price":0,"condition":"Used","badge":"BUDGET PICK","note":"..."},
-      {"name":"...","price":0,"condition":"New","badge":"BEST VALUE","note":"..."}
-    ]},
-    {"cat":"GPU","icon":"🎮","options":[...]},
-    {"cat":"Motherboard","icon":"🧩","options":[...]},
-    {"cat":"RAM","icon":"⚡","options":[...]},
-    {"cat":"Storage","icon":"💾","options":[...]},
-    {"cat":"PSU","icon":"🔌","options":[...]},
-    {"cat":"Case","icon":"📦","options":[...]},
-    {"cat":"Monitor","icon":"🖥️","options":[...]},
-    {"cat":"Keyboard","icon":"⌨️","options":[...]},
-    {"cat":"Mouse","icon":"🖱️","options":[...]},
-    {"cat":"Headphones","icon":"🎧","options":[...]}
-  ],
-  "gaming_performance": {
-    "gpu_name": "RECOMMENDED GPU full name",
-    "resolution": "${resTarget}",
-    "note": "Estimated FPS based on real benchmark data. Actual performance varies by driver, settings and system configuration.",
-    "games": [
-      {"game":"Valorant","preset":"High","avg_fps":"...","low1_fps":"..."},
-      {"game":"CS2","preset":"High","avg_fps":"...","low1_fps":"..."},
-      {"game":"GTA V","preset":"Very High","avg_fps":"...","low1_fps":"..."},
-      {"game":"Call of Duty (Warzone 2)","preset":"High","avg_fps":"...","low1_fps":"..."},
-      {"game":"Fortnite","preset":"Epic","avg_fps":"...","low1_fps":"..."},
-      {"game":"Apex Legends","preset":"High","avg_fps":"...","low1_fps":"..."},
-      {"game":"Cyberpunk 2077","preset":"Ultra","avg_fps":"...","low1_fps":"..."},
-      {"game":"Resident Evil 4 Remake","preset":"High","avg_fps":"...","low1_fps":"..."},
-      {"game":"Forza Horizon 5","preset":"Ultra","avg_fps":"...","low1_fps":"..."},
-      {"game":"Days Gone","preset":"Ultra","avg_fps":"...","low1_fps":"..."}
-    ]
-  }
-}`;
+    {
+      "cat": "CPU",
+      "icon": "🔲",
+      "options": [
+        {"name": "Intel Core i5-13600K", "price": 58000, "condition": "New", "badge": "RECOMMENDED", "note": "Best gaming IPC"},
+        {"name": "AMD Ryzen 5 5600X", "price": 28000, "condition": "Used", "badge": "BUDGET PICK", "note": "Great value"},
+        {"name": "Intel Core i5-12400F", "price": 35000, "condition": "New", "badge": "BEST VALUE", "note": "F-series no iGPU"}
+      ]
+    }
+  ]
+}
+Icons to use: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Case=📦, Monitor=🖥️, Peripherals=🎧`;
 
-  const groqKey=getGroqApiKey();
-  if(!groqKey)throw new Error("No Groq API key configured");
-
-  const response=await fetch("https://api.groq.com/openai/v1/chat/completions",{
-    method:"POST",
-    headers:{"Content-Type":"application/json","Authorization":"Bearer "+groqKey},
-    body:JSON.stringify({
-      model:"llama-3.3-70b-versatile",
-      max_tokens:4096,
-      temperature:0.3,
-      messages:[{role:"user",content:prompt}]
+  const response = await fetch("/api/gemini", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      action: "custom",
+      prompt: prompt,
+      budgetPKR,
+      purpose
     })
   });
 
-  if(!response.ok){
-    const err=await response.text().catch(()=>"");
-    throw new Error(`Groq API error ${response.status}: ${err.slice(0,200)}`);
+  console.log("[FORGE] Response status:", response.status);
+
+  if (!response.ok) {
+    const errText = await response.text().catch(() => "");
+    console.error("[FORGE] API Error body:", errText);
+    throw new Error(`Groq API error ${response.status}: ${errText.slice(0, 300)}`);
   }
 
-  const data=await response.json();
+  const data = await response.json();
+  console.log("[FORGE] Raw response received, extracting...");
 
-  let rawText=data?.choices?.[0]?.message?.content||"";
-  const clean=rawText.trim().replace(/^```(?:json)?\s*/im,"").replace(/\s*```\s*$/m,"").trim();
-  const match=clean.match(/\{[\s\S]*\}/);
-  if(!match)throw new Error("No JSON in response");
+  // Handle raw flag (JSON parse failed on server side)
+  let rawText = typeof data.result === "string" ? data.result : JSON.stringify(data.result);
+
+  // Strip markdown fences if any
+  const clean = rawText.trim()
+    .replace(/^```(?:json)?\s*/im, "")
+    .replace(/\s*```\s*$/m, "")
+    .trim();
+
+  const jsonMatch = clean.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error("No JSON found in Groq response");
 
   let parsed;
-  try{parsed=JSON.parse(match[0]);}
-  catch(e){throw new Error("JSON parse failed: "+e.message);}
+  try { parsed = JSON.parse(jsonMatch[0]); }
+  catch (e) {
+    console.error("[FORGE] JSON parse failed:", clean.slice(0, 500));
+    throw new Error("JSON parse failed: " + e.message);
+  }
 
-  if(!Array.isArray(parsed.categories)||parsed.categories.length<5)
-    throw new Error("Invalid response — missing categories");
+  if (!Array.isArray(parsed.categories) || parsed.categories.length === 0) {
+    throw new Error("Invalid response — missing categories array");
+  }
 
-  parsed._aiPowered=true;
+  console.log("[FORGE] ✓ Success! Categories:", parsed.categories.length);
+  parsed._aiPowered = true;
   return parsed;
 }
 
-// ── TIER DETECTION ─────────────────────────────────────────────────────────────
+// ── TIER DETECTION ───────────────────────────────────────────────────────────
 function getBudgetTier(pkr){
   if(pkr<80000)return"entry";
   if(pkr<200000)return"budget";
@@ -1028,261 +734,114 @@ function getBudgetTier(pkr){
   return"flagship";
 }
 
-function renderGamingPerformance(gp){
-  if(!gp||!Array.isArray(gp.games)||gp.games.length===0)return;
-  const section=document.getElementById("gamingPerfSection");
-  const resBadge=document.getElementById("gpResolutionBadge");
-  const gpuBadge=document.getElementById("gpGpuBadge");
-  const note=document.getElementById("gpNote");
-  const tbody=document.getElementById("gpTableBody");
-  if(!section||!tbody)return;
-
-  if(resBadge)resBadge.textContent=gp.resolution||"1080p";
-  if(gpuBadge)gpuBadge.textContent=gp.gpu_name||"GPU";
-  if(note)note.textContent=gp.note||"Estimated FPS — actual performance varies.";
-
-  // Clamp and validate FPS values from AI — cap at realistic maximums per tier
-  const FPS_CAPS={entry:200,budget:300,"mid-range":420,"high-end":600,enthusiast:800,flagship:1000};
-  const tier=STATE.blueprint?.tier||"budget";
-  const fpsCap=FPS_CAPS[tier]||400;
-
-  // Find the highest avg FPS in the data to scale bars relatively
-  const allAvg=gp.games.map(g=>Math.min(parseInt(String(g.avg_fps).replace(/\D/g,""))||0,fpsCap));
-  const maxFps=Math.max(...allAvg,1);
-
-  tbody.innerHTML="";
-  gp.games.forEach((g,i)=>{
-    const rawAvg=parseInt(String(g.avg_fps).replace(/\D/g,""))||0;
-    const rawLow=parseInt(String(g.low1_fps).replace(/\D/g,""))||0;
-    // Clamp to realistic values
-    const clampedAvg=Math.min(rawAvg,fpsCap);
-    const clampedLow=Math.min(rawLow,fpsCap);
-    // Rebuild display strings preserving "+" suffix if original had it
-    const avgSuffix=String(g.avg_fps).includes("+")?"+":"";
-    const lowSuffix=String(g.low1_fps).includes("+")?"+":"";
-    const displayAvg=(rawAvg>fpsCap?fpsCap:rawAvg)+avgSuffix;
-    const displayLow=(rawLow>fpsCap?fpsCap:rawLow)+lowSuffix;
-    // Bar scaled relative to highest FPS in this build's benchmark set
-    const barW=Math.round((clampedAvg/maxFps)*60);
-
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
-      <td class="gp-game">${esc(g.game)}</td>
-      <td class="gp-preset">${esc(g.preset)}</td>
-      <td class="gp-fps">${esc(displayAvg)}<span class="gp-fps-bar" style="width:${barW}px"></span></td>
-      <td class="gp-fps-low">${esc(displayLow)}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-  section.style.display="block";
-}
-
-// ── FALLBACK DATA (11 CATEGORIES × 6 TIERS) ────────────────────────────────────
+// ── FALLBACK DATA ─────────────────────────────────────────────────────────────
 function buildFallback(budgetPKR,purpose){
   const tier=getBudgetTier(budgetPKR);
   const TIERS={
     entry:{
-      CPU:[{name:"Intel Core i3-12100F",price:22000,condition:"New",badge:"RECOMMENDED",note:"Best entry CPU for gaming"},{name:"AMD Ryzen 3 3300X",price:12000,condition:"Used",badge:"BUDGET PICK",note:"Good used value"},{name:"Intel Pentium G7400",price:14000,condition:"New",badge:"BEST VALUE",note:"Minimum viable"}],
+      CPU:[{name:"Intel Core i3-12100F",price:22000,condition:"New",badge:"RECOMMENDED",note:"Strong entry CPU"},{name:"AMD Ryzen 3 3300X",price:12000,condition:"Used",badge:"BUDGET PICK",note:"Good used value"},{name:"Intel Pentium G6405",price:14000,condition:"New",badge:"BEST VALUE",note:"Minimum viable"}],
       GPU:[{name:"NVIDIA GTX 1650 4GB",price:30000,condition:"New",badge:"RECOMMENDED",note:"1080p capable"},{name:"AMD RX 580 8GB",price:18000,condition:"Used",badge:"BUDGET PICK",note:"Great used value"},{name:"NVIDIA GTX 1630 4GB",price:22000,condition:"New",badge:"BEST VALUE",note:"Budget 1080p"}],
       Motherboard:[{name:"MSI H610M PRO-E",price:14000,condition:"New",badge:"RECOMMENDED",note:"Solid LGA1700"},{name:"Gigabyte B450M DS3H",price:10000,condition:"New",badge:"BUDGET PICK",note:"AMD AM4"},{name:"ASUS PRIME H510M-E",price:12000,condition:"New",badge:"BEST VALUE",note:"Simple, reliable"}],
-      RAM:[{name:"16GB DDR4 3200MHz (2×8)",price:9500,condition:"New",badge:"RECOMMENDED",note:"Dual channel"},{name:"8GB DDR4 2666MHz",price:4500,condition:"New",badge:"BUDGET PICK",note:"Minimal but works"},{name:"16GB DDR4 TeamGroup",price:8500,condition:"New",badge:"BEST VALUE",note:"Good brand"}],
-      Storage:[{name:"512GB NVMe M.2 SSD",price:7500,condition:"New",badge:"RECOMMENDED",note:"Fast boot"},{name:"256GB SATA SSD",price:4500,condition:"New",badge:"BUDGET PICK",note:"Minimal storage"},{name:"1TB HDD + 120GB SSD",price:6500,condition:"New",badge:"BEST VALUE",note:"Combo approach"}],
-      PSU:[{name:"550W 80+ Bronze Seasonic",price:8000,condition:"New",badge:"RECOMMENDED",note:"Reliable"},{name:"500W Generic 80+",price:5500,condition:"New",badge:"BUDGET PICK",note:"Basic power"},{name:"450W Corsair CX450",price:7000,condition:"New",badge:"BEST VALUE",note:"Trusted brand"}],
+      RAM:[{name:"16GB DDR4 3200MHz (2x8)",price:9500,condition:"New",badge:"RECOMMENDED",note:"Dual channel"},{name:"8GB DDR4 2666MHz",price:4500,condition:"New",badge:"BUDGET PICK",note:"Minimal but works"},{name:"16GB DDR4 TeamGroup",price:8500,condition:"New",badge:"BEST VALUE",note:"Good brand"}],
+      Storage:[{name:"512GB NVMe M.2 SSD",price:7500,condition:"New",badge:"RECOMMENDED",note:"Fast boot drive"},{name:"256GB SATA SSD 2.5in",price:4500,condition:"New",badge:"BUDGET PICK",note:"Minimal storage"},{name:"1TB HDD + 120GB SSD",price:6500,condition:"New",badge:"BEST VALUE",note:"Combo approach"}],
+      PSU:[{name:"550W 80+ Bronze Seasonic",price:8000,condition:"New",badge:"RECOMMENDED",note:"Reliable PSU"},{name:"500W Generic 80+ PSU",price:5500,condition:"New",badge:"BUDGET PICK",note:"Basic power"},{name:"450W Corsair CX450",price:7000,condition:"New",badge:"BEST VALUE",note:"Trusted brand"}],
       Case:[{name:"Deepcool MATREXX 30",price:4000,condition:"New",badge:"RECOMMENDED",note:"Good airflow"},{name:"Basic ATX Mid Tower",price:2500,condition:"New",badge:"BUDGET PICK",note:"Bare minimum"},{name:"Antec NX200",price:3500,condition:"New",badge:"BEST VALUE",note:"Decent airflow"}],
       Monitor:[{name:"22in FHD 75Hz IPS",price:9000,condition:"New",badge:"RECOMMENDED",note:"1080p entry"},{name:"19in HD 60Hz TN",price:5500,condition:"Used",badge:"BUDGET PICK",note:"Functional"},{name:"24in FHD 60Hz VA",price:10000,condition:"New",badge:"BEST VALUE",note:"Larger screen"}],
-      Keyboard:[{name:"Redragon K503 Membrane KB",price:2500,condition:"New",badge:"RECOMMENDED",note:"Reliable entry keyboard"},{name:"Basic USB Keyboard",price:1000,condition:"New",badge:"BUDGET PICK",note:"Ultra budget"},{name:"Logitech K120 Wired KB",price:2000,condition:"New",badge:"BEST VALUE",note:"Trusted brand"}],
-      Mouse:[{name:"Logitech G102 Gaming Mouse",price:2800,condition:"New",badge:"RECOMMENDED",note:"Lightweight & precise"},{name:"Basic USB Mouse",price:800,condition:"New",badge:"BUDGET PICK",note:"Gets the job done"},{name:"A4Tech OP-330 Optical Mouse",price:1500,condition:"New",badge:"BEST VALUE",note:"Decent entry mouse"}],
-      Headphones:[{name:"Redragon H120 Stereo Headset",price:3500,condition:"New",badge:"RECOMMENDED",note:"Budget gaming audio"},{name:"Basic 3.5mm Headphones",price:1500,condition:"New",badge:"BUDGET PICK",note:"Minimal audio"},{name:"Havit H2002d Headset",price:2500,condition:"New",badge:"BEST VALUE",note:"Decent sound"}]
+      Peripherals:[{name:"Basic KB+Mouse Combo",price:2000,condition:"New",badge:"RECOMMENDED",note:"Functional set"},{name:"Wired Membrane KB+Mouse",price:1500,condition:"New",badge:"BUDGET PICK",note:"Ultra cheap"},{name:"Logitech MK220 Wireless",price:3500,condition:"New",badge:"BEST VALUE",note:"Wireless comfort"}]
     },
     budget:{
-      CPU:[{name:"AMD Ryzen 5 5600",price:26000,condition:"New",badge:"RECOMMENDED",note:"Best value AM4"},{name:"Intel Core i5-10400F",price:20000,condition:"New",badge:"BUDGET PICK",note:"Solid 6-core"},{name:"AMD Ryzen 5 5500",price:22000,condition:"New",badge:"BEST VALUE",note:"Budget Zen 3"}],
-      GPU:[{name:"NVIDIA RTX 3060 12GB",price:68000,condition:"New",badge:"RECOMMENDED",note:"1080p/1440p king"},{name:"AMD RX 6600 8GB",price:42000,condition:"Used",badge:"BUDGET PICK",note:"Strong used 1080p"},{name:"NVIDIA GTX 1660 Super",price:45000,condition:"New",badge:"BEST VALUE",note:"1080p workhorse"}],
+      CPU:[{name:"AMD Ryzen 5 5600X",price:32000,condition:"New",badge:"RECOMMENDED",note:"Top AM4 value"},{name:"Intel Core i5-10400F",price:20000,condition:"New",badge:"BUDGET PICK",note:"Solid 6-core"},{name:"AMD Ryzen 5 5500",price:25000,condition:"New",badge:"BEST VALUE",note:"Budget Zen 3"}],
+      GPU:[{name:"NVIDIA RTX 3060 12GB",price:62000,condition:"New",badge:"RECOMMENDED",note:"1080p/1440p king"},{name:"AMD RX 6600",price:38000,condition:"Used",badge:"BUDGET PICK",note:"Strong used 1080p"},{name:"NVIDIA GTX 1660 Super",price:42000,condition:"New",badge:"BEST VALUE",note:"1080p workhorse"}],
       Motherboard:[{name:"MSI B550M PRO-VDH",price:18000,condition:"New",badge:"RECOMMENDED",note:"Solid B550"},{name:"Gigabyte B450M Gaming",price:12000,condition:"New",badge:"BUDGET PICK",note:"Entry AM4"},{name:"ASUS PRIME B550M-A",price:16000,condition:"New",badge:"BEST VALUE",note:"Feature-rich"}],
-      RAM:[{name:"16GB DDR4 3600MHz Corsair",price:12000,condition:"New",badge:"RECOMMENDED",note:"Speed boost"},{name:"16GB DDR4 3200MHz Generic",price:9000,condition:"New",badge:"BUDGET PICK",note:"Works fine"},{name:"32GB DDR4 3200MHz (2×16)",price:18000,condition:"New",badge:"BEST VALUE",note:"Future-proof"}],
+      RAM:[{name:"16GB DDR4 3600MHz Corsair",price:12000,condition:"New",badge:"RECOMMENDED",note:"Speed boost"},{name:"16GB DDR4 3200MHz Generic",price:9000,condition:"New",badge:"BUDGET PICK",note:"Works fine"},{name:"32GB DDR4 3200MHz",price:18000,condition:"New",badge:"BEST VALUE",note:"Future proof"}],
       Storage:[{name:"1TB NVMe PCIe 3.0 SSD",price:12000,condition:"New",badge:"RECOMMENDED",note:"Fast & spacious"},{name:"512GB NVMe M.2 SSD",price:7500,condition:"New",badge:"BUDGET PICK",note:"Enough to start"},{name:"1TB Samsung 870 EVO SATA",price:14000,condition:"New",badge:"BEST VALUE",note:"Reliable SATA"}],
       PSU:[{name:"650W 80+ Gold EVGA",price:12000,condition:"New",badge:"RECOMMENDED",note:"Gold efficiency"},{name:"550W 80+ Bronze CM",price:8000,condition:"New",badge:"BUDGET PICK",note:"Good basic PSU"},{name:"600W Seasonic 80+ Bronze",price:10000,condition:"New",badge:"BEST VALUE",note:"Trusted brand"}],
       Case:[{name:"NZXT H510 Mid Tower",price:9000,condition:"New",badge:"RECOMMENDED",note:"Clean build"},{name:"Deepcool MATREXX 55",price:6000,condition:"New",badge:"BUDGET PICK",note:"Great airflow"},{name:"Fractal Focus G",price:7500,condition:"New",badge:"BEST VALUE",note:"Quiet design"}],
       Monitor:[{name:"24in FHD 144Hz IPS",price:18000,condition:"New",badge:"RECOMMENDED",note:"144Hz gaming"},{name:"24in FHD 75Hz VA",price:12000,condition:"New",badge:"BUDGET PICK",note:"Good colors"},{name:"27in FHD 144Hz",price:22000,condition:"New",badge:"BEST VALUE",note:"Bigger screen"}],
-      Keyboard:[{name:"Logitech G213 Prodigy RGB KB",price:5000,condition:"New",badge:"RECOMMENDED",note:"Gaming membrane"},{name:"Redragon K552 Mechanical",price:4000,condition:"New",badge:"BUDGET PICK",note:"Budget mech"},{name:"HyperX Alloy Core RGB",price:6000,condition:"New",badge:"BEST VALUE",note:"Solid rubber dome"}],
-      Mouse:[{name:"Logitech G203 LIGHTSYNC",price:3500,condition:"New",badge:"RECOMMENDED",note:"Reliable 8000 DPI"},{name:"Redragon M711 Cobra",price:2500,condition:"New",badge:"BUDGET PICK",note:"Budget gaming"},{name:"SteelSeries Rival 3",price:4500,condition:"New",badge:"BEST VALUE",note:"Lightweight"}],
-      Headphones:[{name:"HyperX Cloud Stinger Core",price:6000,condition:"New",badge:"RECOMMENDED",note:"Comfortable gaming"},{name:"Redragon H510 Zeus",price:4000,condition:"New",badge:"BUDGET PICK",note:"7.1 surround"},{name:"Logitech G431 7.1",price:7500,condition:"New",badge:"BEST VALUE",note:"DTS sound"}]
+      Peripherals:[{name:"Logitech G213 KB + G203 Mouse",price:7000,condition:"New",badge:"RECOMMENDED",note:"Gaming essentials"},{name:"Redragon K552 + M711",price:5000,condition:"New",badge:"BUDGET PICK",note:"Gamer value set"},{name:"Corsair K55 + M55",price:8500,condition:"New",badge:"BEST VALUE",note:"Branded duo"}]
     },
     "mid-range":{
-      CPU:[{name:"AMD Ryzen 7 5800X3D",price:68000,condition:"New",badge:"RECOMMENDED",note:"Best gaming CPU"},{name:"Intel Core i5-13600K",price:58000,condition:"New",badge:"BUDGET PICK",note:"Excellent IPC"},{name:"AMD Ryzen 5 7600X",price:55000,condition:"New",badge:"BEST VALUE",note:"AM5 future-proof"}],
-      GPU:[{name:"NVIDIA RTX 4070 12GB",price:120000,condition:"New",badge:"RECOMMENDED",note:"Efficient Ada 1440p"},{name:"AMD RX 7800 XT 16GB",price:95000,condition:"New",badge:"BEST VALUE",note:"Rasterization beast"},{name:"NVIDIA RTX 3080 10GB",price:90000,condition:"Used",badge:"BUDGET PICK",note:"Flagship for less"}],
-      Motherboard:[{name:"MSI MAG B550 TOMAHAWK",price:28000,condition:"New",badge:"RECOMMENDED",note:"Top B550"},{name:"Gigabyte B550 AORUS Elite",price:25000,condition:"New",badge:"BEST VALUE",note:"Good VRMs"},{name:"ASUS ROG STRIX B550-F",price:32000,condition:"New",badge:"BUDGET PICK",note:"Feature-rich"}],
+      CPU:[{name:"AMD Ryzen 7 5800X3D",price:68000,condition:"New",badge:"RECOMMENDED",note:"Best gaming CPU"},{name:"Intel Core i5-13600K",price:58000,condition:"New",badge:"BUDGET PICK",note:"Excellent IPC"},{name:"AMD Ryzen 5 7600X",price:55000,condition:"New",badge:"BEST VALUE",note:"AM5 future proof"}],
+      GPU:[{name:"NVIDIA RTX 3080 10GB",price:95000,condition:"Used",badge:"RECOMMENDED",note:"Flagship for less"},{name:"NVIDIA RTX 4070 12GB",price:105000,condition:"New",badge:"BEST NEW",note:"Efficient Ada"},{name:"AMD RX 6800 XT",price:80000,condition:"Used",badge:"BEST VALUE",note:"Rasterization beast"}],
+      Motherboard:[{name:"MSI MAG B550 TOMAHAWK",price:28000,condition:"New",badge:"RECOMMENDED",note:"Top B550"},{name:"ASUS ROG STRIX B550-F",price:32000,condition:"New",badge:"PREMIUM",note:"Feature-rich"},{name:"Gigabyte B550 AORUS Elite",price:25000,condition:"New",badge:"BEST VALUE",note:"Good VRMs"}],
       RAM:[{name:"32GB DDR4 3600MHz Corsair",price:22000,condition:"New",badge:"RECOMMENDED",note:"Gaming sweet spot"},{name:"16GB DDR4 3600MHz G.Skill",price:12000,condition:"New",badge:"BUDGET PICK",note:"Adequate"},{name:"32GB DDR4 3200MHz TeamGroup",price:19000,condition:"New",badge:"BEST VALUE",note:"Budget 32GB"}],
-      Storage:[{name:"1TB Samsung 980 Pro PCIe 4.0",price:18000,condition:"New",badge:"RECOMMENDED",note:"Top-tier speed"},{name:"1TB WD Black SN770",price:14000,condition:"New",badge:"BEST VALUE",note:"Fast & affordable"},{name:"2TB Crucial P3 Plus",price:22000,condition:"New",badge:"BUDGET PICK",note:"Double space"}],
-      PSU:[{name:"750W 80+ Gold Seasonic Focus",price:16000,condition:"New",badge:"RECOMMENDED",note:"RTX 4070 ready"},{name:"850W 80+ Gold EVGA SuperNOVA",price:19000,condition:"New",badge:"BUDGET PICK",note:"Headroom"},{name:"700W 80+ Bronze CM",price:12000,condition:"New",badge:"BEST VALUE",note:"Adequate"}],
-      Case:[{name:"Lian Li LANCOOL 205 MESH",price:12000,condition:"New",badge:"RECOMMENDED",note:"Best airflow"},{name:"Corsair 4000D Airflow",price:13000,condition:"New",badge:"BEST VALUE",note:"Premium airflow"},{name:"Fractal Meshify C",price:14000,condition:"New",badge:"BUDGET PICK",note:"Quiet & cool"}],
-      Monitor:[{name:"27in QHD 165Hz IPS",price:38000,condition:"New",badge:"RECOMMENDED",note:"1440p gaming"},{name:"24in FHD 240Hz IPS",price:28000,condition:"New",badge:"BUDGET PICK",note:"Competitive play"},{name:"27in QHD 144Hz VA",price:30000,condition:"New",badge:"BEST VALUE",note:"Great contrast"}],
-      Keyboard:[{name:"SteelSeries Apex 3 TKL",price:8000,condition:"New",badge:"RECOMMENDED",note:"Water resistant"},{name:"Redragon K580 VATA RGB",price:6000,condition:"New",badge:"BUDGET PICK",note:"Budget mech macro"},{name:"Logitech G413 SE",price:9000,condition:"New",badge:"BEST VALUE",note:"Linear tactile"}],
-      Mouse:[{name:"SteelSeries Rival 3 Wireless",price:7000,condition:"New",badge:"RECOMMENDED",note:"Wireless gaming"},{name:"Logitech G305 LIGHTSPEED",price:6500,condition:"New",badge:"BEST VALUE",note:"1yr battery"},{name:"Redragon M913 Impact Elite",price:5000,condition:"New",badge:"BUDGET PICK",note:"16000 DPI wireless"}],
-      Headphones:[{name:"HyperX Cloud II Wireless",price:12000,condition:"New",badge:"RECOMMENDED",note:"30hr battery 7.1"},{name:"Logitech G435 Wireless",price:9000,condition:"New",badge:"BEST VALUE",note:"Lightweight DTS"},{name:"SteelSeries Arctis 1 Wireless",price:10000,condition:"New",badge:"BUDGET PICK",note:"Low latency"}]
+      Storage:[{name:"1TB Samsung 980 Pro NVMe PCIe4",price:18000,condition:"New",badge:"RECOMMENDED",note:"Top-tier speed"},{name:"1TB WD Black SN770 NVMe",price:14000,condition:"New",badge:"BEST VALUE",note:"Fast & affordable"},{name:"2TB Crucial P3 Plus NVMe",price:22000,condition:"New",badge:"SPACIOUS",note:"Double the space"}],
+      PSU:[{name:"750W 80+ Gold Seasonic Focus",price:16000,condition:"New",badge:"RECOMMENDED",note:"For RTX 3080"},{name:"850W 80+ Gold EVGA SuperNOVA",price:19000,condition:"New",badge:"HEADROOM",note:"Future upgrades"},{name:"700W 80+ Bronze CM",price:12000,condition:"New",badge:"BUDGET PICK",note:"Adequate"}],
+      Case:[{name:"Lian Li LANCOOL 205 MESH",price:12000,condition:"New",badge:"RECOMMENDED",note:"Best airflow"},{name:"Fractal Design Meshify C",price:14000,condition:"New",badge:"SILENT",note:"Quiet & cool"},{name:"Corsair 4000D Airflow",price:13000,condition:"New",badge:"BEST VALUE",note:"Premium airflow"}],
+      Monitor:[{name:"27in QHD 165Hz IPS",price:38000,condition:"New",badge:"RECOMMENDED",note:"1440p gaming"},{name:"24in FHD 240Hz IPS",price:28000,condition:"New",badge:"HIGH REFRESH",note:"Competitive play"},{name:"27in QHD 144Hz VA",price:30000,condition:"New",badge:"BEST VALUE",note:"Great contrast"}],
+      Peripherals:[{name:"SteelSeries Apex 3 + Rival 3 + HS35",price:18000,condition:"New",badge:"RECOMMENDED",note:"Full gaming set"},{name:"Logitech G Pro KB + G502 Mouse",price:20000,condition:"New",badge:"LOGITECH SET",note:"Pro gaming combo"},{name:"HyperX Alloy Core + Pulsefire",price:15000,condition:"New",badge:"BEST VALUE",note:"Solid set"}]
     },
     "high-end":{
-      CPU:[{name:"AMD Ryzen 9 7900X",price:105000,condition:"New",badge:"RECOMMENDED",note:"AM5 powerhouse"},{name:"Intel Core i9-13900K",price:115000,condition:"New",badge:"BUDGET PICK",note:"Top single-thread"},{name:"AMD Ryzen 7 7700X",price:80000,condition:"New",badge:"BEST VALUE",note:"8-core AM5"}],
-      GPU:[{name:"NVIDIA RTX 4080 Super 16GB",price:230000,condition:"New",badge:"RECOMMENDED",note:"4K flagship"},{name:"NVIDIA RTX 4080",price:190000,condition:"Used",badge:"BUDGET PICK",note:"Save vs new"},{name:"NVIDIA RTX 4070 Ti Super",price:170000,condition:"New",badge:"BEST VALUE",note:"Near 4080 perf"}],
-      Motherboard:[{name:"ASUS ROG STRIX X670E-F",price:55000,condition:"New",badge:"RECOMMENDED",note:"AM5 flagship"},{name:"MSI MEG X670E ACE",price:65000,condition:"New",badge:"BUDGET PICK",note:"OC king"},{name:"Gigabyte X670 AORUS Elite",price:45000,condition:"New",badge:"BEST VALUE",note:"Good AM5"}],
-      RAM:[{name:"32GB DDR5-6000 G.Skill Trident Z5",price:38000,condition:"New",badge:"RECOMMENDED",note:"DDR5 sweet spot"},{name:"32GB DDR5-5200 Corsair Dominator",price:32000,condition:"New",badge:"BEST VALUE",note:"Reliable DDR5"},{name:"64GB DDR5-5600 Kingston",price:60000,condition:"New",badge:"BUDGET PICK",note:"Massive capacity"}],
-      Storage:[{name:"2TB Samsung 990 Pro PCIe 4.0",price:32000,condition:"New",badge:"RECOMMENDED",note:"Flagship SSD"},{name:"1TB WD Black SN850X + 2TB HDD",price:28000,condition:"New",badge:"BEST VALUE",note:"Speed + storage"},{name:"4TB Seagate Firecuda 530",price:48000,condition:"New",badge:"BUDGET PICK",note:"4TB NVMe"}],
-      PSU:[{name:"1000W 80+ Platinum Seasonic",price:28000,condition:"New",badge:"RECOMMENDED",note:"RTX 4080 ready"},{name:"1000W 80+ Gold EVGA SuperNOVA",price:22000,condition:"New",badge:"BEST VALUE",note:"Gold 1kW"},{name:"850W 80+ Gold ASUS ROG Thor",price:24000,condition:"New",badge:"BUDGET PICK",note:"OLED meter"}],
-      Case:[{name:"Lian Li PC-O11 Dynamic EVO",price:22000,condition:"New",badge:"RECOMMENDED",note:"Showcase build"},{name:"Fractal Design Torrent",price:25000,condition:"New",badge:"BUDGET PICK",note:"Best thermals"},{name:"NZXT H9 Flow",price:20000,condition:"New",badge:"BEST VALUE",note:"Premium layout"}],
-      Monitor:[{name:"27in QHD 240Hz OLED LG UltraGear",price:85000,condition:"New",badge:"RECOMMENDED",note:"OLED gaming"},{name:"32in 4K 144Hz IPS",price:75000,condition:"New",badge:"BEST VALUE",note:"True 4K"},{name:"27in QHD 165Hz Dell S2722DGM",price:45000,condition:"New",badge:"BUDGET PICK",note:"Solid 1440p"}],
-      Keyboard:[{name:"Logitech G915 TKL Wireless",price:22000,condition:"New",badge:"RECOMMENDED",note:"Ultra-thin GL mech"},{name:"SteelSeries Apex Pro TKL",price:20000,condition:"New",badge:"BEST VALUE",note:"Adjustable actuation"},{name:"Corsair K70 RGB MK.2",price:16000,condition:"New",badge:"BUDGET PICK",note:"Cherry MX Red"}],
-      Mouse:[{name:"Logitech G Pro X Superlight 2",price:16000,condition:"New",badge:"RECOMMENDED",note:"60g wireless pro"},{name:"Razer DeathAdder V3 Pro",price:14000,condition:"New",badge:"BEST VALUE",note:"63g ergonomic"},{name:"SteelSeries Prime Wireless",price:12000,condition:"New",badge:"BUDGET PICK",note:"61g TrueMove Pro"}],
-      Headphones:[{name:"SteelSeries Arctis Nova 7 Wireless",price:18000,condition:"New",badge:"RECOMMENDED",note:"Multi-system 38hr"},{name:"Logitech G535 Wireless",price:15000,condition:"New",badge:"BEST VALUE",note:"175g featherweight"},{name:"Corsair HS80 RGB Wireless",price:16000,condition:"New",badge:"BUDGET PICK",note:"Slipstream 20hr"}]
+      CPU:[{name:"AMD Ryzen 9 7900X",price:105000,condition:"New",badge:"RECOMMENDED",note:"AM5 powerhouse"},{name:"Intel Core i9-13900K",price:115000,condition:"New",badge:"INTEL KING",note:"Top single-thread"},{name:"AMD Ryzen 7 7700X",price:80000,condition:"New",badge:"BEST VALUE",note:"8-core AM5"}],
+      GPU:[{name:"NVIDIA RTX 4080 16GB",price:220000,condition:"New",badge:"RECOMMENDED",note:"4K flagship"},{name:"NVIDIA RTX 4080",price:180000,condition:"Used",badge:"USED DEAL",note:"Save vs new"},{name:"NVIDIA RTX 4070 Ti Super",price:165000,condition:"New",badge:"BEST VALUE",note:"Near 4080 perf"}],
+      Motherboard:[{name:"ASUS ROG STRIX X670E-F",price:55000,condition:"New",badge:"RECOMMENDED",note:"AM5 flagship"},{name:"MSI MEG X670E ACE",price:65000,condition:"New",badge:"PREMIUM",note:"OC king"},{name:"Gigabyte X670 AORUS Elite",price:45000,condition:"New",badge:"BEST VALUE",note:"Good AM5"}],
+      RAM:[{name:"32GB DDR5-6000 G.Skill Trident Z5",price:38000,condition:"New",badge:"RECOMMENDED",note:"DDR5 sweet spot"},{name:"64GB DDR5-5600 Kingston",price:60000,condition:"New",badge:"WORKSTATION",note:"Massive capacity"},{name:"32GB DDR5-5200 Corsair Dominator",price:32000,condition:"New",badge:"BEST VALUE",note:"Reliable DDR5"}],
+      Storage:[{name:"2TB Samsung 990 Pro NVMe PCIe4",price:32000,condition:"New",badge:"RECOMMENDED",note:"Flagship SSD"},{name:"1TB WD Black SN850X + 2TB HDD",price:28000,condition:"New",badge:"COMBO",note:"Speed + storage"},{name:"4TB Seagate Firecuda 530",price:48000,condition:"New",badge:"MASSIVE",note:"4TB NVMe"}],
+      PSU:[{name:"1000W 80+ Platinum Seasonic Prime",price:28000,condition:"New",badge:"RECOMMENDED",note:"RTX 4080 ready"},{name:"850W 80+ Gold ASUS ROG Thor",price:24000,condition:"New",badge:"PREMIUM",note:"OLED meter"},{name:"1000W 80+ Gold EVGA SuperNOVA",price:22000,condition:"New",badge:"BEST VALUE",note:"Gold 1kW"}],
+      Case:[{name:"Lian Li PC-O11 Dynamic EVO",price:22000,condition:"New",badge:"RECOMMENDED",note:"Showcase build"},{name:"Fractal Design Torrent",price:25000,condition:"New",badge:"AIRFLOW KING",note:"Best thermals"},{name:"NZXT H9 Flow",price:20000,condition:"New",badge:"BEST VALUE",note:"Premium layout"}],
+      Monitor:[{name:"27in QHD 240Hz OLED LG UltraGear",price:85000,condition:"New",badge:"RECOMMENDED",note:"OLED gaming"},{name:"32in 4K 144Hz IPS",price:75000,condition:"New",badge:"4K BEAST",note:"True 4K gaming"},{name:"27in QHD 165Hz Dell S2722DGM",price:45000,condition:"New",badge:"BEST VALUE",note:"Solid 1440p"}],
+      Peripherals:[{name:"Corsair K95 + M65 Ultra + HS80",price:45000,condition:"New",badge:"RECOMMENDED",note:"Premium set"},{name:"Razer BlackWidow V4 + DeathAdder V3",price:50000,condition:"New",badge:"RAZER SET",note:"Iconic combo"},{name:"SteelSeries Apex Pro + Prime Mini",price:48000,condition:"New",badge:"STEELSERIES",note:"Pro gaming"}]
     },
     enthusiast:{
-      CPU:[{name:"AMD Ryzen 9 9950X",price:165000,condition:"New",badge:"RECOMMENDED",note:"Zen 5 flagship"},{name:"Intel Core Ultra 9 285K",price:155000,condition:"New",badge:"BUDGET PICK",note:"Arrow Lake king"},{name:"AMD Ryzen 9 7950X3D",price:180000,condition:"New",badge:"BEST VALUE",note:"3D V-Cache gaming+work"}],
-      GPU:[{name:"NVIDIA RTX 5080 16GB",price:320000,condition:"New",badge:"RECOMMENDED",note:"Blackwell gen"},{name:"NVIDIA RTX 4090 24GB",price:360000,condition:"New",badge:"BUDGET PICK",note:"Absolute 4K king"},{name:"NVIDIA RTX 4090",price:300000,condition:"Used",badge:"BEST VALUE",note:"Save vs new 5080"}],
-      Motherboard:[{name:"ASUS ROG MAXIMUS Z790 APEX",price:90000,condition:"New",badge:"RECOMMENDED",note:"Extreme OC"},{name:"Gigabyte Z790 AORUS Master",price:75000,condition:"New",badge:"BEST VALUE",note:"Top Z790"},{name:"MSI MEG Z790 GODLIKE",price:105000,condition:"New",badge:"BUDGET PICK",note:"Flagship board"}],
-      RAM:[{name:"64GB DDR5-6400 G.Skill Trident Z5",price:85000,condition:"New",badge:"RECOMMENDED",note:"High-speed 64GB"},{name:"32GB DDR5-7200 Corsair Dominator Titanium",price:55000,condition:"New",badge:"BEST VALUE",note:"Top OC kit"},{name:"96GB DDR5-5600 Kingston Fury",price:120000,condition:"New",badge:"BUDGET PICK",note:"96GB capacity"}],
-      Storage:[{name:"2TB WD Black SN850X + 4TB HDD",price:50000,condition:"New",badge:"RECOMMENDED",note:"Speed + bulk"},{name:"2TB Corsair MP700 PCIe 5.0",price:55000,condition:"New",badge:"BEST VALUE",note:"PCIe 5 speed"},{name:"4TB Samsung 990 Pro",price:70000,condition:"New",badge:"BUDGET PICK",note:"All NVMe"}],
-      PSU:[{name:"1200W 80+ Titanium Seasonic Prime",price:42000,condition:"New",badge:"RECOMMENDED",note:"Titanium efficiency"},{name:"1000W 80+ Platinum ASUS ROG Thor",price:38000,condition:"New",badge:"BEST VALUE",note:"OLED display"},{name:"1600W 80+ Titanium Corsair AX1600i",price:75000,condition:"New",badge:"BUDGET PICK",note:"Dual-GPU ready"}],
-      Case:[{name:"Lian Li PC-O11 Dynamic XL",price:35000,condition:"New",badge:"RECOMMENDED",note:"Showcase XL"},{name:"Fractal Design Torrent XL",price:30000,condition:"New",badge:"BEST VALUE",note:"Airflow king"},{name:"Corsair 7000X RGB",price:40000,condition:"New",badge:"BUDGET PICK",note:"Full tower RGB"}],
-      Monitor:[{name:"27in 4K 240Hz OLED ASUS ROG Swift",price:160000,condition:"New",badge:"RECOMMENDED",note:"4K OLED"},{name:"32in 4K 144Hz Mini-LED Gigabyte M32U",price:100000,condition:"New",badge:"BEST VALUE",note:"Excellent HDR"},{name:"49in Ultrawide QHD 240Hz Samsung",price:180000,condition:"New",badge:"BUDGET PICK",note:"Immersive"}],
-      Keyboard:[{name:"Wooting 60HE Hall Effect",price:35000,condition:"New",badge:"RECOMMENDED",note:"Analog mech pro"},{name:"Keychron Q6 Pro QMK",price:25000,condition:"New",badge:"BEST VALUE",note:"Custom QMK"},{name:"ASUS ROG Azoth Extreme",price:30000,condition:"New",badge:"BUDGET PICK",note:"ROG ecosystem"}],
-      Mouse:[{name:"Finalmouse Air58 Ninja",price:28000,condition:"New",badge:"RECOMMENDED",note:"Ultra-light 47g"},{name:"Logitech G Pro X Superlight 2 DEX",price:22000,condition:"New",badge:"BEST VALUE",note:"60g asymmetric"},{name:"Razer Viper V3 HyperSpeed",price:18000,condition:"New",badge:"BUDGET PICK",note:"82g wireless"}],
-      Headphones:[{name:"Astro A50 X Gen5 Wireless",price:45000,condition:"New",badge:"RECOMMENDED",note:"Multi-system Dolby"},{name:"Sony WH-1000XM5",price:38000,condition:"New",badge:"BEST VALUE",note:"ANC audiophile"},{name:"SteelSeries Arctis Nova Pro Wireless",price:40000,condition:"New",badge:"BUDGET PICK",note:"Hot-swap battery"}]
+      CPU:[{name:"AMD Ryzen 9 9950X",price:170000,condition:"New",badge:"RECOMMENDED",note:"Zen 5 flagship"},{name:"Intel Core Ultra 9 285K",price:160000,condition:"New",badge:"INTEL FLAG",note:"Arrow Lake king"},{name:"AMD Ryzen 9 7950X3D",price:185000,condition:"New",badge:"GAMING+WORK",note:"3D V-Cache beast"}],
+      GPU:[{name:"NVIDIA RTX 5080 16GB",price:300000,condition:"New",badge:"RECOMMENDED",note:"Latest gen"},{name:"NVIDIA RTX 4090 24GB",price:350000,condition:"New",badge:"PREVIOUS GEN",note:"Absolute 4K king"},{name:"NVIDIA RTX 4090",price:290000,condition:"Used",badge:"USED DEAL",note:"Save vs new 5080"}],
+      Motherboard:[{name:"ASUS ROG MAXIMUS Z790 APEX",price:90000,condition:"New",badge:"RECOMMENDED",note:"Extreme OC"},{name:"MSI MEG Z790 GODLIKE",price:105000,condition:"New",badge:"PREMIUM",note:"Flagship board"},{name:"Gigabyte Z790 AORUS Master",price:75000,condition:"New",badge:"BEST VALUE",note:"Top Z790"}],
+      RAM:[{name:"64GB DDR5-6400 G.Skill Trident Z5",price:85000,condition:"New",badge:"RECOMMENDED",note:"High speed 64GB"},{name:"96GB DDR5-5600 Kingston Fury",price:120000,condition:"New",badge:"MAXED OUT",note:"96GB insanity"},{name:"32GB DDR5-7200 Corsair Dominator Titanium",price:55000,condition:"New",badge:"SPEED KING",note:"Top OC kit"}],
+      Storage:[{name:"2TB WD Black SN850X + 4TB HDD",price:50000,condition:"New",badge:"RECOMMENDED",note:"Speed+bulk"},{name:"4TB Samsung 990 Pro PCIe4",price:70000,condition:"New",badge:"ALL NVMe",note:"Pure NVMe"},{name:"2TB Corsair MP700 PCIe5",price:55000,condition:"New",badge:"PCIe 5",note:"Next-gen speed"}],
+      PSU:[{name:"1200W 80+ Titanium Seasonic Prime",price:42000,condition:"New",badge:"RECOMMENDED",note:"Titanium eff."},{name:"1000W 80+ Platinum ASUS ROG Thor",price:38000,condition:"New",badge:"PREMIUM",note:"With display"},{name:"1600W 80+ Titanium Corsair AX1600i",price:75000,condition:"New",badge:"EXTREME",note:"Dual-GPU ready"}],
+      Case:[{name:"Lian Li PC-O11 Dynamic XL",price:35000,condition:"New",badge:"RECOMMENDED",note:"Showcase XL"},{name:"Corsair 7000X RGB Full Tower",price:40000,condition:"New",badge:"FULL TOWER",note:"Extreme size"},{name:"Thermaltake Core P8",price:45000,condition:"New",badge:"OPEN FRAME",note:"Display piece"}],
+      Monitor:[{name:"27in 4K 240Hz OLED ASUS ROG Swift",price:160000,condition:"New",badge:"RECOMMENDED",note:"4K OLED"},{name:"32in 4K 144Hz Mini-LED Gigabyte M32U",price:100000,condition:"New",badge:"MINI-LED",note:"Excellent HDR"},{name:"49in Ultrawide QHD 240Hz Samsung",price:180000,condition:"New",badge:"ULTRAWIDE",note:"Immersive"}],
+      Peripherals:[{name:"Wooting 60HE + Finalmouse Air58 + Astro A50 X",price:80000,condition:"New",badge:"RECOMMENDED",note:"Pro peripherals"},{name:"Keychron Q6 Pro + G Pro X SL2 + Sony WH-1000XM5",price:75000,condition:"New",badge:"PREMIUM SET",note:"Quality build"},{name:"ASUS ROG Strix Scope + Chakram X + Delta S",price:70000,condition:"New",badge:"ROG SET",note:"Full ROG"}]
     },
     flagship:{
-      CPU:[{name:"AMD Ryzen 9 9950X",price:170000,condition:"New",badge:"RECOMMENDED",note:"Balanced flagship"},{name:"Intel Core i9-14900KS",price:160000,condition:"New",badge:"BEST VALUE",note:"Fastest gaming"},{name:"AMD Threadripper PRO 7960X",price:550000,condition:"New",badge:"BUDGET PICK",note:"Workstation king"}],
-      GPU:[{name:"NVIDIA RTX 5090 32GB",price:600000,condition:"New",badge:"RECOMMENDED",note:"Absolute fastest"},{name:"NVIDIA RTX 4090 24GB",price:360000,condition:"New",badge:"BEST VALUE",note:"Still unbeatable"},{name:"NVIDIA RTX 5080 16GB",price:320000,condition:"New",badge:"BUDGET PICK",note:"Excellent value"}],
-      Motherboard:[{name:"ASUS ROG MAXIMUS Z890 APEX",price:115000,condition:"New",badge:"RECOMMENDED",note:"Z890 flagship"},{name:"Gigabyte Z890 AORUS Tachyon",price:95000,condition:"New",badge:"BEST VALUE",note:"OC champion"},{name:"MSI MEG Z890 GODLIKE",price:135000,condition:"New",badge:"BUDGET PICK",note:"Top board"}],
-      RAM:[{name:"64GB DDR5-8200 Corsair Dominator Titanium",price:120000,condition:"New",badge:"RECOMMENDED",note:"Insane OC RAM"},{name:"96GB DDR5-7200 Kingston Fury Renegade",price:150000,condition:"New",badge:"BEST VALUE",note:"96GB fast kit"},{name:"128GB DDR5-8000 G.Skill Trident Z5",price:250000,condition:"New",badge:"BUDGET PICK",note:"128GB elite"}],
-      Storage:[{name:"4TB Samsung 990 Pro + 8TB NAS HDD",price:95000,condition:"New",badge:"RECOMMENDED",note:"Extreme storage"},{name:"2TB Crucial T705 PCIe 5.0 + 4TB WD Gold",price:80000,condition:"New",badge:"BEST VALUE",note:"PCIe 5 combo"},{name:"8TB Samsung 870 QVO + 2TB 990 Pro",price:100000,condition:"New",badge:"BUDGET PICK",note:"10TB total"}],
-      PSU:[{name:"1600W 80+ Titanium Corsair AX1600i",price:75000,condition:"New",badge:"RECOMMENDED",note:"No-compromise"},{name:"1200W 80+ Titanium Seasonic Prime TX",price:45000,condition:"New",badge:"BEST VALUE",note:"Titanium"},{name:"2000W 80+ Titanium Enermax Digifanless",price:120000,condition:"New",badge:"BUDGET PICK",note:"2kW monster"}],
-      Case:[{name:"Corsair Obsidian 1000D Super Tower",price:90000,condition:"New",badge:"RECOMMENDED",note:"Dual-system ready"},{name:"Phanteks Enthoo Elite",price:80000,condition:"New",badge:"BEST VALUE",note:"Premium tower"},{name:"Caselabs Mercury S8",price:150000,condition:"New",badge:"BUDGET PICK",note:"Modder's dream"}],
-      Monitor:[{name:"27in 4K 480Hz ASUS ROG Swift PG27AQDM",price:200000,condition:"New",badge:"RECOMMENDED",note:"Fastest 4K OLED"},{name:"32in 4K 240Hz OLED LG C3",price:220000,condition:"New",badge:"BEST VALUE",note:"TV-quality gaming"},{name:"57in 8K Samsung Odyssey Neo G9",price:400000,condition:"New",badge:"BUDGET PICK",note:"Insane ultrawide"}],
-      Keyboard:[{name:"Custom Wooting 60HE + Kailh switches",price:50000,condition:"New",badge:"RECOMMENDED",note:"Bespoke analog"},{name:"ASUS ROG Azoth Extreme Wireless",price:35000,condition:"New",badge:"BEST VALUE",note:"Full ROG eco"},{name:"Keychron Q6 Max QMK Wireless",price:30000,condition:"New",badge:"BUDGET PICK",note:"Custom firmware"}],
-      Mouse:[{name:"Finalmouse Ultralight X Pro",price:45000,condition:"New",badge:"RECOMMENDED",note:"Lightest pro mouse"},{name:"Logitech G Pro X Superlight 2 DEX",price:22000,condition:"New",badge:"BEST VALUE",note:"Asymmetric 60g"},{name:"Razer DeathAdder V3 HyperSpeed",price:18000,condition:"New",badge:"BUDGET PICK",note:"Ergonomic wireless"}],
-      Headphones:[{name:"Sony MDR-Z1R Audiophile + DAC/Amp",price:180000,condition:"New",badge:"RECOMMENDED",note:"Reference audiophile"},{name:"Focal Celestee Closed-Back",price:150000,condition:"New",badge:"BEST VALUE",note:"French audiophile"},{name:"ASUS ROG Delta Pro Wireless",price:50000,condition:"New",badge:"BUDGET PICK",note:"Hi-Res gaming"}]
+      CPU:[{name:"AMD Threadripper PRO 7960X 24-Core",price:550000,condition:"New",badge:"WORKSTATION",note:"Workstation king"},{name:"Intel Core i9-14900KS Special",price:160000,condition:"New",badge:"GAMING KING",note:"Fastest gaming"},{name:"AMD Ryzen 9 9950X",price:170000,condition:"New",badge:"RECOMMENDED",note:"Balanced flagship"}],
+      GPU:[{name:"NVIDIA RTX 5090 32GB",price:600000,condition:"New",badge:"ULTIMATE",note:"Absolute fastest"},{name:"NVIDIA RTX 4090 24GB",price:350000,condition:"New",badge:"LAST GEN KING",note:"Still unbeatable"},{name:"NVIDIA RTX 5080 16GB",price:300000,condition:"New",badge:"RECOMMENDED",note:"Excellent value"}],
+      Motherboard:[{name:"ASUS ROG MAXIMUS Z890 APEX",price:110000,condition:"New",badge:"EXTREME OC",note:"Z890 flagship"},{name:"MSI MEG Z890 GODLIKE",price:130000,condition:"New",badge:"ABSOLUTE BEST",note:"Top board"},{name:"Gigabyte Z890 AORUS Tachyon",price:95000,condition:"New",badge:"RECOMMENDED",note:"OC champion"}],
+      RAM:[{name:"128GB DDR5-8000 G.Skill Trident Z5",price:250000,condition:"New",badge:"MAXIMUM",note:"128GB elite kit"},{name:"64GB DDR5-8200 Corsair Dominator Titanium",price:120000,condition:"New",badge:"RECOMMENDED",note:"Insane OC RAM"},{name:"96GB DDR5-7200 Kingston Fury Renegade",price:150000,condition:"New",badge:"BALANCED",note:"96GB fast kit"}],
+      Storage:[{name:"4TB Samsung 990 Pro + 8TB NAS HDD",price:95000,condition:"New",badge:"RECOMMENDED",note:"Extreme storage"},{name:"2TB Crucial T705 PCIe5 + 4TB WD Gold",price:80000,condition:"New",badge:"PCIe 5 COMBO",note:"Next-gen fast"},{name:"8TB Samsung 870 QVO + 2TB 990 Pro",price:100000,condition:"New",badge:"STORAGE BEAST",note:"10TB total"}],
+      PSU:[{name:"1600W 80+ Titanium Corsair AX1600i",price:75000,condition:"New",badge:"RECOMMENDED",note:"No-compromise"},{name:"1200W 80+ Titanium Seasonic Prime TX",price:45000,condition:"New",badge:"BEST VALUE",note:"Titanium eff."},{name:"2000W 80+ Titanium Enermax Digifanless",price:120000,condition:"New",badge:"EXTREME",note:"2kW monster"}],
+      Case:[{name:"Corsair Obsidian 1000D Super Tower",price:90000,condition:"New",badge:"RECOMMENDED",note:"Dual-system ready"},{name:"Phanteks Enthoo Elite Full Tower",price:80000,condition:"New",badge:"BEST VALUE",note:"Premium full tower"},{name:"Caselabs Mercury S8",price:150000,condition:"New",badge:"ULTRA PREMIUM",note:"Modder's dream"}],
+      Monitor:[{name:"27in 4K 480Hz ASUS ROG Swift PG27AQDM",price:200000,condition:"New",badge:"RECOMMENDED",note:"Fastest 4K OLED"},{name:"32in 4K 240Hz OLED LG C3 Gaming",price:220000,condition:"New",badge:"ULTRA PREMIUM",note:"TV-quality gaming"},{name:"57in 8K Samsung Odyssey Neo G9",price:400000,condition:"New",badge:"EXTREME",note:"Insane ultrawide"}],
+      Peripherals:[{name:"Wooting 60HE + Finalmouse Ultralight X + Sony MDR-Z1R",price:180000,condition:"New",badge:"RECOMMENDED",note:"Audiophile + pro"},{name:"Custom 65% KB + G Pro X SL2 DEX + Focal Celestee",price:200000,condition:"New",badge:"CUSTOM",note:"Bespoke setup"},{name:"ASUS ROG Azoth Extreme + Harpe Ace + Delta Pro",price:120000,condition:"New",badge:"FULL ROG",note:"Ecosystem"}]
     }
   };
 
-  const GAMING_BENCHMARKS={
-    entry:{gpu_name:"GTX 1650 / RX 580 class",resolution:"1080p",note:"Estimated FPS based on real benchmark data. Actual performance varies.",
-      games:[
-        {game:"Valorant",               preset:"High",      avg_fps:"120+",  low1_fps:"90+"},
-        {game:"CS2",                    preset:"Medium",    avg_fps:"90+",   low1_fps:"65+"},
-        {game:"GTA V",                  preset:"Normal",    avg_fps:"60+",   low1_fps:"45+"},
-        {game:"Call of Duty (Warzone 2)",preset:"Low-Med",  avg_fps:"60+",   low1_fps:"40+"},
-        {game:"Fortnite",               preset:"Medium",    avg_fps:"75+",   low1_fps:"55+"},
-        {game:"Apex Legends",           preset:"Medium",    avg_fps:"80+",   low1_fps:"55+"},
-        {game:"Cyberpunk 2077",         preset:"Low",       avg_fps:"35+",   low1_fps:"25+"},
-        {game:"Resident Evil 4 Remake", preset:"Medium",    avg_fps:"60+",   low1_fps:"45+"},
-        {game:"Forza Horizon 5",        preset:"Medium",    avg_fps:"55+",   low1_fps:"40+"},
-        {game:"Days Gone",              preset:"Medium",    avg_fps:"50+",   low1_fps:"35+"}
-      ]},
-    budget:{gpu_name:"RTX 3060 / RX 6600 class",resolution:"1080p",note:"Estimated FPS based on real benchmark data. Actual performance varies.",
-      games:[
-        {game:"Valorant",               preset:"High",      avg_fps:"240+",  low1_fps:"180+"},
-        {game:"CS2",                    preset:"High",      avg_fps:"180+",  low1_fps:"130+"},
-        {game:"GTA V",                  preset:"Very High", avg_fps:"95+",   low1_fps:"70+"},
-        {game:"Call of Duty (Warzone 2)",preset:"High",     avg_fps:"100+",  low1_fps:"75+"},
-        {game:"Fortnite",               preset:"High",      avg_fps:"130+",  low1_fps:"95+"},
-        {game:"Apex Legends",           preset:"High",      avg_fps:"140+",  low1_fps:"100+"},
-        {game:"Cyberpunk 2077",         preset:"Medium",    avg_fps:"55+",   low1_fps:"40+"},
-        {game:"Resident Evil 4 Remake", preset:"High",      avg_fps:"95+",   low1_fps:"70+"},
-        {game:"Forza Horizon 5",        preset:"High",      avg_fps:"90+",   low1_fps:"65+"},
-        {game:"Days Gone",              preset:"High",      avg_fps:"85+",   low1_fps:"60+"}
-      ]},
-    "mid-range":{gpu_name:"RTX 4070 / RX 7800 XT class",resolution:"1440p",note:"Estimated FPS based on real benchmark data. Actual performance varies.",
-      games:[
-        {game:"Valorant",               preset:"High",      avg_fps:"350+",  low1_fps:"270+"},
-        {game:"CS2",                    preset:"High",      avg_fps:"240+",  low1_fps:"170+"},
-        {game:"GTA V",                  preset:"Ultra",     avg_fps:"110+",  low1_fps:"80+"},
-        {game:"Call of Duty (Warzone 2)",preset:"High",     avg_fps:"120+",  low1_fps:"90+"},
-        {game:"Fortnite",               preset:"Epic",      avg_fps:"140+",  low1_fps:"105+"},
-        {game:"Apex Legends",           preset:"High",      avg_fps:"160+",  low1_fps:"120+"},
-        {game:"Cyberpunk 2077",         preset:"Ultra (no RT)", avg_fps:"75+", low1_fps:"55+"},
-        {game:"Resident Evil 4 Remake", preset:"High",      avg_fps:"120+",  low1_fps:"90+"},
-        {game:"Forza Horizon 5",        preset:"Ultra",     avg_fps:"110+",  low1_fps:"82+"},
-        {game:"Days Gone",              preset:"Ultra",     avg_fps:"100+",  low1_fps:"75+"}
-      ]},
-    "high-end":{gpu_name:"RTX 4080 Super / RX 7900 XTX class",resolution:"1440p/4K",note:"Estimated FPS based on real benchmark data. Actual performance varies.",
-      games:[
-        {game:"Valorant",               preset:"High",      avg_fps:"500+",  low1_fps:"400+"},
-        {game:"CS2",                    preset:"High",      avg_fps:"350+",  low1_fps:"260+"},
-        {game:"GTA V",                  preset:"Ultra",     avg_fps:"160+",  low1_fps:"120+"},
-        {game:"Call of Duty (Warzone 2)",preset:"Ultra",    avg_fps:"160+",  low1_fps:"120+"},
-        {game:"Fortnite",               preset:"Epic",      avg_fps:"180+",  low1_fps:"140+"},
-        {game:"Apex Legends",           preset:"High",      avg_fps:"220+",  low1_fps:"165+"},
-        {game:"Cyberpunk 2077",         preset:"Ultra+PT",  avg_fps:"65+",   low1_fps:"50+"},
-        {game:"Resident Evil 4 Remake", preset:"Ultra",     avg_fps:"150+",  low1_fps:"115+"},
-        {game:"Forza Horizon 5",        preset:"Extreme",   avg_fps:"140+",  low1_fps:"110+"},
-        {game:"Days Gone",              preset:"Ultra",     avg_fps:"140+",  low1_fps:"105+"}
-      ]},
-    enthusiast:{gpu_name:"RTX 5080 / RTX 4090 class",resolution:"4K",note:"Estimated FPS based on real benchmark data. Actual performance varies.",
-      games:[
-        {game:"Valorant",               preset:"High",      avg_fps:"700+",  low1_fps:"550+"},
-        {game:"CS2",                    preset:"High",      avg_fps:"500+",  low1_fps:"380+"},
-        {game:"GTA V",                  preset:"Ultra",     avg_fps:"200+",  low1_fps:"155+"},
-        {game:"Call of Duty (Warzone 2)",preset:"Ultra",    avg_fps:"200+",  low1_fps:"155+"},
-        {game:"Fortnite",               preset:"Epic",      avg_fps:"220+",  low1_fps:"175+"},
-        {game:"Apex Legends",           preset:"High",      avg_fps:"280+",  low1_fps:"210+"},
-        {game:"Cyberpunk 2077",         preset:"Overdrive RT", avg_fps:"75+", low1_fps:"58+"},
-        {game:"Resident Evil 4 Remake", preset:"Ultra",     avg_fps:"180+",  low1_fps:"140+"},
-        {game:"Forza Horizon 5",        preset:"Extreme",   avg_fps:"175+",  low1_fps:"140+"},
-        {game:"Days Gone",              preset:"Ultra",     avg_fps:"170+",  low1_fps:"130+"}
-      ]},
-    flagship:{gpu_name:"RTX 5090 class",resolution:"4K 240Hz+",note:"Estimated FPS based on real benchmark data. Actual performance varies.",
-      games:[
-        {game:"Valorant",               preset:"High",      avg_fps:"900+",  low1_fps:"700+"},
-        {game:"CS2",                    preset:"High",      avg_fps:"600+",  low1_fps:"460+"},
-        {game:"GTA V",                  preset:"Ultra",     avg_fps:"250+",  low1_fps:"195+"},
-        {game:"Call of Duty (Warzone 2)",preset:"Ultra",    avg_fps:"250+",  low1_fps:"195+"},
-        {game:"Fortnite",               preset:"Epic",      avg_fps:"280+",  low1_fps:"220+"},
-        {game:"Apex Legends",           preset:"High",      avg_fps:"350+",  low1_fps:"270+"},
-        {game:"Cyberpunk 2077",         preset:"Overdrive RT", avg_fps:"110+", low1_fps:"85+"},
-        {game:"Resident Evil 4 Remake", preset:"Ultra",     avg_fps:"240+",  low1_fps:"190+"},
-        {game:"Forza Horizon 5",        preset:"Extreme",   avg_fps:"220+",  low1_fps:"175+"},
-        {game:"Days Gone",              preset:"Ultra",     avg_fps:"220+",  low1_fps:"175+"}
-      ]}
-  };
-
-  const ICONS={CPU:"🔲",GPU:"🎮",Motherboard:"🧩",RAM:"⚡",Storage:"💾",PSU:"🔌",Case:"📦",Monitor:"🖥️",Keyboard:"⌨️",Mouse:"🖱️",Headphones:"🎧"};
   const tierData=TIERS[tier]||TIERS["budget"];
+  const ICONS={CPU:"🔲",GPU:"🎮",Motherboard:"🧩",RAM:"⚡",Storage:"💾",PSU:"🔌",Case:"📦",Monitor:"🖥️",Peripherals:"🎧"};
   const categories=Object.entries(tierData).map(([cat,options])=>({cat,icon:ICONS[cat]||"🛠️",options}));
-  const gaming_performance=GAMING_BENCHMARKS[tier]||GAMING_BENCHMARKS["budget"];
-  return{tier,categories,gaming_performance,_aiPowered:false};
+  return{tier,categories,_aiPowered:false};
 }
 
-// ── RENDER RESULTS ─────────────────────────────────────────────────────────────
+// ── RENDER RESULTS ────────────────────────────────────────────────────────────
 function renderResults(blueprint){
   const container=document.getElementById("partsContainer");
   if(!container||!blueprint?.categories)return;
   container.innerHTML="";
   STATE.selections={};
-  // Hide gaming perf while rendering new build
-  const gpSec=document.getElementById("gamingPerfSection");
-  if(gpSec)gpSec.style.display="none";
 
   blueprint.categories.forEach((category,catIdx)=>{
     const section=document.createElement("div");
     section.className="category-section";
-    section.style.animationDelay=catIdx*50+"ms";
+    section.style.animationDelay=catIdx*60+"ms";
     const catId=category.cat.replace(/[^a-zA-Z0-9]/g,"_");
-    const safeIcon=(typeof category.icon==="string"&&[...category.icon].length<=2)?esc(category.icon):"🛠️";
     section.innerHTML=`
       <div class="cat-header">
-        <span class="cat-icon">${safeIcon}</span>
+        <span class="cat-icon">${(typeof category.icon==="string"&&category.icon.length<=4)?esc(category.icon):"🛠️"}</span>
         <span class="cat-name">${esc(category.cat)}</span>
         <span class="cat-selection-status" id="sel-${catId}">— NOT SELECTED —</span>
       </div>
       <div class="cat-options-row" id="opts-${catId}"></div>
     `;
     const optRow=section.querySelector(`#opts-${catId}`);
-    (category.options||[]).forEach(opt=>{
+    (category.options||[]).forEach((opt,i)=>{
       const card=document.createElement("div");
       card.className="option-card";
       const SAFE_BADGE=new Set(["badge-rec","badge-budget","badge-value","badge-premium","badge-default",""]);
-      const SAFE_COND =new Set(["cond-new","cond-used","cond-refurb"]);
-      const bRaw=getBadgeClass(opt.badge);
-      const bClass=SAFE_BADGE.has(bRaw)?bRaw:"badge-default";
-      const cRaw=opt.condition==="Used"?"cond-used":opt.condition==="Refurbished"?"cond-refurb":"cond-new";
-      const cClass=SAFE_COND.has(cRaw)?cRaw:"cond-new";
+      const SAFE_COND=new Set(["cond-new","cond-used","cond-refurb"]);
+      const rawBClass=getBadgeClass(opt.badge);
+      const bClass=SAFE_BADGE.has(rawBClass)?rawBClass:"badge-default";
+      const rawCClass=opt.condition==="Used"?"cond-used":opt.condition==="Refurbished"?"cond-refurb":"cond-new";
+      const cClass=SAFE_COND.has(rawCClass)?rawCClass:"cond-new";
       card.innerHTML=`
         <div class="option-badge ${bClass}">${esc(opt.badge||"")}</div>
         <div class="option-name">${esc(opt.name)}</div>
@@ -1307,7 +866,7 @@ function getBadgeClass(b){
   if(u.includes("RECOMMENDED"))return"badge-rec";
   if(u.includes("BUDGET")||u.includes("ULTRA BUDGET"))return"badge-budget";
   if(u.includes("BEST VALUE"))return"badge-value";
-  if(u.includes("PREMIUM")||u.includes("KING")||u.includes("ULTIMATE")||u.includes("ABSOLUTE"))return"badge-premium";
+  if(u.includes("PREMIUM")||u.includes("KING")||u.includes("ULTIMATE"))return"badge-premium";
   return"badge-default";
 }
 
@@ -1323,16 +882,17 @@ function toggleSelection(cat,opt,card,optRow,catId){
     STATE.selections[cat]={...opt,cat};
     const s=document.getElementById("sel-"+catId);
     if(s){
-      s.textContent="✓ "+(opt.name.length>30?opt.name.slice(0,28)+"…":opt.name);
+      const nm=opt.name.length>30?opt.name.slice(0,28)+"…":opt.name;
+      s.textContent="✓ "+nm;
       s.classList.add("status-selected");
     }
   }
   updateBuildSummary();
 }
 
-// ── BUILD SUMMARY ──────────────────────────────────────────────────────────────
+// ── BUILD SUMMARY ─────────────────────────────────────────────────────────────
 function updateBuildSummary(){
-  const listEl =document.getElementById("buildSummaryList");
+  const listEl=document.getElementById("buildSummaryList");
   const totalEl=document.getElementById("buildSummaryTotal");
   const countEl=document.getElementById("buildSummaryCount");
   if(!listEl)return;
@@ -1372,16 +932,14 @@ function updateBuildSummary(){
   }
 }
 
-// ── INVOICE ────────────────────────────────────────────────────────────────────
+// ── INVOICE ───────────────────────────────────────────────────────────────────
 function openInvoice(){
-  const modal =document.getElementById("invoiceModal");
-  const items =document.getElementById("invoiceItemsContainer");
+  const modal=document.getElementById("invoiceModal");
+  const items=document.getElementById("invoiceItemsContainer");
   if(!modal||!items)return;
-
   items.innerHTML="";
   let totalPKR=0;
   const selected=Object.values(STATE.selections);
-
   if(selected.length===0){
     items.innerHTML='<div class="receipt-empty">No components selected yet.</div>';
   }else{
@@ -1391,115 +949,36 @@ function openInvoice(){
       row.className="receipt-row";
       row.innerHTML=`
         <span class="receipt-cat">${esc(item.cat)}</span>
-        <span class="receipt-item" title="${esc(item.name)}">${esc(item.name)}</span>
+        <span class="receipt-item">${esc(item.name)}</span>
         <span class="receipt-price">${formatPrice(item.price)}</span>
       `;
       items.appendChild(row);
     });
   }
-
-  const grand=totalPKR+STATE.assemblyFee;
-  const hw  =document.getElementById("invoiceHardwareTotal");
-  const af  =document.getElementById("invoiceAssemblyFee");
-  const gt  =document.getElementById("invoiceGrandTotal");
-  const ts  =document.getElementById("invoiceTimestamp");
+  const hw=document.getElementById("invoiceHardwareTotal");
+  const af=document.getElementById("invoiceAssemblyFee");
+  const gt=document.getElementById("invoiceGrandTotal");
+  const ts=document.getElementById("invoiceTimestamp");
   if(hw)hw.textContent=formatPrice(totalPKR);
   if(af)af.textContent=formatPrice(STATE.assemblyFee);
-  if(gt)gt.textContent=formatPrice(grand);
-  if(ts)ts.textContent="DATETIME: "+new Date().toISOString().replace("T"," ").slice(0,19)+" UTC";
-
-  // Gaming performance in invoice
-  const gpDiv=document.getElementById("invoiceGamingPerf");
-  if(gpDiv){
-    gpDiv.innerHTML="";
-    const gp=STATE.gamingPerf;
-    if(gp&&Array.isArray(gp.games)&&gp.games.length>0){
-      const h=document.createElement("div");
-      h.className="receipt-gp-section";
-      let html=`<div class="receipt-gp-header">🎮 ESTIMATED GAMING PERFORMANCE (${esc(gp.resolution||"")}) — ${esc(gp.gpu_name||"")}</div>`;
-      gp.games.forEach(g=>{
-        html+=`<div class="receipt-gp-row">
-          <span class="receipt-gp-game">${esc(g.game)}</span>
-          <span class="receipt-gp-preset">${esc(g.preset)}</span>
-          <span class="receipt-gp-fps">Avg: ${esc(g.avg_fps)} · 1%Low: ${esc(g.low1_fps)}</span>
-        </div>`;
-      });
-      if(gp.note)html+=`<p style="font-size:9px;color:#7090b0;margin-top:6px;font-family:'JetBrains Mono',monospace;">${esc(gp.note)}</p>`;
-      h.innerHTML=html;
-      gpDiv.appendChild(h);
-    }
-  }
-
+  if(gt)gt.textContent=formatPrice(totalPKR+STATE.assemblyFee);
+  if(ts){ts.textContent="DATETIME: "+new Date().toISOString().replace("T"," ").slice(0,19)+" UTC";}
   modal.classList.add("active");
   document.body.style.overflow="hidden";
-  buildPrintArea(selected,totalPKR,grand);
 }
-
 function closeInvoice(){
   const m=document.getElementById("invoiceModal");
   if(m?.classList.contains("active")){m.classList.remove("active");document.body.style.overflow="";}
 }
 
-// ── PRINT (clean printArea populated before window.print) ─────────────────────
-function buildPrintArea(selected,totalPKR,grandTotal){
-  const pa=document.getElementById("printArea");
-  if(!pa)return;
-  const cur=activeCurrency;
-  const now=new Date().toLocaleString();
-  const tier=STATE.blueprint?.tier||"";
-  const gp=STATE.gamingPerf;
-
-  let itemsHTML="";
-  selected.forEach(item=>{
-    itemsHTML+=`<div class="print-item-row">
-      <span class="print-item-cat">${esc(item.cat)}</span>
-      <span class="print-item-name">${esc(item.name)}</span>
-      <span class="print-item-price">${formatPrice(item.price)}</span>
-    </div>`;
-  });
-
-  let gpHTML="";
-  if(gp&&Array.isArray(gp.games)&&gp.games.length>0){
-    gpHTML=`<div class="print-section-title">🎮 ESTIMATED GAMING PERFORMANCE — ${esc(gp.resolution||"")} — GPU: ${esc(gp.gpu_name||"")}</div>
-    <table class="print-gp-table"><thead><tr><th>Game</th><th>Preset</th><th>Avg FPS</th><th>1% Low FPS</th></tr></thead><tbody>`;
-    gp.games.forEach(g=>{gpHTML+=`<tr><td>${esc(g.game)}</td><td>${esc(g.preset)}</td><td>${esc(g.avg_fps)}</td><td>${esc(g.low1_fps)}</td></tr>`;});
-    gpHTML+=`</tbody></table>`;
-    if(gp.note)gpHTML+=`<p class="print-disclaimer">${esc(gp.note)}</p>`;
-  }
-
-  pa.innerHTML=`<div class="print-doc">
-    <div class="print-doc-header">
-      <h1>FORGE — BILL OF MATERIALS</h1>
-      <p>${esc(now)} · Currency: ${esc(cur)} · Tier: ${esc(tier.toUpperCase())}</p>
-      <p>FORGE AI PC Builder — Powered by Groq AI · forge.vercel.app</p>
-    </div>
-    <div class="print-section-title">SELECTED COMPONENTS</div>
-    ${itemsHTML||"<p>No components selected.</p>"}
-    <div class="print-total-block">
-      <div class="print-total-row"><span>Hardware Total:</span><span>${formatPrice(totalPKR)}</span></div>
-      <div class="print-total-row"><span>Assembly / Technician Fee:</span><span>${formatPrice(STATE.assemblyFee)}</span></div>
-      <div class="print-total-row print-grand-total"><span>GRAND TOTAL:</span><span>${formatPrice(grandTotal)}</span></div>
-    </div>
-    ${gpHTML}
-    <div class="print-footer">
-      <p>© 2025 FORGE AI PC Builder — Recommendations for informational purposes only.</p>
-      <p class="print-disclaimer">All prices are estimates based on Pakistani market data. Verify prices before purchasing. FPS figures are estimates only.</p>
-    </div>
-  </div>`;
-}
-
-function doPrint(){
-  window.print();
-}
-
-// ── NAVIGATION ─────────────────────────────────────────────────────────────────
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
 function navigateTo(id){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   const el=document.getElementById(id);
   if(el){el.classList.add("active");window.scrollTo({top:0,behavior:"smooth"});}
 }
 
-// ── TERMINAL ANIMATION ─────────────────────────────────────────────────────────
+// ── TERMINAL ANIMATION ────────────────────────────────────────────────────────
 function runTerminal(){
   const lines=document.querySelectorAll(".terminal-line");
   lines.forEach(l=>l.className="terminal-line");
@@ -1512,7 +991,7 @@ function runTerminal(){
   });
 }
 
-// ── PARTICLES ──────────────────────────────────────────────────────────────────
+// ── PARTICLES ─────────────────────────────────────────────────────────────────
 function initParticles(){
   const canvas=document.getElementById("particleCanvas");
   if(!canvas)return;
@@ -1530,39 +1009,61 @@ function initParticles(){
   (function loop(){ctx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{p.update();p.draw();});requestAnimationFrame(loop);})();
 }
 
-// ── CURSOR GLOW ────────────────────────────────────────────────────────────────
+// ── CURSOR GLOW ───────────────────────────────────────────────────────────────
 function setupCursorGlow(){
   const g=document.getElementById("cursorGlow");
   if(!g)return;
   window.addEventListener("mousemove",e=>{g.style.left=e.clientX+"px";g.style.top=e.clientY+"px";});
 }
 
-// ── COOKIE BANNER ──────────────────────────────────────────────────────────────
-function initCookieBanner(){
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
+</script>
+<!-- ── FOOTER ──────────────────────────────────────────────────────────────── -->
+<footer style="text-align:center;padding:2rem 1rem;font-size:12px;color:#7090b0;border-top:1px solid #1a2f50;margin-top:4rem;font-family:'JetBrains Mono',monospace;">
+  <div style="margin-bottom:10px;">
+    <a href="privacy.html" style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">Privacy Policy</a>·
+    <a href="terms.html"   style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">Terms &amp; Conditions</a>·
+    <a href="cookies.html" style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">Cookie Policy</a>·
+    <a href="faq.html"     style="color:#7090b0;margin:0 8px;text-decoration:none;" rel="noopener noreferrer">FAQ</a>
+  </div>
+  <div>© 2025 FORGE AI PC Builder. Recommendations for informational purposes only. Verify all prices before purchasing.</div>
+</footer>
+
+<!-- ── COOKIE CONSENT BANNER ─────────────────────────────────────────────── -->
+<div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;
+  background:#080f1a;border-top:1px solid #1a2f50;padding:14px 24px;
+  flex-wrap:wrap;gap:12px;font-size:13px;color:#c8d8f0;align-items:center;justify-content:space-between;">
+  <span>🍪 We use minimal functional cookies.
+    <a href="cookies.html" style="color:#00f0ff;" rel="noopener noreferrer">Cookie Policy</a> ·
+    <a href="privacy.html" style="color:#00f0ff;" rel="noopener noreferrer">Privacy Policy</a>
+  </span>
+  <div style="display:flex;gap:10px;flex-shrink:0;">
+    <button onclick="declineCookies()" style="background:transparent;border:1px solid #1a2f50;color:#7090b0;padding:6px 16px;border-radius:4px;cursor:pointer;font-size:12px;font-family:'JetBrains Mono',monospace;">Decline</button>
+    <button onclick="acceptCookies()" style="background:#00f0ff;border:none;color:#04080f;padding:6px 16px;border-radius:4px;cursor:pointer;font-weight:700;font-size:12px;font-family:'JetBrains Mono',monospace;">Accept</button>
+  </div>
+</div>
+<script>
+(function(){
   try{
-    if(!localStorage.getItem("forge_cookie_consent")){
+    const consent=localStorage.getItem("forge_cookie_consent");
+    if(!consent){
       const b=document.getElementById("cookieBanner");
       if(b)b.style.display="flex";
     }
   }catch(e){}
-}
+})();
 function acceptCookies(){
   try{localStorage.setItem("forge_cookie_consent","accepted");}catch(e){}
-  const b=document.getElementById("cookieBanner");if(b)b.style.display="none";
+  const b=document.getElementById("cookieBanner");
+  if(b)b.style.display="none";
 }
 function declineCookies(){
   try{localStorage.setItem("forge_cookie_consent","declined");}catch(e){}
-  const b=document.getElementById("cookieBanner");if(b)b.style.display="none";
-}
-
-// ── UTILS ──────────────────────────────────────────────────────────────────────
-function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
-function showError(msg){
-  const el=document.getElementById("budgetError");
-  if(el)el.textContent=msg;
-  document.getElementById("budgetWrapper")?.classList.add("error-state");
-  document.getElementById("budgetInput")?.focus();
+  const b=document.getElementById("cookieBanner");
+  if(b)b.style.display="none";
 }
 </script>
+
 </body>
 </html>
