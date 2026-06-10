@@ -385,10 +385,11 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
       <h1 class="logo-text">FORGE<span class="accent-dot">.</span></h1>
     </div>
     <div class="header-right">
+      <button id="groqKeyBtn" onclick="promptGroqKey()" style="background:transparent;border:1px solid var(--warn);color:var(--warn);padding:7px 13px;border-radius:6px;font-family:var(--font-mono);font-size:11px;cursor:pointer;letter-spacing:1px;transition:all .2s;" title="Configure your free Groq API key">🔑 Add Groq Key</button>
       <select class="currency-select" id="currencySelect"></select>
       <div style="display:flex;align-items:center">
-        <span class="status-dot pulsing"></span>
-        <span class="status-text">GROQ ONLINE</span>
+        <span class="status-dot pulsing" id="groqStatusDot"></span>
+        <span class="status-text" id="groqStatusText">NO KEY</span>
       </div>
     </div>
   </header>
@@ -695,6 +696,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   bindEvents();
   updateBudgetHint();
   initCookieBanner();
+  updateGroqKeyUI();
 });
 
 // ── TERMS GATE ─────────────────────────────────────────────────────────────────
@@ -822,7 +824,7 @@ async function handleFormSubmit(e){
   const remaining=Math.max(0,2500-(Date.now()-t0));
   setTimeout(()=>{
     renderResults(STATE.blueprint);
-    if(STATE.gamingPerf)renderGamingPerformance(STATE.gamingPerf);
+    if(STATE.gamingPerf&&purpose==="gaming")renderGamingPerformance(STATE.gamingPerf);
     updateBuildSummary();
     navigateTo("resultsView");
     const ind=document.getElementById("aiSourceIndicator");
@@ -833,12 +835,49 @@ async function handleFormSubmit(e){
         txt.textContent="✓ Build generated via Groq AI (Llama 3.3 70B) · Market-aware pricing";
         ind.style.borderColor="rgba(0,230,118,.4)";txt.style.color="#00e676";
       }else{
-        ind.innerHTML=`<span style="color:#ffb700;">⚠ Using cached market data — Groq not connected</span>
-        <button onclick="location.reload()" style="margin-left:12px;background:transparent;border:1px solid #ffb700;color:#ffb700;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font-mono);">↺ Retry</button>`;
+        const noKey=!getGroqApiKey();
+        ind.innerHTML=`<span style="color:#ffb700;">⚠ Using cached market data — ${noKey?"No Groq API key set":"Groq request failed"}</span>
+        <button onclick="${noKey?"promptGroqKey()":"location.reload()"}" style="margin-left:12px;background:transparent;border:1px solid #ffb700;color:#ffb700;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font-mono);">${noKey?"🔑 Add Key":"↺ Retry"}</button>`;
       }
     }
     if(btn)btn.disabled=false;
   },remaining);
+}
+
+// ── GROQ API KEY MANAGEMENT ────────────────────────────────────────────────────
+function getGroqApiKey(){
+  try{return localStorage.getItem("forge_groq_key")||"";}catch(e){return"";}
+}
+function setGroqApiKey(key){
+  try{if(key)localStorage.setItem("forge_groq_key",key.trim());else localStorage.removeItem("forge_groq_key");}catch(e){}
+}
+function promptGroqKey(){
+  const existing=getGroqApiKey();
+  const k=window.prompt(
+    "Enter your Groq API key (free at console.groq.com):\n\nYour key is stored only in this browser (localStorage) and sent directly to Groq — never to any third-party server.",
+    existing||"gsk_..."
+  );
+  if(k===null)return;
+  const trimmed=k.trim();
+  if(!trimmed.startsWith("gsk_")){
+    alert("Invalid key — Groq keys start with 'gsk_'. Key not saved.");return;
+  }
+  setGroqApiKey(trimmed);
+  alert("✓ Groq API key saved. Your next build will use live AI.");
+  updateGroqKeyUI();
+}
+function updateGroqKeyUI(){
+  const hasKey=!!getGroqApiKey();
+  const btn=document.getElementById("groqKeyBtn");
+  if(btn){
+    btn.textContent=hasKey?"🔑 Groq Key ✓":"🔑 Add Groq Key";
+    btn.style.borderColor=hasKey?"var(--success)":"var(--warn)";
+    btn.style.color=hasKey?"var(--success)":"var(--warn)";
+  }
+  const dot=document.getElementById("groqStatusDot");
+  const txt=document.getElementById("groqStatusText");
+  if(dot){dot.style.background=hasKey?"var(--success)":"var(--warn)";}
+  if(txt){txt.textContent=hasKey?"GROQ READY":"NO KEY";}
 }
 
 // ── RATE LIMITER ───────────────────────────────────────────────────────────────
@@ -942,20 +981,28 @@ JSON STRUCTURE (return ONLY this, pure JSON):
   }
 }`;
 
-  const response=await fetch("/api/groq",{
+  const groqKey=getGroqApiKey();
+  if(!groqKey)throw new Error("No Groq API key configured");
+
+  const response=await fetch("https://api.groq.com/openai/v1/chat/completions",{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({action:"custom",prompt,budgetPKR,purpose})
+    headers:{"Content-Type":"application/json","Authorization":"Bearer "+groqKey},
+    body:JSON.stringify({
+      model:"llama-3.3-70b-versatile",
+      max_tokens:4096,
+      temperature:0.3,
+      messages:[{role:"user",content:prompt}]
+    })
   });
 
   if(!response.ok){
     const err=await response.text().catch(()=>"");
-    throw new Error(`API error ${response.status}: ${err.slice(0,200)}`);
+    throw new Error(`Groq API error ${response.status}: ${err.slice(0,200)}`);
   }
 
   const data=await response.json();
 
-  let rawText=typeof data.result==="string"?data.result:JSON.stringify(data.result);
+  let rawText=data?.choices?.[0]?.message?.content||"";
   const clean=rawText.trim().replace(/^```(?:json)?\s*/im,"").replace(/\s*```\s*$/m,"").trim();
   const match=clean.match(/\{[\s\S]*\}/);
   if(!match)throw new Error("No JSON in response");
@@ -981,7 +1028,6 @@ function getBudgetTier(pkr){
   return"flagship";
 }
 
-// ── GAMING PERFORMANCE RENDER ──────────────────────────────────────────────────
 function renderGamingPerformance(gp){
   if(!gp||!Array.isArray(gp.games)||gp.games.length===0)return;
   const section=document.getElementById("gamingPerfSection");
@@ -995,18 +1041,36 @@ function renderGamingPerformance(gp){
   if(gpuBadge)gpuBadge.textContent=gp.gpu_name||"GPU";
   if(note)note.textContent=gp.note||"Estimated FPS — actual performance varies.";
 
+  // Clamp and validate FPS values from AI — cap at realistic maximums per tier
+  const FPS_CAPS={entry:200,budget:300,"mid-range":420,"high-end":600,enthusiast:800,flagship:1000};
+  const tier=STATE.blueprint?.tier||"budget";
+  const fpsCap=FPS_CAPS[tier]||400;
+
+  // Find the highest avg FPS in the data to scale bars relatively
+  const allAvg=gp.games.map(g=>Math.min(parseInt(String(g.avg_fps).replace(/\D/g,""))||0,fpsCap));
+  const maxFps=Math.max(...allAvg,1);
+
   tbody.innerHTML="";
-  gp.games.forEach(g=>{
-    // Try to parse avg FPS for bar width
-    const avgNum=parseInt(String(g.avg_fps).replace(/\D/g,""))||0;
-    const barW=Math.min(60,Math.round((avgNum/300)*60));
+  gp.games.forEach((g,i)=>{
+    const rawAvg=parseInt(String(g.avg_fps).replace(/\D/g,""))||0;
+    const rawLow=parseInt(String(g.low1_fps).replace(/\D/g,""))||0;
+    // Clamp to realistic values
+    const clampedAvg=Math.min(rawAvg,fpsCap);
+    const clampedLow=Math.min(rawLow,fpsCap);
+    // Rebuild display strings preserving "+" suffix if original had it
+    const avgSuffix=String(g.avg_fps).includes("+")?"+":"";
+    const lowSuffix=String(g.low1_fps).includes("+")?"+":"";
+    const displayAvg=(rawAvg>fpsCap?fpsCap:rawAvg)+avgSuffix;
+    const displayLow=(rawLow>fpsCap?fpsCap:rawLow)+lowSuffix;
+    // Bar scaled relative to highest FPS in this build's benchmark set
+    const barW=Math.round((clampedAvg/maxFps)*60);
 
     const tr=document.createElement("tr");
     tr.innerHTML=`
       <td class="gp-game">${esc(g.game)}</td>
       <td class="gp-preset">${esc(g.preset)}</td>
-      <td class="gp-fps">${esc(g.avg_fps)}<span class="gp-fps-bar" style="width:${barW}px"></span></td>
-      <td class="gp-fps-low">${esc(g.low1_fps)}</td>
+      <td class="gp-fps">${esc(displayAvg)}<span class="gp-fps-bar" style="width:${barW}px"></span></td>
+      <td class="gp-fps-low">${esc(displayLow)}</td>
     `;
     tbody.appendChild(tr);
   });
