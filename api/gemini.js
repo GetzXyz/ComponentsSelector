@@ -150,13 +150,14 @@ async function callGroq(prompt, isJson) {
         {
           role: "system",
           content: isJson
-            ? "You are FORGE AI, a PC hardware expert for Pakistan. Always respond with valid JSON only. No markdown, no explanation outside the JSON object."
+            ? "You are FORGE AI, a PC hardware pricing expert. Always respond with valid JSON only. Use realistic local market prices, never impossible low prices, and choose conservative higher estimates when uncertain. No markdown, no explanation outside the JSON object."
             : "You are FORGE AI, a PC hardware expert for Pakistan. Be concise and helpful.",
         },
         { role: "user", content: prompt },
       ],
-      temperature: 0.6,
-      max_tokens: 2048,
+      temperature: isJson ? 0.2 : 0.5,
+      max_tokens: isJson ? 4096 : 2048,
+      ...(isJson ? { response_format: { type: "json_object" } } : {}),
     }),
   });
 

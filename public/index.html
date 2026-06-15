@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FORGE — AI PC Builder</title>
-<meta name="description" content="FORGE AI PC Builder — Get AI-powered PC build recommendations optimized for Pakistani market prices. Gaming or workstation builds across all budgets.">
-<meta property="og:title" content="FORGE AI PC Builder">
-<meta property="og:description" content="AI-powered PC build recommendations for Pakistani market — Gaming & Workstation">
+<title>FORGE PC Builder</title>
+<meta name="description" content="FORGE PC Builder — Get AI-powered PC build recommendations optimized for Pakistani and International market prices. Gaming or workstation builds across all budgets.">
+<meta property="og:title" content="FORGE PC Builder">
+<meta property="og:description" content="AI-powered PC build recommendations for Pakistani and International market — Gaming & Workstation">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#00f0ff">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='44' height='44' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='44' height='44' rx='8' fill='%2304080f'/%3E%3Crect x='10' y='10' width='24' height='24' rx='3' fill='%2304080f' stroke='%2300f0ff' stroke-width='1.2'/%3E%3Crect x='15' y='15' width='14' height='14' rx='2' fill='%230d1526' stroke='%2300f0ff' stroke-width='0.8'/%3E%3Cline x1='22' y1='15' x2='22' y2='29' stroke='%2300f0ff' stroke-width='0.5' opacity='0.5'/%3E%3Cline x1='15' y1='22' x2='29' y2='22' stroke='%2300f0ff' stroke-width='0.5' opacity='0.5'/%3E%3Ccircle cx='15' cy='15' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='29' cy='15' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='15' cy='29' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='29' cy='29' r='1.2' fill='%237b2fff'/%3E%3Cline x1='17' y1='10' x2='17' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='22' y1='10' x2='22' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='27' y1='10' x2='27' y2='6' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='17' y1='34' x2='17' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='22' y1='34' x2='22' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='27' y1='34' x2='27' y2='38' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='17' x2='6' y2='17' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='22' x2='6' y2='22' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='10' y1='27' x2='6' y2='27' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='17' x2='38' y2='17' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='22' x2='38' y2='22' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cline x1='34' y1='27' x2='38' y2='27' stroke='%2300f0ff' stroke-width='1.2' stroke-linecap='round'/%3E%3Cpath d='M23.5 17L20 22H22.5L20.5 27L25 21H22L23.5 17Z' fill='%2300f0ff'/%3E%3C/svg%3E">
-<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='44' height='44' viewBox='0 0 44 44' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='44' height='44' rx='8' fill='%2304080f'/%3E%3Crect x='10' y='10' width='24' height='24' rx='3' fill='%2304080f' stroke='%2300f0ff' stroke-width='1.2'/%3E%3Crect x='15' y='15' width='14' height='14' rx='2' fill='%230d1526' stroke='%2300f0ff' stroke-width='0.8'/%3E%3Cline x1='22' y1='15' x2='22' y2='29' stroke='%2300f0ff' stroke-width='0.5' opacity='0.5'/%3E%3Cline x1='15' y1='22' x2='29' y2='22' stroke='%2300f0ff' stroke-width='0.5' opacity='0.5'/%3E%3Ccircle cx='15' cy='15' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='29' cy='15' r='1.2' fill='%237b2fff'/%3E%3Ccircle cx='15' cy='29' r('M6 6H6V6H6V6Z') fill='%7B7b7b7b%'/%>
 <meta http-equiv="X-Frame-Options" content="DENY">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
@@ -277,6 +276,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-main);min-hei
     </div>
     <div class="header-right">
       <select class="currency-select" id="currencySelect"></select>
+      <select class="currency-select" id="marketSelect" aria-label="Market area"></select>
       <div class="system-status" style="display:flex;align-items:center">
         <span class="status-dot pulsing"></span>
         <span class="status-text">SYSTEMS ONLINE</span>
@@ -455,8 +455,22 @@ const CURRENCIES = {
 };
 let activeCurrency="PKR";
 
+const MARKETS = {
+  PK_LAHORE:{label:"Pakistan - Lahore",context:"Pakistan, Lahore: Hafeez Centre, Hall Road, local used PC markets, Daraz.pk, ZahComputers, CZone, Galaxy.pk"},
+  PK_KARACHI:{label:"Pakistan - Karachi",context:"Pakistan, Karachi: Saddar, Techno City, Uni Centre, local used PC markets, Daraz.pk, ZahComputers, CZone, Galaxy.pk"},
+  PK_ISLAMABAD:{label:"Pakistan - Islamabad",context:"Pakistan, Islamabad/Rawalpindi: Dubai Plaza, Blue Area, local used PC markets, Daraz.pk, ZahComputers, CZone, Galaxy.pk"},
+  PK_ONLINE:{label:"Pakistan - Online",context:"Pakistan online market: Daraz.pk, ZahComputers, CZone, Galaxy.pk, PakDukaan, OLX Pakistan for used hardware"},
+  AE_DUBAI:{label:"UAE - Dubai",context:"UAE, Dubai: Al Ain Center, local UAE retailers, Amazon.ae, Noon, used market listings"},
+  SA_RIYADH:{label:"Saudi Arabia - Riyadh",context:"Saudi Arabia, Riyadh: local computer stores, Amazon.sa, Noon, Haraj used market listings"},
+  US_ONLINE:{label:"USA - Online",context:"United States online market: Amazon, Newegg, Best Buy, Micro Center, eBay used listings"},
+  UK_ONLINE:{label:"UK - Online",context:"United Kingdom online market: Amazon UK, Scan, Overclockers UK, Currys, eBay used listings"}
+};
+let activeMarket="PK_LAHORE";
+
 function setActiveCurrency(c){if(CURRENCIES[c])activeCurrency=c;}
 function getActiveCurrency(){return activeCurrency;}
+function setActiveMarket(m){if(MARKETS[m])activeMarket=m;}
+function getActiveMarket(){return activeMarket;}
 function convertFromPKR(p){return p*(CURRENCIES[activeCurrency]?.rate??1);}
 function convertToPKR(a){return Math.round(a/(CURRENCIES[activeCurrency]?.rate??1));}
 function formatPrice(pkr){
@@ -477,6 +491,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   initParticles();
   setupCursorGlow();
   renderCurrencySelector();
+  renderMarketSelector();
   bindEvents();
   updateBudgetHint();
 });
@@ -500,6 +515,20 @@ function renderCurrencySelector(){
     if(STATE.blueprint)renderResults(STATE.blueprint);
     updateBuildSummary();
   });
+}
+
+function renderMarketSelector(){
+  const sel=document.getElementById("marketSelect");
+  if(!sel)return;
+  sel.innerHTML="";
+  Object.entries(MARKETS).forEach(([code,info])=>{
+    const opt=document.createElement("option");
+    opt.value=code;
+    opt.textContent=info.label;
+    if(code===activeMarket)opt.selected=true;
+    sel.appendChild(opt);
+  });
+  sel.addEventListener("change",()=>setActiveMarket(sel.value));
 }
 
 function updateBudgetHint(){
@@ -598,12 +627,12 @@ async function handleFormSubmit(e){
     const txt=document.getElementById("aiSourceText");
     if(ind&&txt){
       ind.style.display="flex";
-      if(usedAI){txt.textContent="✓ Build generated via Groq AI (Llama 3.3 70B)";
+      if(usedAI){txt.textContent="Build generated via Groq AI";
         
         ind.style.borderColor="rgba(0,230,118,.4)";
         txt.style.color="#00e676";
       }else{
-       ind.innerHTML=`<span style="color:#ffb700;">⚠ Using cached data — Groq not connected</span>
+       ind.innerHTML=`<span style="color:#ffb700;">Using cached data — Groq not connected</span>
   <button onclick="location.reload()" style="margin-left:12px;background:transparent;border:1px solid #ffb700;color:#ffb700;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:11px;font-family:var(--font-mono);">↺ Retry</button>`;
       }
     }
@@ -629,6 +658,8 @@ async function fetchBuildFromGroq(budgetPKR, purpose) {
   console.log("[FORGE] Calling Groq API...", { budgetPKR, purpose });
 
   const tier = getBudgetTier(budgetPKR);
+  const selectedCurrency = getActiveCurrency();
+  const selectedMarket = MARKETS[getActiveMarket()] || MARKETS.PK_LAHORE;
   const tierGuide = {
     entry:      "Entry-level: very basic components, skip expensive peripherals",
     budget:     "Budget: solid mid-entry AMD/Intel CPUs, GTX 1660/RX 6600 class GPU",
@@ -642,8 +673,10 @@ async function fetchBuildFromGroq(budgetPKR, purpose) {
     ? "GPU 35-45%, CPU 20-25%, Motherboard 8-12%, RAM 5-10%, Storage 5-8%, PSU 5-8%, Case 2-4%, Monitor+Peripherals 10-15%"
     : "CPU 30-35%, GPU 15-20%, RAM 10-15%, Motherboard 10-12%, Storage 8-12%, PSU 5-8%, Case 2-4%, rest for peripherals";
 
-  const prompt = `You are FORGE, an expert PC hardware analyst for the Pakistani market.
+  const prompt = `You are FORGE, a senior PC hardware pricing analyst and compatibility expert.
 Generate a complete PC build for budget: ${budgetPKR.toLocaleString()} PKR
+Display currency selected by user: ${selectedCurrency}
+Buyer market/area: ${selectedMarket.context}
 Use case: ${purpose}
 Budget tier: ${tier} — ${tierGuide[tier]}
 Budget allocation: ${alloc}
@@ -651,15 +684,24 @@ Budget allocation: ${alloc}
 RULES:
 1. Return ONLY a valid JSON object. No explanation text, no markdown fences.
 2. Exactly 3 options per category: recommended (New), budget pick (Used/cheaper), best value
-3. All prices in PKR based on real current Pakistani market prices (Hafeez Centre, Daraz, itech.com.pk)
-4. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR * 0.93).toLocaleString()} PKR
-5. Include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals
-6. Scale components dramatically with budget tier
-7. For entry budgets under 80k PKR: skip expensive monitors/peripherals, maximize core hardware
+3. All prices must be integer PKR values only. The frontend will convert PKR to ${selectedCurrency} for display.
+4. Use realistic 2026 street-market prices for the selected buyer market/area.
+5. If current pricing is uncertain, choose a conservative higher estimate instead of an unrealistically cheap price.
+6. Never invent impossible prices. New desktop RAM should not be priced around Rs 2000 unless it is a tiny used/obsolete module and clearly marked Used.
+7. RAM price sanity ranges for Pakistan: 8GB DDR4 usually several thousand PKR, 16GB DDR4 commonly around 8000-12000 PKR, 32GB DDR4/DDR5 higher, DDR5 premium kits much higher. Adjust for market and condition.
+8. GPU, motherboard, PSU, and monitor prices must reflect import duties, local dealer margin, and used-market risk.
+9. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR * 0.93).toLocaleString()} PKR
+10. If the budget is too low for a complete new build, use used/refurbished parts and clearly mark condition.
+11. Include only components plausible in the selected market.
+12. Include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals
+13. Scale components dramatically with budget tier
+14. For entry budgets under 80k PKR: skip expensive monitors/peripherals, maximize core hardware
 
 Return this EXACT JSON structure only (no markdown, no text before or after):
 {
   "tier": "${tier}",
+  "market": "${selectedMarket.label}",
+  "currency": "PKR",
   "categories": [
     {
       "cat": "CPU",
@@ -681,7 +723,9 @@ Icons to use: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=�
       action: "custom",
       prompt: prompt,
       budgetPKR,
-      purpose
+      purpose,
+      currency: selectedCurrency,
+      market: selectedMarket.label
     })
   });
 
@@ -740,8 +784,8 @@ function buildFallback(budgetPKR,purpose){
   const TIERS={
     entry:{
       CPU:[{name:"Intel Core i3-12100F",price:22000,condition:"New",badge:"RECOMMENDED",note:"Strong entry CPU"},{name:"AMD Ryzen 3 3300X",price:12000,condition:"Used",badge:"BUDGET PICK",note:"Good used value"},{name:"Intel Pentium G6405",price:14000,condition:"New",badge:"BEST VALUE",note:"Minimum viable"}],
-      GPU:[{name:"NVIDIA GTX 1650 4GB",price:30000,condition:"New",badge:"RECOMMENDED",note:"1080p capable"},{name:"AMD RX 580 8GB",price:18000,condition:"Used",badge:"BUDGET PICK",note:"Great used value"},{name:"NVIDIA GTX 1630 4GB",price:22000,condition:"New",badge:"BEST VALUE",note:"Budget 1080p"}],
-      Motherboard:[{name:"MSI H610M PRO-E",price:14000,condition:"New",badge:"RECOMMENDED",note:"Solid LGA1700"},{name:"Gigabyte B450M DS3H",price:10000,condition:"New",badge:"BUDGET PICK",note:"AMD AM4"},{name:"ASUS PRIME H510M-E",price:12000,condition:"New",badge:"BEST VALUE",note:"Simple, reliable"}],
+      GPU:[{name:"NVIDIA GTX 1650 4GB",price:32000,condition:"Used",badge:"RECOMMENDED",note:"1080p capable"},{name:"AMD RX 580 8GB",price:20000,condition:"Used",badge:"BUDGET PICK",note:"Great used value"},{name:"NVIDIA GTX 1630 4GB",price:22000,condition:"New",badge:"BEST VALUE",note:"Budget 1080p"}],
+      Motherboard:[{name:"MSI H610M PRO-E",price:17000,condition:"Used",badge:"RECOMMENDED",note:"Solid LGA1700"},{name:"Gigabyte B450M DS3H",price:26000,condition:"New",badge:"BUDGET PICK",note:"AMD AM4"},{name:"ASUS PRIME H510M-E",price:28000,condition:"New",badge:"BEST VALUE",note:"Simple, reliable"}],
       RAM:[{name:"16GB DDR4 3200MHz (2x8)",price:9500,condition:"New",badge:"RECOMMENDED",note:"Dual channel"},{name:"8GB DDR4 2666MHz",price:4500,condition:"New",badge:"BUDGET PICK",note:"Minimal but works"},{name:"16GB DDR4 TeamGroup",price:8500,condition:"New",badge:"BEST VALUE",note:"Good brand"}],
       Storage:[{name:"512GB NVMe M.2 SSD",price:7500,condition:"New",badge:"RECOMMENDED",note:"Fast boot drive"},{name:"256GB SATA SSD 2.5in",price:4500,condition:"New",badge:"BUDGET PICK",note:"Minimal storage"},{name:"1TB HDD + 120GB SSD",price:6500,condition:"New",badge:"BEST VALUE",note:"Combo approach"}],
       PSU:[{name:"550W 80+ Bronze Seasonic",price:8000,condition:"New",badge:"RECOMMENDED",note:"Reliable PSU"},{name:"500W Generic 80+ PSU",price:5500,condition:"New",badge:"BUDGET PICK",note:"Basic power"},{name:"450W Corsair CX450",price:7000,condition:"New",badge:"BEST VALUE",note:"Trusted brand"}],
