@@ -1,6 +1,10 @@
 // api/gemini.js — Powered by Groq (drop-in replacement for Gemini)
 // Vercel Serverless Function
 
+module.exports.config = {
+  maxDuration: 10, // Vercel Hobby plan hard cap
+};
+
 // ── Rate limiting ────────────────────────────────────────────────────────────
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW = 60 * 1000;
@@ -134,9 +138,32 @@ Respond in this EXACT JSON format only (no markdown, no explanation outside JSON
 }
 
 // ── Groq API call ─────────────────────────────────────────────────────────────
-async function callGroq(prompt, isJson) {
+async function callGroq(prompt, isJson, useWebSearch = false) {
   const GROQ_API_KEY = process.env.GROQ_API_KEY;
   if (!GROQ_API_KEY) throw new Error("GROQ_API_KEY environment variable is not set.");
+
+  const model = useWebSearch ? "groq/compound" : "llama-3.3-70b-versatile";
+
+  const requestBody = {
+    model,
+    messages: [
+      {
+        role: "system",
+        content: isJson
+          ? "You are FORGE AI, a PC hardware expert for Pakistan. Always respond with valid JSON only. No markdown, no explanation outside the JSON object. If you perform web searches, do NOT include any search narration, summaries, or commentary in your final reply — output ONLY the JSON object as your final answer."
+          : "You are FORGE AI, a PC hardware expert for Pakistan. Be concise and helpful.",
+      },
+      { role: "user", content: prompt },
+    ],
+    temperature: 0.6,
+    max_tokens: 2048,
+  };
+
+  if (useWebSearch) {
+    requestBody.compound_custom = {
+      tools: { enabled_tools: ["web_search"] }
+    };
+  }
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -144,20 +171,7 @@ async function callGroq(prompt, isJson) {
       "Authorization": `Bearer ${GROQ_API_KEY}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      model: "llama-3.3-70b-versatile",
-      messages: [
-        {
-          role: "system",
-          content: isJson
-            ? "You are FORGE AI, a PC hardware expert for Pakistan. Always respond with valid JSON only. No markdown, no explanation outside the JSON object."
-            : "You are FORGE AI, a PC hardware expert for Pakistan. Be concise and helpful.",
-        },
-        { role: "user", content: prompt },
-      ],
-      temperature: 0.6,
-      max_tokens: 2048,
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   if (!response.ok) {
@@ -166,6 +180,12 @@ async function callGroq(prompt, isJson) {
   }
 
   const data = await response.json();
+
+  // Useful for debugging in Vercel logs — shows what searches actually ran
+  if (useWebSearch) {
+    console.log("[FORGE] executed_tools:", JSON.stringify(data.choices?.[0]?.message?.executed_tools || []));
+  }
+
   return data.choices?.[0]?.message?.content || "";
 }
 
@@ -204,10 +224,11 @@ module.exports = async function handler(req, res) {
 
   const action = body.action || "recommend";
   const isJson = action !== "explain";
+  const useWebSearch = action === "custom";
   const prompt = buildPrompt(body);
 
   try {
-    const rawText = await callGroq(prompt, isJson);
+    const rawText = await callGroq(prompt, isJson, useWebSearch);
 
     if (!isJson) return res.status(200).json({ result: rawText });
 

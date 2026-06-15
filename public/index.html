@@ -684,7 +684,11 @@ async function fetchBuildFromGroq(budgetPKR, purpose, currencyCode) {
 
   const prompt = `You are FORGE, an expert PC hardware procurement analyst for the Pakistani retail market (Hafeez Centre Lahore, Daraz.pk, itech.com.pk, PriceOye, Paklap, Z-Tech).
 
-TASK: Build a complete, internally-consistent PC configuration for the budget below. Work through this like a real sourcing job: first lock the CPU/GPU pairing for the tier, then size every other component's price to fit its share of the remaining budget — never default to generic "textbook" prices that ignore the actual budget.
+TASK: You have access to a web search tool, but you are under a STRICT TIME LIMIT. Perform AT MOST 3 web searches total:
+1. One search for current GPU prices in Pakistan for this budget tier
+2. One search for current CPU prices in Pakistan for this budget tier
+3. One search for current RAM/storage prices in Pakistan
+Use these results to calibrate pricing for ALL 9 categories proportionally — for categories without direct search results, scale prices realistically relative to what you found. Do NOT exceed 3 searches; speed matters. After searching, output ONLY the final JSON object as your last message, with absolutely no narration, search summaries, or commentary.
 
 BUDGET: ${budgetPKR.toLocaleString()} PKR total
 USE CASE: ${purpose}
