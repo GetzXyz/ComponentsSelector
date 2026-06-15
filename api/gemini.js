@@ -228,10 +228,16 @@ module.exports = async function handler(req, res) {
 
   } catch (err) {
     console.error("FORGE API Error:", err.message);
+    const status = err.message.includes("GROQ_API_KEY") ? 500 : 502;
     if (action === "recommend") {
       return res.status(200).json({ result: getFallbackBuild(body), fallback: true });
     }
-    return res.status(500).json({ error: "AI service temporarily unavailable. Please try again." });
+    return res.status(status).json({
+      error: "Groq API request failed.",
+      detail: err.message.includes("GROQ_API_KEY")
+        ? "Missing GROQ_API_KEY environment variable."
+        : err.message.slice(0, 500),
+    });
   }
 };
 

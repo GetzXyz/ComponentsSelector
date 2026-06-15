@@ -658,8 +658,6 @@ async function fetchBuildFromGroq(budgetPKR, purpose) {
   console.log("[FORGE] Calling Groq API...", { budgetPKR, purpose });
 
   const tier = getBudgetTier(budgetPKR);
-  const selectedCurrency = getActiveCurrency();
-  const selectedMarket = MARKETS[getActiveMarket()] || MARKETS.PK_LAHORE;
   const tierGuide = {
     entry:      "Entry-level: very basic components, skip expensive peripherals",
     budget:     "Budget: solid mid-entry AMD/Intel CPUs, GTX 1660/RX 6600 class GPU",
@@ -673,10 +671,8 @@ async function fetchBuildFromGroq(budgetPKR, purpose) {
     ? "GPU 35-45%, CPU 20-25%, Motherboard 8-12%, RAM 5-10%, Storage 5-8%, PSU 5-8%, Case 2-4%, Monitor+Peripherals 10-15%"
     : "CPU 30-35%, GPU 15-20%, RAM 10-15%, Motherboard 10-12%, Storage 8-12%, PSU 5-8%, Case 2-4%, rest for peripherals";
 
-  const prompt = `You are FORGE, a senior PC hardware pricing analyst and compatibility expert.
+  const prompt = `You are FORGE, an expert PC hardware analyst for the Pakistani market.
 Generate a complete PC build for budget: ${budgetPKR.toLocaleString()} PKR
-Display currency selected by user: ${selectedCurrency}
-Buyer market/area: ${selectedMarket.context}
 Use case: ${purpose}
 Budget tier: ${tier} — ${tierGuide[tier]}
 Budget allocation: ${alloc}
@@ -684,24 +680,15 @@ Budget allocation: ${alloc}
 RULES:
 1. Return ONLY a valid JSON object. No explanation text, no markdown fences.
 2. Exactly 3 options per category: recommended (New), budget pick (Used/cheaper), best value
-3. All prices must be integer PKR values only. The frontend will convert PKR to ${selectedCurrency} for display.
-4. Use realistic 2026 street-market prices for the selected buyer market/area.
-5. If current pricing is uncertain, choose a conservative higher estimate instead of an unrealistically cheap price.
-6. Never invent impossible prices. New desktop RAM should not be priced around Rs 2000 unless it is a tiny used/obsolete module and clearly marked Used.
-7. RAM price sanity ranges for Pakistan: 8GB DDR4 usually several thousand PKR, 16GB DDR4 commonly around 8000-12000 PKR, 32GB DDR4/DDR5 higher, DDR5 premium kits much higher. Adjust for market and condition.
-8. GPU, motherboard, PSU, and monitor prices must reflect import duties, local dealer margin, and used-market risk.
-9. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR * 0.93).toLocaleString()} PKR
-10. If the budget is too low for a complete new build, use used/refurbished parts and clearly mark condition.
-11. Include only components plausible in the selected market.
-12. Include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals
-13. Scale components dramatically with budget tier
-14. For entry budgets under 80k PKR: skip expensive monitors/peripherals, maximize core hardware
+3. All prices in PKR based on real current Pakistani market prices (Hafeez Centre, Daraz, itech.com.pk)
+4. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR * 0.93).toLocaleString()} PKR
+5. Include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals
+6. Scale components dramatically with budget tier
+7. For entry budgets under 80k PKR: skip expensive monitors/peripherals, maximize core hardware
 
 Return this EXACT JSON structure only (no markdown, no text before or after):
 {
   "tier": "${tier}",
-  "market": "${selectedMarket.label}",
-  "currency": "PKR",
   "categories": [
     {
       "cat": "CPU",
@@ -723,9 +710,7 @@ Icons to use: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=�
       action: "custom",
       prompt: prompt,
       budgetPKR,
-      purpose,
-      currency: selectedCurrency,
-      market: selectedMarket.label
+      purpose
     })
   });
 

@@ -3,6 +3,7 @@
   "version": "2.1.0",
   "description": "AI PC Builder — no API key needed prototype",
   "scripts": {
+    "dev": "vercel dev",
     "deploy": "vercel --prod"
   },
   "devDependencies": {
