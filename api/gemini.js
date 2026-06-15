@@ -1,6 +1,27 @@
 // api/gemini.js — Powered by Groq (drop-in replacement for Gemini)
 // Vercel Serverless Function
 
+const { getMarketData, formatMarketDataForPrompt } = require("./priceSearch");
+
+// ── Budget tier detection (mirrors index.html getBudgetTier) ──────────────────
+function getBudgetTier(pkr) {
+  if (pkr < 80000) return "entry";
+  if (pkr < 200000) return "budget";
+  if (pkr < 400000) return "mid-range";
+  if (pkr < 700000) return "high-end";
+  if (pkr < 1200000) return "enthusiast";
+  return "flagship";
+}
+
+// Inserts the market data block right before "Return this EXACT JSON structure"
+function injectMarketData(prompt, marketBlock) {
+  if (!marketBlock) return prompt;
+  const marker = "Return this EXACT JSON structure";
+  const idx = prompt.indexOf(marker);
+  if (idx === -1) return prompt + "\n\n" + marketBlock;
+  return prompt.slice(0, idx) + marketBlock + "\n\n" + prompt.slice(idx);
+}
+
 // ── Rate limiting ────────────────────────────────────────────────────────────
 const rateLimitMap = new Map();
 const RATE_LIMIT_WINDOW = 60 * 1000;
@@ -156,7 +177,7 @@ async function callGroq(prompt, isJson) {
         { role: "user", content: prompt },
       ],
       temperature: 0.6,
-      max_tokens: 2048,
+      max_tokens: 2200,
     }),
   });
 
@@ -204,7 +225,26 @@ module.exports = async function handler(req, res) {
 
   const action = body.action || "recommend";
   const isJson = action !== "explain";
-  const prompt = buildPrompt(body);
+  let prompt = buildPrompt(body);
+
+  // For PC-build requests, try to inject real cached market prices.
+  // Fails silently (no SERPER_API_KEY, search error, etc.) — prompt is
+  // used as-is and the model falls back to its anchor-based pricing.
+  if (action === "custom") {
+    try {
+      const budgetPKR = Number(body.budgetPKR) || 0;
+      const tier = getBudgetTier(budgetPKR);
+      const marketData = await getMarketData(tier);
+      const marketText = formatMarketDataForPrompt(marketData);
+      if (marketText) {
+        const marketBlock =
+          `REAL CURRENT MARKET LISTINGS (Pakistan, recent — use these as your PRIMARY price reference for matching categories; for categories without listings here, use the price anchors given earlier in this prompt):\n${marketText}`;
+        prompt = injectMarketData(prompt, marketBlock);
+      }
+    } catch (err) {
+      console.warn("[gemini] Market data injection skipped:", err.message);
+    }
+  }
 
   try {
     const rawText = await callGroq(prompt, isJson);
