@@ -578,7 +578,7 @@ async function handleFormSubmit(e){
 
   let usedAI=false;
   try{
-    STATE.blueprint=await fetchBuildFromGroq(budgetPKR,purpose);
+    STATE.blueprint=await fetchBuildFromGroq(budgetPKR,purpose,getActiveCurrency());
     usedAI=true;
   }catch(err){
     console.warn("AI error — using fallback:",err.message);
@@ -625,8 +625,8 @@ function checkRateLimit(){
 }
 
 // ── GROQ API CALL ─────────────────────────────────────────────────────────────
-async function fetchBuildFromGroq(budgetPKR, purpose) {
-  console.log("[FORGE] Calling Groq API...", { budgetPKR, purpose });
+async function fetchBuildFromGroq(budgetPKR, purpose, currencyCode) {
+  console.log("[FORGE] Calling Groq API...", { budgetPKR, purpose, currencyCode });
 
   const tier = getBudgetTier(budgetPKR);
   const tierGuide = {
@@ -642,24 +642,60 @@ async function fetchBuildFromGroq(budgetPKR, purpose) {
     ? "GPU 35-45%, CPU 20-25%, Motherboard 8-12%, RAM 5-10%, Storage 5-8%, PSU 5-8%, Case 2-4%, Monitor+Peripherals 10-15%"
     : "CPU 30-35%, GPU 15-20%, RAM 10-15%, Motherboard 10-12%, Storage 8-12%, PSU 5-8%, Case 2-4%, rest for peripherals";
 
-  const prompt = `You are FORGE, an expert PC hardware analyst for the Pakistani market.
-Generate a complete PC build for budget: ${budgetPKR.toLocaleString()} PKR
-Use case: ${purpose}
-Budget tier: ${tier} — ${tierGuide[tier]}
-Budget allocation: ${alloc}
+  const curMeta = CURRENCIES[currencyCode] || CURRENCIES.PKR;
+  const regionMap = {
+    PKR:"Pakistan", USD:"the United States", EUR:"the Eurozone", GBP:"the United Kingdom",
+    AED:"the United Arab Emirates", SAR:"Saudi Arabia", CAD:"Canada", AUD:"Australia"
+  };
+  const region = regionMap[currencyCode] || "Pakistan";
+  const retailerMap = {
+    PKR:"Hafeez Centre, Daraz, itech.com.pk",
+    USD:"Newegg, Amazon US, Micro Center",
+    EUR:"Amazon.de/.fr, Mindfactory, Alternate",
+    GBP:"Amazon UK, Scan, Overclockers UK",
+    AED:"Amazon.ae, Sharaf DG, Noon",
+    SAR:"Amazon.sa, Extra, Noon",
+    CAD:"Amazon.ca, Canada Computers, Memory Express",
+    AUD:"Amazon.au, PLE Computers, Mwave"
+  };
+  const retailers = retailerMap[currencyCode] || retailerMap.PKR;
 
-RULES:
-1. Return ONLY a valid JSON object. No explanation text, no markdown fences.
-2. Exactly 3 options per category: recommended (New), budget pick (Used/cheaper), best value
-3. All prices in PKR based on real current Pakistani market prices (Hafeez Centre, Daraz, itech.com.pk)
-4. Sum of all RECOMMENDED options must not exceed ${Math.round(budgetPKR * 0.93).toLocaleString()} PKR
+  const budgetInCur = Math.round(budgetPKR * curMeta.rate);
+  const maxRecommendedCur = Math.round(budgetPKR * 0.93 * curMeta.rate);
+
+  const prompt = `You are FORGE, a senior PC hardware procurement analyst with deep, current knowledge of retail PC component pricing across global markets.
+
+TASK: Conduct a thorough market analysis and build the OPTIMAL PC configuration for the budget and region below. Treat this as a real shopping research task — weigh price-to-performance, current street prices, availability, and bottleneck balance across every component before deciding.
+
+CLIENT BRIEF:
+- Total budget: ${curMeta.symbol}${budgetInCur.toLocaleString()} ${currencyCode} (equivalent to ${budgetPKR.toLocaleString()} PKR)
+- Region / market: ${region} (currency: ${currencyCode})
+- Use case: ${purpose}
+- Budget tier: ${tier} — ${tierGuide[tier]}
+- Target budget allocation by category: ${alloc}
+- Reference retailers for pricing realism: ${retailers}
+
+ANALYSIS PROCESS (apply this thinking before producing output):
+1. Determine the strongest CPU/GPU pairing achievable at this budget tier for ${region}, avoiding bottlenecks (e.g. don't pair a flagship GPU with a weak CPU or vice versa).
+2. Cross-check that supporting components (motherboard, RAM, PSU wattage, storage speed, case airflow) match the tier of the CPU/GPU — no mismatched builds.
+3. For each category, identify a RECOMMENDED option (best overall pick, new), a BUDGET PICK (cheaper or used alternative that frees up budget), and a BEST VALUE option (strongest price-to-performance at a middle price point).
+4. Validate that the sum of all RECOMMENDED prices stays within budget and that the overall build has no obvious weak link relative to its peers.
+5. Prices must reflect realistic current street prices in ${currencyCode} for ${region}, consistent with retailers like ${retailers}.
+
+OUTPUT RULES (STRICT):
+1. Return ONLY a valid JSON object. No explanation text, no markdown fences, no commentary before or after.
+2. Exactly 3 options per category: RECOMMENDED (New), BUDGET PICK (Used/cheaper), BEST VALUE
+3. All prices in ${currencyCode}, realistic for ${region} retail pricing
+4. Sum of all RECOMMENDED options must not exceed ${curMeta.symbol}${maxRecommendedCur.toLocaleString()} ${currencyCode}
 5. Include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals
-6. Scale components dramatically with budget tier
-7. For entry budgets under 80k PKR: skip expensive monitors/peripherals, maximize core hardware
+6. Scale components dramatically with budget tier — a flagship budget must produce a flagship build, not a mid-range build with extra peripherals
+7. For entry budgets: skip expensive monitors/peripherals, maximize core hardware (CPU/GPU/RAM/Storage)
+8. Every component name must be a real, currently-available product
 
 Return this EXACT JSON structure only (no markdown, no text before or after):
 {
   "tier": "${tier}",
+  "currency": "${currencyCode}",
   "categories": [
     {
       "cat": "CPU",
@@ -672,6 +708,7 @@ Return this EXACT JSON structure only (no markdown, no text before or after):
     }
   ]
 }
+Note: example "price" values above are illustrative placeholders only — replace them with realistic ${currencyCode} prices for ${region}.
 Icons to use: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Case=📦, Monitor=🖥️, Peripherals=🎧`;
 
   const response = await fetch("/api/gemini", {
