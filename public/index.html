@@ -663,39 +663,60 @@ async function fetchBuildFromGroq(budgetPKR, purpose, currencyCode) {
   const budgetInCur = Math.round(budgetPKR * curMeta.rate);
   const maxRecommendedCur = Math.round(budgetPKR * 0.93 * curMeta.rate);
 
-  const prompt = `You are FORGE, a senior PC hardware procurement analyst with deep, current knowledge of retail PC component pricing across global markets.
+  // Per-category price-share guide, used to compute a per-component target
+  // budget band so the model anchors EVERY price to the actual budget,
+  // not just the overall total.
+  const categoryShares = purpose === "gaming"
+    ? { CPU:0.22, GPU:0.40, Motherboard:0.10, RAM:0.07, Storage:0.06, PSU:0.06, Case:0.03, Monitor:0.04, Peripherals:0.02 }
+    : { CPU:0.32, GPU:0.18, Motherboard:0.11, RAM:0.12, Storage:0.10, PSU:0.06, Case:0.03, Monitor:0.04, Peripherals:0.04 };
 
-TASK: Conduct a thorough market analysis and build the OPTIMAL PC configuration for the budget and region below. Treat this as a real shopping research task — weigh price-to-performance, current street prices, availability, and bottleneck balance across every component before deciding.
+  const recommendedCap = Math.round(budgetPKR * 0.93);
 
-CLIENT BRIEF:
-- Total budget: ${curMeta.symbol}${budgetInCur.toLocaleString()} ${currencyCode} (equivalent to ${budgetPKR.toLocaleString()} PKR)
-- Region / market: ${region} (currency: ${currencyCode})
-- Use case: ${purpose}
-- Budget tier: ${tier} — ${tierGuide[tier]}
-- Target budget allocation by category: ${alloc}
-- Reference retailers for pricing realism: ${retailers}
+  // Build a concrete per-category PKR band (recommended target ± budget/best-value range)
+  // so the model has a numeric anchor for every single component instead of
+  // free-floating guesses.
+  const categoryBands = Object.entries(categoryShares).map(([cat, share]) => {
+    const target = Math.round(recommendedCap * share);
+    const low = Math.round(target * 0.55);   // budget pick floor
+    const high = Math.round(target * 1.15);  // best value / recommended ceiling
+    return `- ${cat}: target ≈ ${target.toLocaleString()} PKR (RECOMMENDED should land near this; BUDGET PICK roughly ${low.toLocaleString()}–${target.toLocaleString()} PKR; BEST VALUE roughly ${Math.round(target*0.8).toLocaleString()}–${high.toLocaleString()} PKR)`;
+  }).join("\n");
 
-ANALYSIS PROCESS (apply this thinking before producing output):
-1. Determine the strongest CPU/GPU pairing achievable at this budget tier for ${region}, avoiding bottlenecks (e.g. don't pair a flagship GPU with a weak CPU or vice versa).
-2. Cross-check that supporting components (motherboard, RAM, PSU wattage, storage speed, case airflow) match the tier of the CPU/GPU — no mismatched builds.
-3. For each category, identify a RECOMMENDED option (best overall pick, new), a BUDGET PICK (cheaper or used alternative that frees up budget), and a BEST VALUE option (strongest price-to-performance at a middle price point).
-4. Validate that the sum of all RECOMMENDED prices stays within budget and that the overall build has no obvious weak link relative to its peers.
-5. Prices must reflect realistic current street prices in ${currencyCode} for ${region}, consistent with retailers like ${retailers}.
+  const prompt = `You are FORGE, an expert PC hardware procurement analyst for the Pakistani retail market (Hafeez Centre Lahore, Daraz.pk, itech.com.pk, PriceOye, Paklap, Z-Tech).
 
-OUTPUT RULES (STRICT):
-1. Return ONLY a valid JSON object. No explanation text, no markdown fences, no commentary before or after.
+TASK: Build a complete, internally-consistent PC configuration for the budget below. Work through this like a real sourcing job: first lock the CPU/GPU pairing for the tier, then size every other component's price to fit its share of the remaining budget — never default to generic "textbook" prices that ignore the actual budget.
+
+BUDGET: ${budgetPKR.toLocaleString()} PKR total
+USE CASE: ${purpose}
+BUDGET TIER: ${tier} — ${tierGuide[tier]}
+TOTAL RECOMMENDED CAP: ${recommendedCap.toLocaleString()} PKR (sum of all 9 RECOMMENDED prices must not exceed this)
+
+PER-CATEGORY PRICE ANCHORS (use these as the realistic PKR range for THIS budget — do not reuse prices from a different tier):
+${categoryBands}
+
+PRICING DISCIPLINE — apply to EVERY component, including RAM, storage, case, PSU, peripherals:
+- Prices must scale with the budget tier. A flagship-tier build must have flagship-tier RAM/storage/case prices, not entry-level prices reused from habit.
+- Before writing each price, check it against the per-category anchor above. If your instinct disagrees with the anchor by more than ~30%, trust the anchor and pick a real product that fits it (e.g. for a higher RAM anchor, choose a larger kit, higher speed/CL, or RGB variant — not the same cheap 8GB kit at every tier).
+- Never repeat the exact same product+price combination across different budget tiers for non-CPU/GPU categories. RAM, storage, case, and PSU choices should visibly change as the budget grows (capacity, speed, brand tier, wattage, build quality).
+- All prices must be realistic current PKR street prices for Pakistan — round to the nearest 100 PKR.
+
+CONSISTENCY CHECK (perform mentally before output):
+1. Does the CPU/GPU pairing avoid bottlenecks for this tier and use case?
+2. Does every other component's price roughly match its anchor band above?
+3. Does the sum of all 9 RECOMMENDED prices stay at or under ${recommendedCap.toLocaleString()} PKR?
+4. Do BUDGET PICK and BEST VALUE options offer genuinely different products (not just relabeled prices) at sensible price gaps below/around the RECOMMENDED price?
+If any check fails, silently adjust the component choice or price before producing the final JSON.
+
+OUTPUT RULES:
+1. Return ONLY a valid JSON object. No explanation text, no markdown fences, no text before or after.
 2. Exactly 3 options per category: RECOMMENDED (New), BUDGET PICK (Used/cheaper), BEST VALUE
-3. All prices in ${currencyCode}, realistic for ${region} retail pricing
-4. Sum of all RECOMMENDED options must not exceed ${curMeta.symbol}${maxRecommendedCur.toLocaleString()} ${currencyCode}
-5. Include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals
-6. Scale components dramatically with budget tier — a flagship budget must produce a flagship build, not a mid-range build with extra peripherals
-7. For entry budgets: skip expensive monitors/peripherals, maximize core hardware (CPU/GPU/RAM/Storage)
-8. Every component name must be a real, currently-available product
+3. Include all 9 categories: CPU, GPU, Motherboard, RAM, Storage, PSU, Case, Monitor, Peripherals
+4. For entry budgets under 80k PKR: skip expensive monitors/peripherals, maximize core hardware (CPU/GPU/RAM/Storage), and reallocate their anchor amounts into CPU/GPU/Storage instead.
+5. Every "name" must be a real, currently-sold product (no placeholder/fake model numbers).
 
 Return this EXACT JSON structure only (no markdown, no text before or after):
 {
   "tier": "${tier}",
-  "currency": "${currencyCode}",
   "categories": [
     {
       "cat": "CPU",
@@ -708,9 +729,8 @@ Return this EXACT JSON structure only (no markdown, no text before or after):
     }
   ]
 }
-Note: example "price" values above are illustrative placeholders only — replace them with realistic ${currencyCode} prices for ${region}.
+Note: the example prices above are placeholders for structure only — replace ALL prices with values matching this budget's anchors, not the example's tier.
 Icons to use: CPU=🔲, GPU=🎮, Motherboard=🧩, RAM=⚡, Storage=💾, PSU=🔌, Case=📦, Monitor=🖥️, Peripherals=🎧`;
-
   const response = await fetch("/api/gemini", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
