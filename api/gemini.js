@@ -16,7 +16,7 @@ export async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://api.groq.com/openai/v1/chat/completions?key=${apiKey}`,
+      `https://api.groq.com/openai/v1/chat/completions`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
